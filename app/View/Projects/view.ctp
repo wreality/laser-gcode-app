@@ -7,9 +7,11 @@
 			<?php foreach ($project['Operation'] as $oi => $operation) {?>
 				<div class="well">
 					<h2>Operation <?php echo $oi + 1; ?></h2>
+					
 					<?php if (empty($operation['Path'])) {?>
 						<p>No paths exist yet.</p>
 					<?php } else { ?>
+						<iframe height="300" src="<?php echo Router::url('/files/'.$operation['id'].'.pdf')?>"></iframe>
 						<table class="table table-striped">
 						<?php foreach($operation['Path'] as $pi => $path) {?>
 							<tr>
