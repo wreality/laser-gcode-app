@@ -45,6 +45,9 @@ class LaserSchema extends CakeSchema {
 	public $projects = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'project_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'max_feedrate' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'traversal_rate' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'home_before' => array('type' => 'boolean', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
