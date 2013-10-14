@@ -17,17 +17,18 @@
 								<th>&nbsp;</th>
 								<th><?php echo __('File Name');?></th>
 								<th><?php echo __('Order');?></th>
-								<th><?php echo __('Power')?></th>
-								<th><?php echo __('Speed');?></th>
+								<th>Settings</th>
 								<th>&nbsp;</th>
 							</tr>
 						<?php foreach($operation['Path'] as $pi => $path) {?>
+
 							<tr>
 								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $path['order']?></td>
-								<td><?php echo __('%01.2f%% Power', $path['power']);?></td>
-								<td><?php echo __("%01.2f%% Speed", $path['speed']);?></td>
+								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
+									<?php if (!empty($path['Preset']['name'])) {?> <?php echo $this->Html->label($path['Preset']['name']);?> <?php }?>
+								</td>
 								<td><?php echo $this->Html->button('Edit', array('controller' => 'paths', 'action' => 'edit', $path['id']), array('type' => 'btn-primary btn-xs'));?>
 									
 									<?php if ($pi > 0)  { ?>

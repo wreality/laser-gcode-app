@@ -32,6 +32,7 @@ class ProjectsController extends AppController {
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(
+					'Preset',
 					'order' => array('order' => 'ASC'),
 				)
 			)

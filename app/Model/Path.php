@@ -101,7 +101,8 @@ class Path extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		)
+		),
+		'Preset',
 	);
 
 	public function validateValidUpload($check) {
