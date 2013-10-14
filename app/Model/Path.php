@@ -18,8 +18,8 @@ class Path extends AppModel {
 				'rule' => array('validateValidUpload'),
 			)
 		),
-		'preset' => array(
-			'preset' => array(
+		'preset_id' => array(
+			'preset_id' => array(
 				'rule' => array('validateImportPreset'),
 			),
 		),
@@ -69,6 +69,19 @@ class Path extends AppModel {
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'speed' => array(
+			'sane' => array(
+				'rule' => array('range', 5, 101),
+				'message' => 'Speed must be between 10 and 100%',
+			),
+		),
+
+		'power' => array(
+				'sane' => array(
+						'rule' => array('range', 5, 101),
+						'message' => 'Power must be between 5 and 100%',
 			),
 		),
 		
@@ -137,15 +150,16 @@ class Path extends AppModel {
 	}
 
 	public function validateImportPreset($check) {
-		if ((empty($this->data[$this->alias]['preset']) || $this->data[$this->alias]['preset'] == 1)) {
+		if ((empty($this->data[$this->alias]['preset_id']) || $this->data[$this->alias]['preset_id'] == 1)) {
 			return true;
 		}
 		App::import('Model', 'Preset');
 		$Preset = new Preset();
-		if (!$Preset->exists($this->data[$this->alias]['preset'])) {
+		if (!$Preset->exists($this->data[$this->alias]['preset_id'])) {
 			return __('Invalid preset.');
 		} else {
-			$p = $Preset->read(null, $this->data[$this->alias]['preset']);
+			$p = $Preset->read(null, $this->data[$this->alias]['preset_id']);
+			var_dump($p);
 			$this->data[$this->alias]['power'] = $p['Preset']['power'];
 			$this->data[$this->alias]['speed'] = $p['Preset']['speed'];
 			return true;

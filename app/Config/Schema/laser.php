@@ -23,8 +23,9 @@ class LaserSchema extends CakeSchema {
 		'file_hash' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 32, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'order' => array('type' => 'integer', 'null' => false, 'default' => null),
 		'file_name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 120, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'power' => array('type' => 'float', 'null' => true, 'default' => null),
-		'speed' => array('type' => 'float', 'null' => true, 'default' => null),
+		'power' => array('type' => 'float', 'null' => false, 'default' => null),
+		'speed' => array('type' => 'float', 'null' => false, 'default' => null),
+		'preset_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),

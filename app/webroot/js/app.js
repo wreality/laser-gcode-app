@@ -9,5 +9,10 @@ $(document).ready(function() {
 	};
 	
 	$('.preset-options').change(updateCustomDiv);
+	$('.preset-options').each(function() {
+		if ($(this).val() == '1') {
+			$(this).closest('.form-group').nextAll('.custom-options').show();
+		}
+	});
 	
 });

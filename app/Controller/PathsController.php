@@ -78,12 +78,16 @@ class PathsController extends AppController {
 				
 				$this->redirect(array('controller' => 'projects', 'action' => 'view',$this->Path->Operation->field('project_id')));
 			} else {
+				var_dump($this->Path->invalidFields());
+				var_dump($this->Path->data);
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
 			}
 		} else {
 			$options = array('conditions' => array('Path.' . $this->Path->primaryKey => $id));
 			$this->request->data = $this->Path->find('first', $options);
 		}
+		$this->loadModel('Preset');
+		$this->set('presets', $this->Preset->getList());
 		
 	}
 
