@@ -13,6 +13,14 @@
 					<?php } else { ?>
 						<iframe height="300" src="<?php echo Router::url('/files/'.$operation['id'].'.pdf')?>"></iframe>
 						<table class="table table-striped">
+							<tr>
+								<th>&nbsp;</th>
+								<th><?php echo __('File Name');?></th>
+								<th><?php echo __('Order');?></th>
+								<th><?php echo __('Power')?></th>
+								<th><?php echo __('Speed');?></th>
+								<th>&nbsp;</th>
+							</tr>
 						<?php foreach($operation['Path'] as $pi => $path) {?>
 							<tr>
 								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
