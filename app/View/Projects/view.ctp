@@ -96,8 +96,8 @@
     </div>
     <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
-		<?php echo $this->Form->input('max_feedrate')?>
-		<?php echo $this->Form->input('traversal_speed')?>
+		<?php echo $this->Form->input('max_feedrate', array('label' => __('100% Feedrate'), 'append' => 'mm/min'))?>
+		<?php echo $this->Form->input('traversal_speed', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
       </div>
     </div>
   </div>
