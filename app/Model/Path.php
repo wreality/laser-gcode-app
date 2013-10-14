@@ -13,6 +13,16 @@ class Path extends AppModel {
  * @var array
  */
 	public $validate = array(
+		'file' => array(
+			'validupload' => array(
+				'rule' => array('validateValidUpload'),
+			)
+		),
+		'preset' => array(
+			'preset' => array(
+				'rule' => array('validateImportPreset'),
+			),
+		),
 		'operation_id' => array(
 			'uuid' => array(
 				'rule' => array('uuid'),
@@ -61,6 +71,7 @@ class Path extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -79,4 +90,65 @@ class Path extends AppModel {
 			'order' => ''
 		)
 	);
+
+	public function validateValidUpload($check) {
+		
+		switch ($this->data[$this->alias]['file']['error']) {
+			case UPLOAD_ERR_INI_SIZE:
+				return __('File upload exceeds the max size allowed.');
+			case UPLOAD_ERR_FORM_SIZE:
+				return __('File upload exceed application max size allowed.');
+			case UPLOAD_ERR_PARTIAL:
+				return __('File upload was not completed.');
+			case UPLOAD_ERR_NO_FILE:
+				if (empty($this->data[$this->alias]['id'])) {
+					return __('Path file upload is required.');
+				} else {
+					return true;
+				}
+				break;
+			case UPLOAD_ERR_NO_TMP_DIR:
+				return __('Error uploading temproary file.');
+			case UPLOAD_ERR_CANT_WRITE:
+				return __('Unable to write uploaded file to disk.'); 
+		}
+		
+		if (!in_array($this->data[$this->alias]['file']['type'], Configure::read('App.allowed_file_types'))) {
+			return __('Invalid file type.  Only pdf is currently supported.');
+		}
+		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
+		if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf')) {
+			return __('Unable to move uploaded file.');
+		}
+		$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
+		$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
+		if (extension_loaded('imagick')) {
+		
+			$image = new Imagick(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf');
+			$image->setResolution(150,150);
+			$image->setImageFormat('png');
+			$image->writeImage(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
+		} else {
+			copy(PDF_PATH.DS.'no-image.png', PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
+		}
+		return true;
+		
+		
+	}
+
+	public function validateImportPreset($check) {
+		if ((empty($this->data[$this->alias]['preset']) || $this->data[$this->alias]['preset'] == 1)) {
+			return true;
+		}
+		App::import('Model', 'Preset');
+		$Preset = new Preset();
+		if (!$Preset->exists($this->data[$this->alias]['preset'])) {
+			return __('Invalid preset.');
+		} else {
+			$p = $Preset->read(null, $this->data[$this->alias]['preset']);
+			$this->data[$this->alias]['power'] = $p['Preset']['power'];
+			$this->data[$this->alias]['speed'] = $p['Preset']['speed'];
+			return true;
+		}
+	}
 }

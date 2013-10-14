@@ -42,30 +42,18 @@ class PathsController extends AppController {
 			if (!$this->Path->Operation->exists($operation_id)) {
 				throw new BadRequestException('Operation does not exist');
 			}
-			$allowed_types = array('application/pdf');
-			if (!in_array($this->request->data['Path']['file']['type'], Configure::read('App.allowed_file_types'))) {
-				$this->Session->setFlash(__('Invalid file type'));
-				$this->redirect($this->referer());
-			}
-			if ($this->request->data['Path']['file']['error']) {
-				$this->Session->setFlash(__('Error during file upload'));
-				$this->redirect($this->referer());
-			}
-			$this->request->data['Path']['file_hash'] = md5_file($this->request->data['Path']['file']['tmp_name']);
-			$this->request->data['Path']['file_name'] = $this->request->data['Path']['file']['name'];
-			$this->request->data['Path']['order'] = $this->Path->field('order', array('operation_id' => $operation_id), array('order' => 'DESC')) + 1;
-			$this->request->data['Path']['operation_id'] = $operation_id;
-			if (!move_uploaded_file($this->request->data['Path']['file']['tmp_name'], Configure::read('App.file_path').DS.$this->request->data['Path']['file_hash'].'.pdf')) {
-				throw new InternalErrorException(__('Unable to move uploaded file.'));
-			}
+			
 			$this->Path->create();
+			$this->request->data['Path']['operation_id'] = $operation_id;
+			
 			if ($this->Path->save($this->request->data)) {
+				
 				$this->Path->Operation->updateOverview($operation_id);
 				$this->Session->setFlash(__('The path has been saved'));
 				$this->redirect($this->referer());
 			} else {
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
-				$this->redirect($this->referer());
+			//	$this->redirect($this->referer());
 			}
 		} else {
 			throw new BadMethodCallException();
@@ -86,7 +74,9 @@ class PathsController extends AppController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Path->save($this->request->data)) {
 				$this->Session->setFlash(__('The path has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->Path->Operation->id = $this->request->data['Path']['operation_id'];
+				
+				$this->redirect(array('controller' => 'projects', 'action' => 'view',$this->Path->Operation->field('project_id')));
 			} else {
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
 			}
@@ -94,8 +84,7 @@ class PathsController extends AppController {
 			$options = array('conditions' => array('Path.' . $this->Path->primaryKey => $id));
 			$this->request->data = $this->Path->find('first', $options);
 		}
-		$operations = $this->Path->Operation->find('list');
-		$this->set(compact('operations'));
+		
 	}
 
 	public function move_down($id = null) {

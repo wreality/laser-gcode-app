@@ -23,4 +23,10 @@ class Preset extends AppModel {
 			),
 		),
 	);
+
+	public function getList() {
+		$presets = $this->find('list');
+		$presets[1] = 'Custom';
+		return $presets;
+	}
 }

@@ -1,9 +1,11 @@
 <div class="paths form">
-<?php echo $this->Form->create('Path'); ?>
+<?php echo $this->Form->create('Path', array('type' => 'file')); ?>
 	<fieldset>
 		<legend><?php echo __('Edit Path'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
+		echo $this->Form->input('operation_id', array('type' => 'hidden'));
+		echo $this->Form->input('file_name');
 		echo $this->Form->input('power');
 		echo $this->Form->input('speed');
 		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Replace Path File')));

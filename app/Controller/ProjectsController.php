@@ -38,6 +38,8 @@ class ProjectsController extends AppController {
 		));
 		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
 		$this->set('project', $this->Project->find('first', $options));
+		$this->loadModel('Preset');
+		$this->set('presets', $this->Preset->getList());
 	}
 
 /**
