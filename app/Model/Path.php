@@ -165,4 +165,22 @@ class Path extends AppModel {
 			return true;
 		}
 	}
+	
+	public function beforeDelete($cascade = true) {
+		$operation_id = $this->field('operation_id');
+		$this->recursive = -1;
+		$paths = $this->find('all', array(
+				'conditions' => array(
+					'Path.operation_id' => $operation_id,
+					'Path.id <>' => $this->id,
+				),
+				'order' => array(
+						'Path.order' => 'ASC'
+				)
+		));
+		foreach ($paths as $pi => $path) {
+			$this->id = $path['Path']['id'];
+			$this->saveField('order', $pi+1);
+		}
+	}
 }
