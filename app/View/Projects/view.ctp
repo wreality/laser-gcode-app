@@ -1,5 +1,5 @@
 
-
+<?php $colors = Configure::read('App.colors');?>
 <div class="projects form">
 		<?php if (empty($project['Operation'])) { ?>
 			<p>No operations exist yet.</p>
@@ -23,9 +23,9 @@
 								<th>&nbsp;</th>
 							</tr>
 						<?php foreach($operation['Path'] as $pi => $path) {?>
-
+								
 							<tr>
-								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
+								<td style="background-color: <?php echo $colors[$pi]?>;"><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $path['order']?></td>
 								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>

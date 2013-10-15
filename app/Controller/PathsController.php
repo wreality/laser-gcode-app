@@ -75,11 +75,9 @@ class PathsController extends AppController {
 			if ($this->Path->save($this->request->data)) {
 				$this->Session->setFlash(__('The path has been saved'));
 				$this->Path->Operation->id = $this->request->data['Path']['operation_id'];
-				
+				$this->Path->Operation->updateOverview();
 				$this->redirect(array('controller' => 'projects', 'action' => 'view',$this->Path->Operation->field('project_id')));
 			} else {
-				var_dump($this->Path->invalidFields());
-				var_dump($this->Path->data);
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
 			}
 		} else {
@@ -113,6 +111,7 @@ class PathsController extends AppController {
 			$exchange_path['Path']['order']--;
 			$path['Path']['order']++;
 			if ($this->Path->save($exchange_path) && $this->Path->save($path)) {
+				$this->Path->Operation->updateOverview($path['Path']['operation_id']);
 				$this->Session->setFlash(__('Path order updated.'));
 			} else {
 				$this->Session->setFlash(__('Problem updating path order'));
@@ -143,6 +142,7 @@ class PathsController extends AppController {
 			$exchange_path['Path']['order']++;
 			$path['Path']['order']--;
 			if ($this->Path->save($exchange_path) && $this->Path->save($path)) {
+				$this->Path->Operation->updateOverview($path['Path']['operation_id']);
 				$this->Session->setFlash(__('Path order updated.'));
 			} else {
 				$this->Session->setFlash(__('Problem updating path order'));

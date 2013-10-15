@@ -88,7 +88,7 @@ class Operation extends AppModel {
 				array_shift($operation['Path']);
 				foreach ($operation['Path'] as $fi => $file) {
 					$layer = new Imagick(PDF_PATH.DS.$file['file_hash'].'.pdf');
-					$layer->paintOpaqueImage('#000000', $colors[$fi], 5);
+					$layer->paintOpaqueImage('#000000', $colors[$fi+1], 50000);
 					$layer->setImageFormat('png');
 					$layer->setResolution(300, 300);
 					$image->compositeImage($layer, Imagick::COMPOSITE_DEFAULT, 0, 0);
