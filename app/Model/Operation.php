@@ -55,7 +55,7 @@ class Operation extends AppModel {
 			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
-			'order' => '',
+			'order' => array('order' => 'ASC'),
 			'limit' => '',
 			'offset' => '',
 			'exclusive' => '',
