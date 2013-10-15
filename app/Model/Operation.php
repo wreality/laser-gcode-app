@@ -52,7 +52,7 @@ class Operation extends AppModel {
 		'Path' => array(
 			'className' => 'Path',
 			'foreignKey' => 'operation_id',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
 			'order' => '',
