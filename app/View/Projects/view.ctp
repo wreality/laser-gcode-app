@@ -16,7 +16,7 @@
 						<?php } ?>
 						<table class="table table-striped">
 							<tr>
-								<th>&nbsp;</th>
+								<th colspan="2">&nbsp;</th>
 								<th><?php echo __('File Name');?></th>
 								<th><?php echo __('Order');?></th>
 								<th>Settings</th>
@@ -25,7 +25,8 @@
 						<?php foreach($operation['Path'] as $pi => $path) {?>
 								
 							<tr>
-								<td style="background-color: <?php echo $colors[$pi]?>;"><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
+								<td style="background-color: <?php echo $colors[$pi]?>;">&nbsp;</td>
+								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $path['order']?></td>
 								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
