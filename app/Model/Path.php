@@ -144,6 +144,8 @@ class Path extends AppModel {
 			$this->data[$this->alias]['width'] = $res['width'];
 			$image->setResolution(150,150);
 			$image->setImageFormat('png');
+			$image->setImageBackgroundColor('white');
+			$image = $image->flattenImages();
 			$image->writeImage(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
 		} else {
 			copy(PDF_PATH.DS.'no-image.png', PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
@@ -163,7 +165,7 @@ class Path extends AppModel {
 			return __('Invalid preset.');
 		} else {
 			$p = $Preset->read(null, $this->data[$this->alias]['preset_id']);
-			var_dump($p);
+			
 			$this->data[$this->alias]['power'] = $p['Preset']['power'];
 			$this->data[$this->alias]['speed'] = $p['Preset']['speed'];
 			return true;
