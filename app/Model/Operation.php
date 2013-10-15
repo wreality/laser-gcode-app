@@ -90,7 +90,7 @@ class Operation extends AppModel {
 					$layer = new Imagick(PDF_PATH.DS.$file['file_hash'].'.pdf');
 					$layer->setImageFormat('png');
 					$layer->setResolution(300, 300);
-					$image->compositeImage($layer, Imagick::COMPOSITE_COPY, 0, 0);
+					$image->compositeImage($layer, Imagick::COMPOSITE_DEFAULT, 0, 0);
 					$layer->destroy();
 				}
 			}
