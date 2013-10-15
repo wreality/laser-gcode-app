@@ -14,6 +14,13 @@
 						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.png')) {?>
 							<?php echo $this->Html->image('/files/'.$operation['id'].'.png')?>
 						<?php } ?>
+						<?php if ($operation['size_warning']) {?>
+							<div class="alert alert-warning">
+								<strong>Size Mismatch!</strong> Your path files are not all the same dimensions (or at least don't appear to be).  Don't
+								trust the operation preview image in this case and <strong>CHECK THE GCODE MANUALLY</strong>.  Seriously, this tool isn't
+								designed for this case, so just make sure you know what you're doing.
+							</div>
+						<?php } ?>
 						<table class="table table-striped">
 							<tr>
 								<th colspan="2">&nbsp;</th>

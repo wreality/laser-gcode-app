@@ -69,6 +69,8 @@ class Operation extends AppModel {
 		if (empty($id)) {
 			$id = $this->id;
 		}
+		$this->id = $id;
+		
 		$operation = $this->find('first', array('conditions' => array('Operation.id' => $id)));
 		
 		//$files = Set::extract('/Path/file_hash', $operation);
@@ -77,10 +79,15 @@ class Operation extends AppModel {
 			return false;
 		}
 		if (count($operation['Path']) == 0) {
+			$this->saveField('size_warning', false);
 			unlink(PDF_PATH.DS.$id.'.png');
 			return true;
 		} else { 
 			$image = new Imagick(PDF_PATH.DS.$operation['Path'][0]['file_hash'].'.pdf');
+			$warn_size = false;
+			$size['width'] = $operation['Path'][0]['width'];
+			$size['height'] = $operation['Path'][0]['height'];
+			
 			$image->setresolution(300, 300);
 			$image->setImageFormat('png');
 			if (count($operation['Path']) > 1) {
@@ -88,6 +95,9 @@ class Operation extends AppModel {
 				array_shift($operation['Path']);
 				foreach ($operation['Path'] as $fi => $file) {
 					$layer = new Imagick(PDF_PATH.DS.$file['file_hash'].'.pdf');
+					if (($file['width'] != $size['width']) || ($file['height'] != $size['height'])){
+						$warn_size = true;
+					}
 					$layer->paintOpaqueImage('#000000', $colors[$fi+1], 50000);
 					$layer->setImageFormat('png');
 					$layer->setResolution(300, 300);
@@ -95,6 +105,7 @@ class Operation extends AppModel {
 					$layer->destroy();
 				}
 			}
+			$this->saveField('size_warning', $warn_size);
 			$image->writeImage(PDF_PATH.DS.$id.'.png');
 		}
 	}

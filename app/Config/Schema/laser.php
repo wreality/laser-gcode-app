@@ -11,6 +11,7 @@ class LaserSchema extends CakeSchema {
 	public $operations = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'project_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'size_warning' => array('type' => 'boolean', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => array('id', 'project_id'), 'unique' => 1)
 		),
@@ -26,6 +27,8 @@ class LaserSchema extends CakeSchema {
 		'power' => array('type' => 'float', 'null' => false, 'default' => null),
 		'speed' => array('type' => 'float', 'null' => false, 'default' => null),
 		'preset_id' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 36, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'height' => array('type' => 'integer', 'null' => true, 'default' => null),
+		'width' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
