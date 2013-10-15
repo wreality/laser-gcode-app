@@ -139,6 +139,9 @@ class Path extends AppModel {
 		if (extension_loaded('imagick')) {
 		
 			$image = new Imagick(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf');
+			$res = $image->getImageGeometry();
+			$this->data[$this->alias]['height'] = $res['height'];
+			$this->data[$this->alias]['width'] = $res['width'];
 			$image->setResolution(150,150);
 			$image->setImageFormat('png');
 			$image->writeImage(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');

@@ -71,21 +71,30 @@ class Operation extends AppModel {
 		}
 		$operation = $this->find('first', array('conditions' => array('Operation.id' => $id)));
 		
-		$files = Set::extract('/Path/file_hash', $operation);
-		
-		if (count($files) == 0) {
+		//$files = Set::extract('/Path/file_hash', $operation);
+		if (!extension_loaded('imagick')) {
+			copy(PDF_PATH.DS.'no-preview.png', PDF_PATH.DS.$id.'.png');
+			return false;
+		}
+		if (count($operation['Path']) == 0) {
+			unlink(PDF_PATH.DS.$id.'.png');
 			return true;
-		} else if (count($files) == 1) {
-			copy(PDF_PATH.DS.$files[0].'.pdf', PDF_PATH.DS.$id.'.pdf');
-		} else {
-			
-			$start_file = array_shift($files);
-			$other_files = '';
-			foreach ($files as $file) {
-				$other_files.= 'background '.PDF_PATH.DS.$file.'.pdf ';
+		} else { 
+			$image = new Imagick(PDF_PATH.DS.$operation['Path'][0]['file_hash'].'.pdf');
+			$image->setresolution(300, 300);
+			$image->setImageFormat('png');
+			if (count($operation['Path']) == 1) {
+			} else {
+				array_shift($operation['Path']);
+				foreach ($operation['Path'] as $file) {
+					$layer = new Imagick(PDF_PATH.DS.$file['file_hash'].'.pdf');
+					$layer->setImageFormat('png');
+					$layer->setResolution(300, 300);
+					$image->compositeImage($layer, Imagick::COMPOSITE_COPY, 0, 0);
+					$layer->destroy();
+				}
 			}
-			$exec_string = 'pdftk '. PDF_PATH.DS.$start_file.'.pdf '.$other_files.'output '.PDF_PATH.DS.$id.'.pdf';
-			exec($exec_string);
+			$image->writeImage(PDF_PATH.DS.$id.'.png');
 		}
 	}
 }

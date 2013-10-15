@@ -11,7 +11,9 @@
 					<?php if (empty($operation['Path'])) {?>
 						<p>No paths exist yet.</p>
 					<?php } else { ?>
-						<iframe height="300" src="<?php echo Router::url('/files/'.$operation['id'].'.pdf')?>"></iframe>
+						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.png')) {?>
+							<?php echo $this->Html->image('/files/'.$operation['id'].'.png')?>
+						<?php } ?>
 						<table class="table table-striped">
 							<tr>
 								<th>&nbsp;</th>
@@ -29,16 +31,17 @@
 								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
 									<?php if (!empty($path['Preset']['name'])) {?> <?php echo $this->Html->label($path['Preset']['name']);?> <?php }?>
 								</td>
-								<td><?php echo $this->Html->button('Edit', array('controller' => 'paths', 'action' => 'edit', $path['id']), array('type' => 'btn-primary btn-xs'));?>
-									
+								<td>	
 									<?php if ($pi > 0)  { ?>
 										<?php echo $this->Form->postButton('&#x21e7', array('controller' => 'paths', 'action' => 'move_up', $path['id']), array('escape' => false,'type' => ' btn-xs btn-default'));?>
 									<?php } ?>
 									<?php if (($pi+1) < count($operation['Path']))  { ?>
 										<?php echo $this->Form->postButton('&#x21e9', array('controller' => 'paths', 'action' => 'move_down', $path['id']), array('escape' => false, 'type' => 'btn-xs btn-default'));?>
 									<?php } ?>
-									<?php echo $this->Form->postButton('Delete', array('controller' => 'paths', 'action' => 'delete', $path['id']), array('type' => 'btn-xs btn-danger'),  __('Are you sure you want to delete this path? (Cannot be undone)'));?>
-									
+									<div class="btn-group pull-right">
+										<?php echo $this->Html->button('Edit', array('controller' => 'paths', 'action' => 'edit', $path['id']), array('type' => 'btn-primary btn-xs'));?>
+										<?php echo $this->Form->postButton('Delete', array('controller' => 'paths', 'action' => 'delete', $path['id']), array('type' => 'btn-xs btn-danger'),  __('Are you sure you want to delete this path? (Cannot be undone)'));?>
+									</div>
 								</td>
 							</tr>
 						<?php } ?>
@@ -54,6 +57,8 @@
 						<?php echo $this->Form->input('speed', array('placeholder' => 'Speed', 'class' => 'col-lg-3', 'append' => '%','label' => array('class' => 'sr-only', 'text' => 'Enter Speed Percentage')));?>
 					</div>
 					<?php echo $this->Form->end();?>
+					<?php echo $this->Form->postButton(__('Delete Operation'), array('controller' => 'operations', 'action' => 'delete', $operation['id']), array('class' => 'btn pull-right', 'type' => 'btn-danger'), __('Are you sure you want to delete this operation?'))?>
+					<div class="clearfix"></div>
 				</div>
 			<?php } ?>
 		<?php } ?>	
@@ -65,37 +70,38 @@
 	<h2>Project Settings</h2>
 	<?php echo $this->Form->create('Project', array('action' => 'edit'))?>
 	<div class="panel-group" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          Project Start
-        </a>
-      </h4>
-    </div>
-    <div id="collapseOne" class="panel-collapse collapse in">
-      <div class="panel-body">
-        <?php echo $this->Form->input('home_before')?>
-      </div>
-    </div>
-  </div>
-  <?php /*
-  <div class="panel panel-default">
+  <div class="panel panel-primary">
     <div class="panel-heading">
       <h4 class="panel-title">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-          Collapsible Group Item #2
+          <?php echo __('General')?>
         </a>
       </h4>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
+    <div id="collapseTwo" class="panel-collapse collapse in">
       <div class="panel-body">
-        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+        <?php echo $this->Form->input('project_name');?>
+        <?php echo $this->Form->input('material_thickness', array('append' => 'mm', 'help_text' => __('Only applies if "Home Before" is yes.')))?>
       </div>
     </div>
   </div>
- */?>
-  <div class="panel panel-default">
+ 
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          <?php echo __('Project Start/End'); ?>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+        <?php echo $this->Form->input('home_before')?>
+        <?php echo $this->Form->input('clear_after', array('type' => 'bool'));?>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-primary">
     <div class="panel-heading">
       <h4 class="panel-title">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
@@ -107,10 +113,13 @@
       <div class="panel-body">
 		<?php echo $this->Form->input('max_feedrate', array('label' => __('100% Feedrate'), 'append' => 'mm/min'))?>
 		<?php echo $this->Form->input('traversal_speed', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
+		<?php echo $this->Form->input('gcode_preamble', array('type' => 'textarea'));?>
+		<?php echo $this->Form->input('gcode_postscript', array('type' => 'textarea'))?>
       </div>
     </div>
   </div>
 </div>
 	<?php echo $this->Form->input('id');?>
+	<div class="clearfix">&nbsp;</div>
 	<?php echo $this->Form->end(__('Save and Generate GCode'))?>
 <?php $this->end();?>

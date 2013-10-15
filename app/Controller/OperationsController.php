@@ -94,12 +94,14 @@ class OperationsController extends AppController {
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException(__('Invalid operation'));
 		}
+		$this->Operation->recursive = -1;
+		$op = $this->Operation->read();
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Operation->delete()) {
 			$this->Session->setFlash(__('Operation deleted'));
-			$this->redirect(array('action' => 'index'));
+			$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 		}
 		$this->Session->setFlash(__('Operation was not deleted'));
-		$this->redirect(array('action' => 'index'));
+		$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 	}
 }
