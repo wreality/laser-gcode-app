@@ -36,6 +36,14 @@
 	define('PDF_PATH', APP.'webroot'.DS.'files');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
 	Configure::write('App.allowed_file_types', array('application/pdf'));
+	Configure::write('App.colors', array(
+		'#000000',
+		'#FF0000',
+		'#00FF00',
+		'#0000FF',
+		'#FFFF00',
+		'#FF00FF',
+	));
 
 /**
  * Configure the Error handler used to handle errors for your application. By default

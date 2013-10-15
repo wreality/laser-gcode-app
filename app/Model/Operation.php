@@ -83,11 +83,12 @@ class Operation extends AppModel {
 			$image = new Imagick(PDF_PATH.DS.$operation['Path'][0]['file_hash'].'.pdf');
 			$image->setresolution(300, 300);
 			$image->setImageFormat('png');
-			if (count($operation['Path']) == 1) {
-			} else {
+			if (count($operation['Path']) > 1) {
+				$colors = Configure::read('App.colors');
 				array_shift($operation['Path']);
-				foreach ($operation['Path'] as $file) {
+				foreach ($operation['Path'] as $fi => $file) {
 					$layer = new Imagick(PDF_PATH.DS.$file['file_hash'].'.pdf');
+					$layer->paintOpaqueImage('#000000', $colors[$fi], 5);
 					$layer->setImageFormat('png');
 					$layer->setResolution(300, 300);
 					$image->compositeImage($layer, Imagick::COMPOSITE_DEFAULT, 0, 0);
