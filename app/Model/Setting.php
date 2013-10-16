@@ -53,6 +53,11 @@ class Setting extends AppModel {
 			'type' => 'text',
 			'title' => 'Focal length',
 			'units' => 'mm',
+		), array(
+			'key' => 'App.z_feedrate',
+			'type' => 'text',
+			'title' => 'Z Move Feedrate',
+			'units' => 'mm'
 		),
 	);
 /**
