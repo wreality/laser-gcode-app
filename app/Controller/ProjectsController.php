@@ -40,7 +40,33 @@ class ProjectsController extends AppController {
 		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
 		$project = $this->Project->find('first', $options);
 		$this->set('project', $project);
-		$this->request->data = $project;
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->Project->save($data)) {
+				foreach($project['Operation'] as $oi => $operation) {
+					$prepend = array();
+					$append = array();
+					if ($oi == 0) {
+						if ($project['Project']['home_before']) {
+							$prepend[] = 'M28 F150';
+							$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
+						}
+						$prepend = $prepend + explode("\n", $project['Project']['gcode_preamble']);
+					}
+					if ($oi == count($operation)-1) {
+						if ($project['Project']['clear_after']) {
+							$append[] = 'M28 F150';
+							$append[] = 'G0 Y560 F5000';
+						}
+						$append = $append + explode("\n", $project['Project']['gcode_postscript']);
+					}
+					
+					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
+					
+				}
+			}
+		} else {
+			$this->request->data = $project;
+		}
 		$this->loadModel('Preset');
 		$this->set('presets', $this->Preset->getList());
 	}

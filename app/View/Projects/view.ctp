@@ -21,6 +21,7 @@
 								designed for this case, so just make sure you know what you're doing.
 							</div>
 						<?php } ?>
+						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
 						<table class="table table-striped">
 							<tr>
 								<th colspan="2">&nbsp;</th>
@@ -130,4 +131,17 @@
 	<?php echo $this->Form->input('id');?>
 	<div class="clearfix">&nbsp;</div>
 	<?php echo $this->Form->end(__('Save and Generate GCode'))?>
+	<div class="clearfix">&nbsp;</div>
+	<?php if (!empty($gcode)) {?>
+		<table>
+			<?php foreach($gcode as  $oi => $op) {?>
+				<tr>
+					<td><?php echo __('Operation %d', $oi)?></td>
+					<td><?php echo $this->Html->link(__('View'), '/files/'.$op.'.gcode');?></td>
+					<td><?php echo $this->Html->link(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op));?></td>
+					<td><?php echo $this->Html->link(__('Download'), array('controller' => 'operations', 'action' => 'download', $op));?></td>
+				</tr>
+			<?php } ?>
+		</table>
+	
 <?php $this->end();?>

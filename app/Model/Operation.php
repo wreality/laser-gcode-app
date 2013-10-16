@@ -109,4 +109,33 @@ class Operation extends AppModel {
 			$image->writeImage(PDF_PATH.DS.$id.'.png');
 		}
 	}
+	
+	public function generateGcode($id = null, $prepend, $append) {
+		if (!empty($id)) {
+			$this->id = $id;
+		}
+		
+		$this->Behaviors->attach('Containable');
+		$this->contain(array(
+			'Project',
+			'Path',
+		));
+		$operation = $this->read();
+		$command = 'pstoedit -q -f "gcode: -speed %d -intensity %d -noheader -nofooter" %s';
+		if (!empty($prepend)) {
+			$gcode = $prepend;
+		} else {
+			$gcode = array();
+		}
+		
+		foreach ($operation['Path'] as $path) {
+			exec(sprintf($command,$path['speed'], $path['power'], PDF_PATH.DS.$path['file_hash'].'.pdf'), $gcode);
+		}
+		
+		if (!empty($append)) {
+			$gcode = $gcode + $append;
+		}
+		return file_put_contents(PDF_PATH.DS.$this->id.'.gcode', implode("\n", $gocde));
+		
+	}
 }
