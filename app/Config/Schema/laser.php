@@ -52,6 +52,9 @@ class LaserSchema extends CakeSchema {
 		'max_feedrate' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'traversal_rate' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'home_before' => array('type' => 'boolean', 'null' => true, 'default' => null),
+		'gcode_preamble' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'gcode_postscript' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'clear_after' => array('type' => 'boolean', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),

@@ -38,7 +38,9 @@ class ProjectsController extends AppController {
 			)
 		));
 		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
-		$this->set('project', $this->Project->find('first', $options));
+		$project = $this->Project->find('first', $options);
+		$this->set('project', $project);
+		$this->request->data = $project;
 		$this->loadModel('Preset');
 		$this->set('presets', $this->Preset->getList());
 	}
@@ -50,7 +52,7 @@ class ProjectsController extends AppController {
  */
 	public function add() {
 		$this->Project->create();
-		$this->request->data = array('Project' => array('project_name' => 'blah'));
+		$this->request->data = array('Project' => array('project_name' => ''));
 		if ($this->Project->save($this->request->data)) {
 			$this->redirect(array('action' => 'view', $this->Project->id));
 		} else {

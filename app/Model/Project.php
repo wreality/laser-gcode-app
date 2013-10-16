@@ -31,4 +31,16 @@ class Project extends AppModel {
 		)
 	);
 
+
+	public function beforeSave($options = array()) {
+		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
+			$this->data[$this->alias]['max_feedrate'] = Configure::read('App.default_max_cut_feedrate');
+			$this->data[$this->alias]['traversal_rate'] = Configure::read('App.default_traversal_feedrate');
+			$this->data[$this->alias]['home_before'] = true;
+			$this->data[$this->alias]['clear_after'] = true;
+			$this->data[$this->alias]['gcode_preamble'] = Configure::read('App.default_gcode_preamble');
+			$this->data[$this->alias]['gcode_postscript'] = Configure::read('App.default_gcode_postscript');
+		}
+		return true;
+	}
 }
