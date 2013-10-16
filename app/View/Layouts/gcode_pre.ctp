@@ -52,7 +52,7 @@
     
     
     <?php echo $this->Html->script(adjustPath("js/Stats.js"))?>
-    <?php echo $this->Html->script(adjustPath("js/DAT.GUI.min.js"))?>
+    <?php echo $this->Html->script(adjustPath("js/dat.gui.min.js"))?>
     <?php echo $this->Html->script(adjustPath("gcode_model.js"))?>
     <?php echo $this->Html->script(adjustPath("gcode_parser.js"))?>
     <?php echo $this->Html->script(adjustPath("gcode_interpreter.js"))?>
