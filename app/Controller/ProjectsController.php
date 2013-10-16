@@ -61,8 +61,9 @@ class ProjectsController extends AppController {
 					}
 					
 					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
-					
 				}
+			} else {
+				$this->Session->setFlash(__('There was an error saving this project.'), 'bs_error');
 			}
 		} else {
 			$this->request->data = $project;
