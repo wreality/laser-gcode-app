@@ -57,7 +57,7 @@ class Setting extends AppModel {
 			'key' => 'App.z_feedrate',
 			'type' => 'text',
 			'title' => 'Z Move Feedrate',
-			'units' => 'mm'
+			'units' => 'mm/min'
 		),
 	);
 /**
