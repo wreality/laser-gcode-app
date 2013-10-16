@@ -104,4 +104,18 @@ class OperationsController extends AppController {
 		$this->Session->setFlash(__('Operation was not deleted'));
 		$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 	}
+
+	public function preview($id = null) {
+		$this->Operation->id = $id;
+		if (!$this->Operation->exists()) {
+			throw new NotFoundException();
+		}
+		if (!file_exists(PDF_PATH.DS.$id.'.gcode')) {
+			throw new NotFoundException();
+		}
+	
+		$this->layout = 'gcode_pre';
+		$this->set('operation_id', $id);
+	
+	}
 }
