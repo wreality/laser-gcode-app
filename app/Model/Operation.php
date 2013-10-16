@@ -125,7 +125,15 @@ class Operation extends AppModel {
 		$gcode = array();
 		
 		foreach ($operation['Path'] as $path) {
+			$speed = $operation['Project']['max_feedrate'] * ($path['speed']/100);
+			$power = $path['power'];
+			$gcode[] ;
+			$gcode[] = '; Start of path: '.$path['file_name'];
+			$gcode[] = sprintf('; Speed: %d, Power: %d', $speed, $power);
+			
 			exec(sprintf($command,$path['speed'], $path['power'], PDF_PATH.DS.$path['file_hash'].'.pdf'), $gcode);
+			
+			$gcode[] = '; End of path: '.$path['file_name'];
 		}
 		
 		$output = array_merge($prepend, $gcode, $append);

@@ -47,17 +47,31 @@ class ProjectsController extends AppController {
 					$append = array();
 					if ($oi == 0) {
 						if ($project['Project']['home_before']) {
+							$prepend[] = '; Start of Project: Homing';
 							$prepend[] = 'M28 F150';
 							$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
+						} else {
+							$prepend[] = '; Start of Project';
 						}
-						$prepend = $prepend + explode("\n", $project['Project']['gcode_preamble']);
+						if (!empty($project['Project']['gcode_preamble'])) {
+							$prepend[];
+							$prepend[] = '; Project preamble..';
+							$prepend = array_merge($prepend, explode("\n", $project['Project']['gcode_preamble']));
+						}
 					}
 					if ($oi == (count($project['Operation'])-1)) {
 						if ($project['Project']['clear_after']) {
+							$append[] = '; Project End: Clearing X Carriage';
 							$append[] = 'M28 F150';
 							$append[] = 'G0 Y560 F5000';
+						} else {
+							$append[] = '; End of Project';
 						}
-						$append = $append + explode("\n", $project['Project']['gcode_postscript']);
+						if (!empty($project['Project']['gcode_postscript'])) {
+							$append[];
+							$append[] = '; Project postscript';
+							$append = array_merge($append, explode("\n", $project['Project']['gcode_postscript']));
+						}
 					}
 					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
 				}
