@@ -88,9 +88,9 @@ class CakestrapFormHelper extends FormHelper {
 			$class=$options['class'];
 			$options['class'] .= ' form-control';
 		}
+		if (empty($options['after'])) $options['after'] = '';
 		if ((!empty($options['prepend'])) || (!empty($options['append']))) {
 			$options['between'] = '<div class="input-group '.((!empty($class))?$class:'').'">';
-			if (empty($options['after'])) $options['after'] = '';
 			if ((!empty($options['prepend']))) {
 				$options['between'] .= '<span class="input-group-addon">'.$options['prepend'].'</span>';
 				unset($options['prepend']);
