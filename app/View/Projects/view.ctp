@@ -143,5 +143,6 @@
 				</tr>
 			<?php } ?>
 		</table>
+	<?php } ?>
 	
 <?php $this->end();?>
