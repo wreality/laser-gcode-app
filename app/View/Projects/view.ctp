@@ -133,13 +133,13 @@
 	<?php echo $this->Form->end(__('Save and Generate GCode'))?>
 	<div class="clearfix">&nbsp;</div>
 	<?php if (!empty($gcode)) {?>
-		<table>
+		<table class="table table-bordered">
 			<?php foreach($gcode as  $oi => $op) {?>
 				<tr>
 					<td><?php echo __('Operation %d', $oi)?></td>
-					<td><?php echo $this->Html->link(__('View'), '/files/'.$op.'.gcode');?></td>
-					<td><?php echo $this->Html->link(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op));?></td>
-					<td><?php echo $this->Html->link(__('Download'), array('controller' => 'operations', 'action' => 'download', $op));?></td>
+					<td><?php echo $this->Html->link(__('View'), '/files/'.$op.'.gcode');?>
+						<?php echo $this->Html->link(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op));?>
+						<?php echo $this->Html->link(__('Download'), array('controller' => 'operations', 'action' => 'download', $op));?></td>
 				</tr>
 			<?php } ?>
 		</table>

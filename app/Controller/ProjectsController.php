@@ -41,7 +41,7 @@ class ProjectsController extends AppController {
 		$project = $this->Project->find('first', $options);
 		$this->set('project', $project);
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Project->save($data)) {
+			if ($this->Project->save($this->request->data)) {
 				foreach($project['Operation'] as $oi => $operation) {
 					$prepend = array();
 					$append = array();
@@ -52,14 +52,13 @@ class ProjectsController extends AppController {
 						}
 						$prepend = $prepend + explode("\n", $project['Project']['gcode_preamble']);
 					}
-					if ($oi == count($operation)-1) {
+					if ($oi == (count($project['Operation'])-1)) {
 						if ($project['Project']['clear_after']) {
 							$append[] = 'M28 F150';
 							$append[] = 'G0 Y560 F5000';
 						}
 						$append = $append + explode("\n", $project['Project']['gcode_postscript']);
 					}
-					
 					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
 				}
 			} else {

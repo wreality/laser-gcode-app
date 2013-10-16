@@ -110,7 +110,7 @@ class Operation extends AppModel {
 		}
 	}
 	
-	public function generateGcode($id = null, $prepend, $append) {
+	public function generateGcode($id = null, $prepend = array(), $append = array()) {
 		if (!empty($id)) {
 			$this->id = $id;
 		}
@@ -122,20 +122,14 @@ class Operation extends AppModel {
 		));
 		$operation = $this->read();
 		$command = 'pstoedit -q -f "gcode: -speed %d -intensity %d -noheader -nofooter" %s';
-		if (!empty($prepend)) {
-			$gcode = $prepend;
-		} else {
-			$gcode = array();
-		}
+		$gcode = array();
 		
 		foreach ($operation['Path'] as $path) {
 			exec(sprintf($command,$path['speed'], $path['power'], PDF_PATH.DS.$path['file_hash'].'.pdf'), $gcode);
 		}
 		
-		if (!empty($append)) {
-			$gcode = $gcode + $append;
-		}
-		return file_put_contents(PDF_PATH.DS.$this->id.'.gcode', implode("\n", $gocde));
+		$output = array_merge($prepend, $gcode, $append);
+		return file_put_contents(PDF_PATH.DS.$this->id.'.gcode', implode("\n", $output));
 		
 	}
 }
