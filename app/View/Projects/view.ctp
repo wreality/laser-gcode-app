@@ -134,6 +134,9 @@
 	<div class="clearfix">&nbsp;</div>
 	<?php if (!empty($gcode)) {?>
 		<table class="table table-bordered">
+			<tr>
+				<th colspan="2"><?php echo __('GCode');?></th>
+			</tr>
 			<?php foreach($gcode as  $oi => $op) {?>
 				<tr>
 					<td><?php echo __('Operation %d', $oi)?></td>
