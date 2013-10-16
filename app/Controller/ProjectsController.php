@@ -54,7 +54,7 @@ class ProjectsController extends AppController {
 							$prepend[] = '; Start of Project';
 						}
 						if (!empty($project['Project']['gcode_preamble'])) {
-							$prepend[];
+							$prepend[] = '';
 							$prepend[] = '; Project preamble..';
 							$prepend = array_merge($prepend, explode("\n", $project['Project']['gcode_preamble']));
 						}
@@ -68,7 +68,7 @@ class ProjectsController extends AppController {
 							$append[] = '; End of Project';
 						}
 						if (!empty($project['Project']['gcode_postscript'])) {
-							$append[];
+							$append[] = '';
 							$append[] = '; Project postscript';
 							$append = array_merge($append, explode("\n", $project['Project']['gcode_postscript']));
 						}

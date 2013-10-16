@@ -127,7 +127,7 @@ class Operation extends AppModel {
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed']/100);
 			$power = $path['power'];
-			$gcode[] ;
+			$gcode[] = '';
 			$gcode[] = '; Start of path: '.$path['file_name'];
 			$gcode[] = sprintf('; Speed: %d, Power: %d', $speed, $power);
 			
