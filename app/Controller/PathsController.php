@@ -95,27 +95,15 @@ class PathsController extends AppController {
 		if (!($this->request->is('post') || $this->request->is('put'))) {
 			throw new MethodNotAllowedException();
 		}
-		$path = $this->Path->read();
-		$exchange_path = $this->Path->find('first', array(
-			'conditions' => array(
-				'order' => $path['Path']['order']+1,
-				'operation_id' => $path['Path']['operation_id'],
-			)
-		));
-		if (!$exchange_path) {
-			$this->Session->setFlash(__('Can\'t move path.'));
-			$this->redirect($this->referer());
+		
+		if ($this->Path->movePathDown($id)) {
+			$this->Path->Operation->updateOverview($path['Path']['operation_id']);
+			$this->Session->setFlash(__('Path order updated.'));
 		} else {
-			$exchange_path['Path']['order']--;
-			$path['Path']['order']++;
-			if ($this->Path->save($exchange_path) && $this->Path->save($path)) {
-				$this->Path->Operation->updateOverview($path['Path']['operation_id']);
-				$this->Session->setFlash(__('Path order updated.'));
-			} else {
-				$this->Session->setFlash(__('Problem updating path order'));
-			}
-			$this->redirect($this->referer());
+			$this->Session->setFlash(__('Problem updating path order'));
 		}
+		$this->redirect($this->referer());
+	
 	}
 	
 	public function move_up($id = null) {
@@ -126,27 +114,15 @@ class PathsController extends AppController {
 		if (!($this->request->is('post') || $this->request->is('put'))) {
 			throw new MethodNotAllowedException();
 		}
-		$path = $this->Path->read();
-		$exchange_path = $this->Path->find('first', array(
-			'conditions' => array(
-				'order' => $path['Path']['order']-1,
-				'operation_id' => $path['Path']['operation_id'],
-			)
-		));
-		if (!$exchange_path) {
-			$this->Session->setFlash(__('Can\'t move path.'));
-			$this->redirect($this->referer());
+		
+		if ($this->Path->movePathUp($id)) {
+			$this->Path->Operation->updateOverview($path['Path']['operation_id']);
+			$this->Session->setFlash(__('Path order updated.'));
 		} else {
-			$exchange_path['Path']['order']++;
-			$path['Path']['order']--;
-			if ($this->Path->save($exchange_path) && $this->Path->save($path)) {
-				$this->Path->Operation->updateOverview($path['Path']['operation_id']);
-				$this->Session->setFlash(__('Path order updated.'));
-			} else {
-				$this->Session->setFlash(__('Problem updating path order'));
-			}
-			$this->redirect($this->referer());
+			$this->Session->setFlash(__('Problem updating path order'));
 		}
+		$this->redirect($this->referer());
+		
 	}
 /**
  * delete method

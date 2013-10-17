@@ -131,9 +131,9 @@ class Path extends AppModel {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
 		$gcode = $this->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
-		if (empty($gcode)) {
-			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
-		}
+// 		if (empty($gcode)) {
+// 			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
+// 		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
 		$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
 		return true;
@@ -217,5 +217,43 @@ class Path extends AppModel {
 			return true;
 		}
 		return true;
+	}
+	
+	public function movePathUp($id = null) {
+		return $this->movePath(PATH_MOVE_UP, $id);
+	}
+	
+	public function movePathDown($id = null) {
+		return $this->movePath(PATH_MOVE_DOWN, $id);
+	}
+	
+	public function movePath($dir, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		
+		$this->recursive = -1;
+		$path = $this->read();
+		$ex_path = $this->find('first', array(
+			'conditions' => array(
+				'order' => $path['Path']['order']+($dir),
+				'operation_id' => $path['Path']['operation_id']
+			)
+		));
+		
+		if (!$ex_path) {
+			return false;
+		}
+		$ex_path['Path']['order'] += ($dir*-1);
+		$path['Path']['order'] += ($dir);
+		
+		if ($this->save($ex_path) && $this->save($path)) {
+			return true;
+		} else {
+			
+			return false;
+		}
+		
 	}
 }
