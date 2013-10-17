@@ -34,7 +34,7 @@
  */
 	Configure::write('debug', 2);
 	define('PDF_PATH', APP.'webroot'.DS.'files');
-	define('PSTOEDIT', 'pstoedit -q -f "gcode: -speed %d -intensity %d -noheader -nofooter" %s');
+	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
 	Configure::write('App.default_max_cut_feedrate', 1000);
 	Configure::write('App.default_traversal_feedrate', 6000);
