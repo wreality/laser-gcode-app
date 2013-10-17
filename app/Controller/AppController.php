@@ -39,6 +39,11 @@ class AppController extends Controller {
 	
 	public function beforeFilter() {
 		$this->Setting->getSettings();
+		
+		$this->request->addDetector('internalIp', array(
+			'env' => 'REMOTE_ADDR',
+			'pattern' => '/^(192\.168\.0\.|192\.168\.1\.|127\.0\.0\.1|::1)/',
+		));
 		parent::beforeFilter();
 	}
 }

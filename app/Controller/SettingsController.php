@@ -7,7 +7,12 @@ App::uses('AppController', 'Controller');
  */
 class SettingsController extends AppController {
 	
-	
+	public function beforeFilter() {
+		parent::beforeFilter();
+		if (!$this->request->is('internalIp')) {
+			throw new ForbiddenException();
+		}
+	}
 
 /**
  * admin_index method
