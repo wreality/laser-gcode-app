@@ -13,7 +13,7 @@ class ProjectsController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->Project->recursive = 0;
+		$this->Project->recursive = 1;
 		$this->set('projects', $this->paginate());
 	}
 
