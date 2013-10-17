@@ -131,26 +131,7 @@ class Path extends AppModel {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
-		if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf')) {
-			return __('Unable to move uploaded file.');
-		}
-		$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
 		
-		if (extension_loaded('imagick')) {
-		
-			$image = new Imagick(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf');
-			$res = $image->getImageGeometry();
-			$this->data[$this->alias]['height'] = $res['height'];
-			$this->data[$this->alias]['width'] = $res['width'];
-			$image->setResolution(150,150);
-			$image->setImageFormat('png');
-			$image->setImageBackgroundColor('white');
-			$image = $image->flattenImages();
-			$image->writeImage(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
-		} else {
-			copy(PDF_PATH.DS.'no-image.png', PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
-		}
-		return true;
 		
 		
 	}
@@ -196,6 +177,29 @@ class Path extends AppModel {
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
+			
+		}
+		if ($this->data[$this->alias]['file']['error'] != UPLOAD_ERR_NOFILE) {
+			if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf')) {
+				return false;
+			}
+			$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
+			
+			if (extension_loaded('imagick')) {
+			
+				$image = new Imagick(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf');
+				$res = $image->getImageGeometry();
+				$this->data[$this->alias]['height'] = $res['height'];
+				$this->data[$this->alias]['width'] = $res['width'];
+				$image->setResolution(150,150);
+				$image->setImageFormat('png');
+				$image->setImageBackgroundColor('white');
+				$image = $image->flattenImages();
+				$image->writeImage(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
+			} else {
+				copy(PDF_PATH.DS.'no-image.png', PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.png');
+			}
+			return true;
 		}
 	}
 }
