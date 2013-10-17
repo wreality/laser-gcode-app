@@ -136,7 +136,7 @@ class Path extends AppModel {
 			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
 		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
-		
+		return true;
 		
 		
 	}
