@@ -27,7 +27,8 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#">GCode Generator</a>
+    <?php echo $this->Html->link(__('GCode Generator'), '/', array('class' => 'navbar-brand'))?>
+    
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->
