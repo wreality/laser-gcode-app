@@ -135,14 +135,15 @@
 	<?php if (!empty($gcode)) {?>
 		<table class="table table-bordered">
 			<tr>
-				<th colspan="2"><?php echo __('GCode');?></th>
+				<th><?php echo __('GCode');?></th>
 			</tr>
 			<?php foreach($gcode as  $oi => $op) {?>
 				<tr>
-					<td><?php echo __('Operation %d', $oi)?></td>
-					<td><?php echo $this->Html->link(__('View'), '/files/'.$op.'.gcode');?>
-						<?php echo $this->Html->link(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op));?>
-						<?php echo $this->Html->link(__('Download'), array('controller' => 'operations', 'action' => 'download', $op));?></td>
+					<td><?php echo $this->Html->link(__('%s_OP%d.gcode', $project['Project']['project_name'],$oi+1), '/files/'.$op.'.gcode')?>
+					<div class="btn-group pull-right">
+						<?php echo $this->Html->button(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op), array('size' => 'btn-xs', 'type' => 'btn-default'));?>
+						<?php echo $this->Html->button(__('Download'), array('controller' => 'operations', 'action' => 'download', $op), array('type' => 'btn-default', 'size' => 'btn-xs'));?>
+					</div></td>
 				</tr>
 			<?php } ?>
 		</table>

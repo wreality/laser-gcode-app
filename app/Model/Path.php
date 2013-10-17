@@ -135,7 +135,7 @@ class Path extends AppModel {
 			return __('Unable to move uploaded file.');
 		}
 		$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
-		$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
+		
 		if (extension_loaded('imagick')) {
 		
 			$image = new Imagick(PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf');
@@ -190,6 +190,12 @@ class Path extends AppModel {
 		foreach ($paths as $pi => $path) {
 			$this->id = $path['Path']['id'];
 			$this->saveField('order', $pi+1);
+		}
+	}
+	
+	public function beforeSave($options = array()) {
+		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
+			$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
 		}
 	}
 }

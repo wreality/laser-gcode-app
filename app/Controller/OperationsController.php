@@ -118,4 +118,25 @@ class OperationsController extends AppController {
 		$this->set('operation_id', $id);
 	
 	}
+	
+	public function download($id = null) {
+		$this->Operation->id = $id;
+		if (!$this->Operation->exists()) {
+			throw new NotFoundException();
+		}
+		if (!file_exists(PDF_PATH.DS.$id.'.gcode')) {
+			throw new NotFoundException();
+		}
+		$this->Operation->Behaviors->attach('Containable');
+		$this->Operation->contain(array('Project'));
+		$operation = $this->Operation->read();
+		if (!empty($operation['Project']['project_name'])) {
+			$name = $operation['Project']['project_name'].'_OP'.$operation['Operation']['order'].'.gcode';
+		} else {
+			$name = 'OP'.$operation['Operation']['order'].'.gcode';
+		}
+		$this->response->file(PDF_PATH.DS.$id.'.gcode', array('download' => true, 'name' => $name));
+		return $this->response;
+		
+	}
 }

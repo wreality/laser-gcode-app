@@ -39,7 +39,6 @@ class ProjectsController extends AppController {
 		));
 		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
 		$project = $this->Project->find('first', $options);
-		$this->set('project', $project);
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Project->save($this->request->data)) {
 				foreach($project['Operation'] as $oi => $operation) {
@@ -75,6 +74,7 @@ class ProjectsController extends AppController {
 					}
 					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
 				}
+					$project['Project'] = $this->request->data['Project'];
 			} else {
 				$this->Session->setFlash(__('There was an error saving this project.'), 'bs_error');
 			}
@@ -83,6 +83,7 @@ class ProjectsController extends AppController {
 		}
 		$this->loadModel('Preset');
 		$this->set('presets', $this->Preset->getList());
+		$this->set('project', $project);
 	}
 
 /**

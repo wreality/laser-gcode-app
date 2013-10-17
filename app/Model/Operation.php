@@ -140,4 +140,27 @@ class Operation extends AppModel {
 		return file_put_contents(PDF_PATH.DS.$this->id.'.gcode', implode("\n", $output));
 		
 	}
+
+	public function beforeDelete($cascade = true) {
+		$project_id = $this->field('project_id');
+		$this->recursive = -1;
+		$operations = $this->find('all', array(
+			'conditions' => array(
+				'Operation.project_id' => $project_id,
+				'Operation.id <>' => $this->id,
+			),
+		));
+		foreach ($operations as $oi => $operation) {
+			$this->id = $operation['Operation']['id'];
+			$this->saveField('order', $oi+1);
+		}
+	}
+	
+	public function beforeSave($options = array()) {
+		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
+			$order = $this->field('order', array('project_id' => $this->data[$this->alias]['project_id']), array('order' => 'DESC'))+1;
+			$this->data[$this->alias]['order'] = $order;
+		}
+		return true;
+	}
 }
