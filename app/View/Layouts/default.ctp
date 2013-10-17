@@ -13,6 +13,7 @@
     	'/vendor/bootstrap-3.0.0/js/collapse.js',
     	'/vendor/bootstrap-3.0.0/js/dropdown.js',
     	'/vendor/bootstrap-3.0.0/js/modal.js',
+    	'/vendor/bootstrap-3.0.0/js/alert.js',
     ));?>
  
   </head>
