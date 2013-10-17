@@ -65,7 +65,7 @@ class Project extends AppModel {
 		if ($this->data[$this->alias]['material_thickness'] < 0) {
 			return __('Material thickness cannot be negative');
 		}
-		if ($this->data[$this->alias]['material_thickness'] > Configure::read('App.z_height')) {
+		if ($this->data[$this->alias]['material_thickness'] > Configure::read('App.z_total')) {
 			return __('Material thickness must be less than max z-height.');
 		}
 		return true;
