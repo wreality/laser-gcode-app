@@ -12,7 +12,7 @@
 						<p>No paths exist yet.</p>
 					<?php } else { ?>
 						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.png')) {?>
-							<?php echo $this->Html->image('/files/'.$operation['id'].'.png')?>
+							<?php echo $this->Html->image('/files/'.$operation['id'].'.png', array('style' => 'max-width: 790px; border: 1px solid black; background: white;'))?>
 						<?php } ?>
 						<?php if ($operation['size_warning']) {?>
 							<div class="alert alert-warning">
