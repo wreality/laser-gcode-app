@@ -89,7 +89,7 @@
     </div>
     <div id="collapseTwo" class="panel-collapse collapse in">
       <div class="panel-body">
-        <?php echo $this->Form->input('project_name');?>
+        <?php echo $this->Form->input('project_name', array('help_text' => __('GCode files will be prefixed with this name.')));?>
         <?php echo $this->Form->input('material_thickness', array('append' => 'mm', 'help_text' => __('Only applies if "Home Before" is yes.')))?>
       </div>
     </div>
