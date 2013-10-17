@@ -55,9 +55,8 @@ class PathsController extends AppController {
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
 			//	$this->redirect($this->referer());
 			}
-		} else {
-			throw new BadMethodCallException();
-		}
+		} 
+		$this->set('presets', $this->Path->Preset->getList());
 	}
 
 /**
@@ -84,8 +83,7 @@ class PathsController extends AppController {
 			$options = array('conditions' => array('Path.' . $this->Path->primaryKey => $id));
 			$this->request->data = $this->Path->find('first', $options);
 		}
-		$this->loadModel('Preset');
-		$this->set('presets', $this->Preset->getList());
+		$this->set('presets', $this->Path->Preset->getList());
 		
 	}
 

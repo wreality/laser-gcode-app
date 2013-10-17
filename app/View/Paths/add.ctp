@@ -1,22 +1,22 @@
 <div class="paths form">
-<?php echo $this->Form->create('Path'); ?>
+<?php echo $this->Form->create('Path', array('type' => 'file', 'novalidate' => true)); ?>
 	<fieldset>
-		<legend><?php echo __('Add Path'); ?></legend>
+		<legend><?php echo __('Edit Path'); ?></legend>
+	
 	<?php
-		echo $this->Form->input('operation_id');
-		echo $this->Form->input('file_hash');
-		echo $this->Form->input('order');
-		echo $this->Form->input('file_name');
+		echo $this->Form->input('id');
+		echo $this->Form->input('operation_id', array('type' => 'hidden'));
+		echo $this->Form->input('preset_id', array('class' => 'preset-options', 'options' => $presets, 'empty' => '--Choose Preset --', 'label' => array('class' => 'sr-only', 'text' => 'Select Preset')));
+	?>
+		<div class="custom-options" style="display:none;">
+			<?php echo $this->Form->input('power', array('placeholder' => 'Power', 'class' => 'col-lg-3 ', 'append' => '%', 'label' => array('class' => 'sr-only', 'text' => 'Enter Power Percentage')));?>
+			<?php echo $this->Form->input('speed', array('placeholder' => 'Speed', 'class' => 'col-lg-3', 'append' => '%','label' => array('class' => 'sr-only', 'text' => 'Enter Speed Percentage')));?>
+		</div>
+			<div class="clearfix">&nbsp;</div>
+	<?php 
+	
+		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Choose Path File')));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-
-		<li><?php echo $this->Html->link(__('List Paths'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Operations'), array('controller' => 'operations', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Operation'), array('controller' => 'operations', 'action' => 'add')); ?> </li>
-	</ul>
 </div>

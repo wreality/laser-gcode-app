@@ -156,8 +156,11 @@ class Path extends AppModel {
 	}
 
 	public function validateImportPreset($check) {
-		if ((empty($this->data[$this->alias]['preset_id']) || $this->data[$this->alias]['preset_id'] == 1)) {
+		if (($this->data[$this->alias]['preset_id'] == 1)) {
 			return true;
+		}
+		if (empty($this->data[$this->alias]['preset_id'])) {
+			return __('Select a preset or "Custom" to add a path.');
 		}
 		App::import('Model', 'Preset');
 		$Preset = new Preset();
