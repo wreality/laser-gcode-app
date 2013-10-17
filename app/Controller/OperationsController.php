@@ -131,7 +131,7 @@ class OperationsController extends AppController {
 		$this->Operation->contain(array('Project'));
 		$operation = $this->Operation->read();
 		if (!empty($operation['Project']['project_name'])) {
-			$name = $operation['Project']['project_name'].'_OP'.$operation['Operation']['order'].'.gcode';
+			$name = str_replace(' ', '_', $operation['Project']['project_name']).'_OP'.$operation['Operation']['order'].'.gcode';
 		} else {
 			$name = 'OP'.$operation['Operation']['order'].'.gcode';
 		}
