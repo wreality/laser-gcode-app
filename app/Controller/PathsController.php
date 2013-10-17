@@ -97,7 +97,6 @@ class PathsController extends AppController {
 		}
 		
 		if ($this->Path->movePathDown($id)) {
-			$this->Path->Operation->updateOverview($path['Path']['operation_id']);
 			$this->Session->setFlash(__('Path order updated.'));
 		} else {
 			$this->Session->setFlash(__('Problem updating path order'));
@@ -116,7 +115,6 @@ class PathsController extends AppController {
 		}
 		
 		if ($this->Path->movePathUp($id)) {
-			$this->Path->Operation->updateOverview($path['Path']['operation_id']);
 			$this->Session->setFlash(__('Path order updated.'));
 		} else {
 			$this->Session->setFlash(__('Problem updating path order'));

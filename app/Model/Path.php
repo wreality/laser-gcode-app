@@ -249,6 +249,7 @@ class Path extends AppModel {
 		$path['Path']['order'] += ($dir);
 		
 		if ($this->save($ex_path) && $this->save($path)) {
+			$this->Operation->updateOverview($path['Path']['operation_id']);
 			return true;
 		} else {
 			
