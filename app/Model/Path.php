@@ -185,7 +185,7 @@ class Path extends AppModel {
 			$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
 			
 		}
-		if ((!empty($this->data[$this->alias]['file'])) && ($this->data[$this->alias]['file']['error'] != UPLOAD_ERR_NOFILE)) {
+		if ((!empty($this->data[$this->alias]['file'])) && ($this->data[$this->alias]['file']['error'] == 0)) {
 			if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], PDF_PATH.DS.$this->data[$this->alias]['file_hash'].'.pdf')) {
 				return false;
 			}
