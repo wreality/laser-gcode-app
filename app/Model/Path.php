@@ -130,6 +130,11 @@ class Path extends AppModel {
 		if (!in_array($this->data[$this->alias]['file']['type'], Configure::read('App.allowed_file_types'))) {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
+		$gcode = array();
+		exec(sprintf(PSTOEDIT, 100, 100, $this->data[$this->alias]['file']['tmp_name']), $gcode);
+		if (empty($gcode)) {
+			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
+		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
 		
 		
