@@ -139,7 +139,7 @@
 			</tr>
 			<?php foreach($gcode as  $oi => $op) {?>
 				<tr>
-					<td><?php echo $this->Html->link(__('%s_OP%d.gcode', $project['Project']['project_name'],$oi+1), '/files/'.$op.'.gcode')?>
+					<td><?php echo $this->Html->link(__('%s_OP%d.gcode', str_replace(' ', '_',$project['Project']['project_name']),$oi+1), '/files/'.$op.'.gcode')?>
 					<div class="btn-group pull-right">
 						<?php echo $this->Html->button(__('Preview'), array('controller' => 'operations', 'action' => 'preview', $op), array('size' => 'btn-xs', 'type' => 'btn-default'));?>
 						<?php echo $this->Html->button(__('Download'), array('controller' => 'operations', 'action' => 'download', $op), array('type' => 'btn-default', 'size' => 'btn-xs'));?>
