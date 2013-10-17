@@ -141,9 +141,9 @@ class ProjectsController extends AppController {
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Project->delete()) {
 			$this->Session->setFlash(__('Project deleted'));
-			$this->redirect(array('action' => 'index'));
+			$this->redirect(array('action' => 'add'));
 		}
 		$this->Session->setFlash(__('Project was not deleted'));
-		$this->redirect(array('action' => 'index'));
+		$this->redirect($this->referer());
 	}
 }

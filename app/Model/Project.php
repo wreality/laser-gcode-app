@@ -19,7 +19,7 @@ class Project extends AppModel {
 		'Operation' => array(
 			'className' => 'Operation',
 			'foreignKey' => 'project_id',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
 			'order' => '',

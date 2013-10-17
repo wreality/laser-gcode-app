@@ -148,5 +148,5 @@
 			<?php } ?>
 		</table>
 	<?php } ?>
-	
+	<?php echo $this->Form->postButton(__('Delete Project'), array('action' => 'delete', $project['Project']['id']), array('size' => 'btn-lg btn-danger'), __('Are you sure, this really can\'t be undone..'))?>
 <?php $this->end();?>
