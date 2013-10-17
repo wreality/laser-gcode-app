@@ -31,7 +31,15 @@ class Project extends AppModel {
 		)
 	);
 
-
+	public $validate = array(
+		'material_thickness' => array(
+			'validThickness' => array(
+				'rule' => array('validateMaterialThickness'),
+			)
+		),
+	);
+	
+	
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$this->data[$this->alias]['max_feedrate'] = Configure::read('App.default_max_cut_feedrate');
@@ -40,6 +48,25 @@ class Project extends AppModel {
 			$this->data[$this->alias]['clear_after'] = true;
 			$this->data[$this->alias]['gcode_preamble'] = Configure::read('App.default_gcode_preamble');
 			$this->data[$this->alias]['gcode_postscript'] = Configure::read('App.default_gcode_postscript');
+		}
+		return true;
+	}
+
+	public function validateMaterialThickness() {
+		if (!$this->data[$this->alias]['home_before']) {
+			return true;
+		}
+		if ($this->data[$this->alias]['material_thickness'] == '0') {
+			return true;
+		}
+		if (empty($this->data[$this->alias]['material_thickness'])) {
+			return __('Material thickness is required if "Home Before" is enabled.');
+		}
+		if ($this->data[$this->alias]['material_thickness'] < 0) {
+			return __('Material thickness cannot be negative');
+		}
+		if ($this->data[$this->alias]['material_thickness'] > Configure::read('App.z_height')) {
+			return __('Material thickness must be less than max z-height.');
 		}
 		return true;
 	}

@@ -77,7 +77,7 @@
 </div>
 <?php $this->start('sidebar');?>
 	<h2>Project Settings</h2>
-	<?php echo $this->Form->create('Project')?>
+	<?php echo $this->Form->create('Project', array('novalidate' => true))?>
 	<div class="panel-group" id="accordion">
   <div class="panel panel-primary">
     <div class="panel-heading">
