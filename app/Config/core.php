@@ -34,10 +34,12 @@
  */
 	Configure::write('debug', 2);
 	define('PDF_PATH', APP.'webroot'.DS.'files');
+	define('PSTOEDIT', 'pstoedit -q -f "gcode: -speed %d -intensity %d -noheader -nofooter" %s');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
 	Configure::write('App.default_max_cut_feedrate', 1000);
 	Configure::write('App.default_traversal_feedrate', 6000);
 	Configure::write('App.allowed_file_types', array('application/pdf'));
+	
 	Configure::write('App.colors', array(
 		'#000000',
 		'#FF0000',

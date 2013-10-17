@@ -121,7 +121,7 @@ class Operation extends AppModel {
 			'Path',
 		));
 		$operation = $this->read();
-		$command = 'pstoedit -q -f "gcode: -speed %d -intensity %d -noheader -nofooter" %s';
+		
 		$gcode = array();
 		
 		foreach ($operation['Path'] as $path) {
@@ -131,7 +131,7 @@ class Operation extends AppModel {
 			$gcode[] = '; Start of path: '.$path['file_name'];
 			$gcode[] = sprintf('; Speed: %d, Power: %d', $speed, $power);
 			
-			exec(sprintf($command, $speed, $power, PDF_PATH.DS.$path['file_hash'].'.pdf'), $gcode);
+			exec(sprintf(PSTOEDIT, $speed, $power, PDF_PATH.DS.$path['file_hash'].'.pdf'), $gcode);
 			
 			$gcode[] = '; End of path: '.$path['file_name'];
 		}
