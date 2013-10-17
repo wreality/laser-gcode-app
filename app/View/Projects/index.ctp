@@ -12,6 +12,7 @@
 			<?php }?>
 		<td><?php echo h($project['Project']['project_name']); ?>&nbsp;</td>
 		<td class="actions">
+			<?php echo $this->Form->link(__('View'), array('action' => 'view', $project['Project']['id']))?>
 			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $project['Project']['id']), null, __('Are you sure you want to delete # %s?', $project['Project']['id'])); ?>
 		</td>
 	</tr>
