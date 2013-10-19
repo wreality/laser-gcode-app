@@ -44,11 +44,13 @@ class ProjectsController extends AppController {
 				foreach($project['Operation'] as $oi => $operation) {
 					$prepend = array();
 					$append = array();
+					$prepend[] = 'M106';
+					$append[] = 'M107';
 					if ($oi == 0) {
 						if ($project['Project']['home_before']) {
 							$prepend[] = '; Start of Project: Homing';
-							$prepend[] = 'G28 F150';
-							$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
+							$prepend[] = 'G28 X Y F1000';
+							//$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
 						} else {
 							$prepend[] = '; Start of Project';
 						}
@@ -61,7 +63,7 @@ class ProjectsController extends AppController {
 					if ($oi == (count($project['Operation'])-1)) {
 						if ($project['Project']['clear_after']) {
 							$append[] = '; Project End: Clearing X Carriage';
-							$append[] = 'G28 F150';
+							$append[] = 'G28 X Y F1000';
 							$append[] = 'G0 Y560 F5000';
 						} else {
 							$append[] = '; End of Project';

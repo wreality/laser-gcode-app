@@ -30,7 +30,7 @@ class Project extends AppModel {
 			'counterQuery' => ''
 		)
 	);
-
+/*
 	public $validate = array(
 		'material_thickness' => array(
 			'validThickness' => array(
@@ -38,7 +38,7 @@ class Project extends AppModel {
 			)
 		),
 	);
-	
+	*/
 	
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
