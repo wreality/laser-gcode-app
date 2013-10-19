@@ -54,7 +54,7 @@ class ProjectsController extends AppController {
 					if ($oi == 0) {
 						if ($project['Project']['home_before']) {
 							$prepend[] = '; Start of Project: Homing';
-							$prepend[] = 'G28 X0 Y0 F1000';
+							$prepend[] = 'G28 X0 Y0 F6000';
 							//$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
 						} else {
 							$prepend[] = '; Start of Project';
@@ -78,7 +78,7 @@ class ProjectsController extends AppController {
 							$append = array_merge($append, explode("\n", $project['Project']['gcode_postscript']));
 						}
 					}
-					$append[] = 'G28 F200   ; home all axes';
+					
 					$append[] = 'G90        ; use absolute coordinates';
 					$append[] = 'M84        ; power down all stepper motors';
 					$append[] = 'M107       ; fan off';
