@@ -131,9 +131,9 @@ class Path extends AppModel {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
 		$gcode = $this->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
-// 		if (empty($gcode)) {
-// 			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
-// 		}
+		if (empty($gcode)) {
+			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
+		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
 		$this->data[$this->alias]['file_name'] = $this->data[$this->alias]['file']['name'];
 		return true;

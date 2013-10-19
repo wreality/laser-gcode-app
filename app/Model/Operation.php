@@ -130,12 +130,13 @@ class Operation extends AppModel {
 			$gcode[] = '';
 			$gcode[] = '; Start of path: '.$path['file_name'];
 			$gcode[] = sprintf('; Speed: %d, Power: %d', $speed, $power);
-			 
+			
 			$gcode = array_merge(
 				$gcode, 
 				$this->Path->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH.DS.$path['file_hash'].'.pdf')
 			);
 			
+			$gcode[] = 'M5         ; laser off';
 			$gcode[] = '; End of path: '.$path['file_name'];
 		}
 		
