@@ -130,8 +130,11 @@ class Path extends AppModel {
 		if (!in_array($this->data[$this->alias]['file']['type'], Configure::read('App.allowed_file_types'))) {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
-		$gcode = $this->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
-		if (empty($gcode)) {
+		App::importz('Model', 'GCode');
+		$GCode = new GCode();
+		 
+		$gc = $GCode->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
+		if (empty($gc)) {
 			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
 		}
 		$this->data[$this->alias]['file_hash'] = md5_file($this->data[$this->alias]['file']['tmp_name']);
@@ -161,16 +164,6 @@ class Path extends AppModel {
 		}
 	}
 	
-	public function pstoedit($speed, $power, $traversal, $filename) {
-		$gcode = array();
-		$command = Configure::read('App.pstoedit_command');
-		$command = str_replace('{{POWER}}', (int)($power), $command);
-		$command = str_replace('{{SPEED}}', (int)($speed), $command);
-		$command = str_replace('{{TRAVERSAL}}', (int)($traversal), $command);
-		$command = str_replace('{{FILE}}', $filename, $command);
-		exec($command, $gcode);
-		return $gcode;
-	}
 	
 	public function beforeDelete($cascade = true) {
 		$operation_id = $this->field('operation_id');

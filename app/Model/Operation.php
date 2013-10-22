@@ -110,7 +110,7 @@ class Operation extends AppModel {
 		}
 	}
 	
-	public function generateGcode($id = null, $prepend = array(), $append = array()) {
+	public function generateGcode($id = null, $home = false, $disableSteppers = true, $preamble = array(), $postscript = array()) {
 		if (!empty($id)) {
 			$this->id = $id;
 		}
@@ -123,25 +123,30 @@ class Operation extends AppModel {
 		$operation = $this->read();
 		
 		$gcode = array();
+		App::import('Model', 'GCode');
+		
+		$GCode = new GCode();
+		$GCode->insertGCode($preamble);
+		$GCode->startOpCode($home);
 		
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed']/100);
-			$power = ($path['power']/100) * 560;
-			$gcode[] = '';
-			$gcode[] = '; Start of path: '.$path['file_name'];
-			$gcode[] = sprintf('; Speed: %d, Power: %d', $speed, $power);
-			
-			$gcode = array_merge(
-				$gcode, 
-				$this->Path->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH.DS.$path['file_hash'].'.pdf')
-			);
-			
-			$gcode[] = 'M5         ; laser off';
-			$gcode[] = '; End of path: '.$path['file_name'];
+			$power = ($path['power']/100) * Configure::read('App.power_scale');
+			$GCode->insertComment('Start of path: '.$path['file_name']);
+			$GCode->insertComment(sprintf('; Speed: %d, Power: %d', $speed, $power));
+			$GCode->newLine();
+			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH.DS.$path['file_hash'].'.pdf');
+			$GCode->laserOff();
+			$GCode->moveTo(0,0,false, 6000);
+			$GCode->inserComment('End of path: '.$path['file_name']);
 		}
 		
-		$output = array_merge($prepend, $gcode, $append);
-		return file_put_contents(PDF_PATH.DS.$this->id.'.gcode', implode("\n", $output));
+		$GCode->endOpCode($disableStepper);
+		$GCode->insertGCode($postscript);
+		
+		return $GCode->writeFile(PDF_PATH.DS.$this->id.'.gcode');
+		
+		
 		
 	}
 

@@ -42,48 +42,25 @@ class ProjectsController extends AppController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Project->save($this->request->data)) {
 				foreach($project['Operation'] as $oi => $operation) {
-					$prepend = array();
-					$append = array();
-					$prepend[] = 'M106            ; fan on';
-					$prepend[] = 'M84             ; disable steppers until next move';
-					$prepend[] = 'G21            ; set units to millimeters';
-					$prepend[] = 'G90            ; set absolute positioning';
-					$prepend[] = 'G92 X0 Y0       ; zero x and y axes';
-
-					
-					if ($oi == 0) {
+					$home = false;
+					$disableSteppers = false;
+					$preamble = array();
+					$postscript = array();
+			       if ($oi == 0) {
 						if ($project['Project']['home_before']) {
-							$prepend[] = '; Start of Project: Homing';
-							$prepend[] = 'G28 X0 Y0 F6000';
-							//$prepend[] = 'G0 Z'.(Configure::read('App.z_total')-Configure::read('App.focal_length')-$project['Project']['material_thickness']).' F'.Configure::read('App.z_feedrate');
-						} else {
-							$prepend[] = '; Start of Project';
+								$home = true;
 						}
 						if (!empty($project['Project']['gcode_preamble'])) {
-							$prepend[] = '';
-							$prepend[] = '; Project preamble..';
-							$prepend = array_merge($prepend, explode("\n", $project['Project']['gcode_preamble']));
+							$preamble =  $project['Project']['gcode_preamble'];
 						}
 					}
 					if ($oi == (count($project['Operation'])-1)) {
-						if ($project['Project']['clear_after']) {
-							$append[] = '; Project End: Clearing X Carriage';
-							$append[] = 'G0 Y558 F6000';
-						} else {
-							$append[] = '; End of Project';
-						}
 						if (!empty($project['Project']['gcode_postscript'])) {
-							$append[] = '';
-							$append[] = '; Project postscript';
-							$append = array_merge($append, explode("\n", $project['Project']['gcode_postscript']));
+							$append = $project['Project']['gcode_postscript'];
 						}
+						$disableSteppers = true;
 					}
-					
-					$append[] = 'G90        ; use absolute coordinates';
-					$append[] = 'M84        ; power down all stepper motors';
-					$append[] = 'M107       ; fan off';
-						
-					$this->Project->Operation->generateGcode($operation['id'], $prepend, $append);
+					$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
 				}
 					$project['Project'] = $this->request->data['Project'];
 			} else {

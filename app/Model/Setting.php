@@ -17,7 +17,11 @@ class Setting extends AppModel {
 		
 		
 		
-		
+		array(
+			'key' => 'App.power_scale',
+			'type' => 'text',
+			'title' => 'Power Upper Scale Limit'
+		),
 		array(
 			'key' => 'App.default_max_cut_feedrate',
 			'type' => 'text',
