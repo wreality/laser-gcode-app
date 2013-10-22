@@ -138,10 +138,10 @@ class Operation extends AppModel {
 			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH.DS.$path['file_hash'].'.pdf');
 			$GCode->laserOff();
 			$GCode->moveTo(0,0,false, 6000);
-			$GCode->inserComment('End of path: '.$path['file_name']);
+			$GCode->insertComment('End of path: '.$path['file_name']);
 		}
 		
-		$GCode->endOpCode($disableStepper);
+		$GCode->endOpCode($disableSteppers);
 		$GCode->insertGCode($postscript);
 		
 		return $GCode->writeFile(PDF_PATH.DS.$this->id.'.gcode');

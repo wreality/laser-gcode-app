@@ -234,7 +234,7 @@ class GCode extends AppModel {
 			$command = str_replace('{{TRAVERSAL}}', (int)($traversal), $command);
 			$command = str_replace('{{FILE}}', $filename, $command);
 			exec($command, $gcode);
-			$this->gcode[] = $gcode;
+			$this->gcode = array_merge($this->gcode, $gcode);
 			return $gcode;
 	}
 	
