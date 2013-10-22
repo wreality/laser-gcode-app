@@ -41,6 +41,8 @@
         <ul class="dropdown-menu">
           <li><?php echo $this->Html->link(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?></li>
           <li><?php echo $this->Html->link(__('Presets'), array('controller' => 'presets', 'action' => 'index'));?></li>
+          <li class="divider">&nbsp;</li>
+          <li><?php echo $this->Html->link(__('Utility GCode'), array('controller' => 'g_codes', 'action' => 'index'));?></li>
          
         </ul>
       </li>
