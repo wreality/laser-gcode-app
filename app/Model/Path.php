@@ -130,7 +130,7 @@ class Path extends AppModel {
 		if (!in_array($this->data[$this->alias]['file']['type'], Configure::read('App.allowed_file_types'))) {
 			return __('Invalid file type.  Only pdf is currently supported.');
 		}
-		App::importz('Model', 'GCode');
+		App::import('Model', 'GCode');
 		$GCode = new GCode();
 		 
 		$gc = $GCode->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
