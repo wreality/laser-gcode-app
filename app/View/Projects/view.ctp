@@ -38,7 +38,11 @@
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $path['order']?></td>
 								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
-									<?php if (!empty($path['Preset']['name'])) {?> <?php echo $this->Html->label($path['Preset']['name']);?> <?php }?>
+									<?php if (!empty($path['Preset']['name'])) {?> 
+										<?php echo $this->Html->label($path['Preset']['name']);?> 
+									<?php } else { ?>
+										<?php echo $this->Html->label(__('Custom'));?> <?php echo $this->Html->button(__('Create Preset'), array('controller' => 'presets', 'action' => 'import', $path['id']), array('size' => 'btn-warning btn-xs'));?>
+									<?php } ?>
 								</td>
 								<td>	
 									<?php if ($pi > 0)  { ?>
