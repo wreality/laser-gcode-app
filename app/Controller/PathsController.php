@@ -57,8 +57,9 @@ class PathsController extends AppController {
 			}
 		} 
 		$this->set('presets', $this->Path->Preset->getList());
+		$this->view = 'edit';
 	}
-
+ 
 /**
  * edit method
  *

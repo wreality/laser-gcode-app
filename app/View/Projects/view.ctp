@@ -62,8 +62,8 @@
 					<?php echo $this->Form->submit('Upload New Path', array('div' => array('class' => 'form-group')))?>
 					<div class="clearfix">&nbsp;</div>
 					<div class="custom-options" style="display:none;">
-						<?php echo $this->Form->input('power', array('placeholder' => 'Power', 'class' => 'col-lg-3 ', 'append' => '%', 'label' => array('class' => 'sr-only', 'text' => 'Enter Power Percentage')));?>
-						<?php echo $this->Form->input('speed', array('placeholder' => 'Speed', 'class' => 'col-lg-3', 'append' => '%','label' => array('class' => 'sr-only', 'text' => 'Enter Speed Percentage')));?>
+						<?php echo $this->Form->input('power', array('div' => array('class' => 'col-lg-4 form-group'),'placeholder' => 'Power', 'class' => 'col-lg-8', 'append' => '%', 'label' => array('class' => 'col-lg-4', 'text' => 'Power')));?>
+						<?php echo $this->Form->input('speed', array('div' => array('class' => 'col-lg-4 form-group'), 'placeholder' => 'Speed', 'class' => 'col-lg-8', 'append' => '%','label' => array('class' => 'col-lg-4', 'text' => 'Speed')));?>
 					</div>
 					<?php echo $this->Form->end();?>
 					<?php echo $this->Form->postButton(__('Delete Operation'), array('controller' => 'operations', 'action' => 'delete', $operation['id']), array('class' => 'btn pull-right', 'type' => 'btn-danger'), __('Are you sure you want to delete this operation?'))?>
