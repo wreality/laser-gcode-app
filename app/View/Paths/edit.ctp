@@ -2,7 +2,7 @@
 <?php echo $this->Form->create('Path', array('type' => 'file', 'class' => 'form-horizontal')); ?>
 	<fieldset>
 		<legend><?php echo __('Edit Path'); ?></legend>
-	<?php if (!empty($this->request->data['Path']['filename'])) { ?>
+	<?php if (!empty($this->request->data['Path']['file_hash'])) { ?>
 		<iframe height="300" src="<?php echo Router::url('/files/'.$this->request->data['Path']['file_hash'].'.pdf')?>"></iframe>
 	<?php } ?>
 	<?php
