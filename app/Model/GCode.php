@@ -174,6 +174,18 @@ class GCode extends AppModel {
 		return $gcode;
 	}
 	
+	public function enablePower() {
+		$gcode = 'M80   ; enable accessories';
+		$this->gcode[] = $gcode;
+		return $gcode;
+	}
+	
+	public function disablePower() {
+		$gcode = 'M81   ; disable accessories';
+		$this->gcode[] = $gcode;
+		return $gcode;
+	}
+	
 	public function dwell($duration) {
 	   $gcode = 'G4 P'.$duration;
 	   $this->gcode[] = $gcode;
