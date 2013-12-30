@@ -14,6 +14,8 @@ class ProjectsController extends AppController {
  */
 	public function index() {
 		$this->Project->recursive = 1;
+		$this->paginate = array(
+			'order' => array('Project.created' => 'DESC'));
 		$this->set('projects', $this->paginate());
 	}
 
