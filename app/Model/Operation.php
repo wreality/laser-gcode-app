@@ -39,7 +39,8 @@ class Operation extends AppModel {
 			'foreignKey' => 'project_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => ''
+			'order' => '',
+			'counterCache' => 'operation_count',
 		)
 	);
 
