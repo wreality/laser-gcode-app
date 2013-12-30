@@ -3,6 +3,7 @@
 	<table class="table table-striped">
 	<tr>
 			<th colspan="2"><?php echo $this->Paginator->sort('project_name'); ?></th>
+			<th><?php echo __('Created')?>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php foreach ($projects as $project): ?>
@@ -11,6 +12,7 @@
 				<?php echo $this->Html->image('/files/'.$project['Operation'][0]['id'].'.png', array('url' => array('action' => 'view', $project['Project']['id']), 'width' => '75', 'style' => 'border: 1px solid black; background: white;'))?>
 			<?php }?></td>
 		<td><?php echo $this->Html->link($project['Project']['project_name'], array('action' => 'view', $project['Project']['id'])); ?>&nbsp;</td>
+		<td><?php echo __('Created %s', $this->Time->timeAgoInWords($project['Project']['created']));?></td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('View'), array('action' => 'view', $project['Project']['id']));?>
 			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $project['Project']['id']), null, __('Are you sure you want to delete # %s?', $project['Project']['id'])); ?>

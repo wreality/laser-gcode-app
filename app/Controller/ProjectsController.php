@@ -14,6 +14,8 @@ class ProjectsController extends AppController {
  */
 	public function index() {
 		$this->Project->recursive = 1;
+		$this->paginate = array(
+			'order' => array('Project.created' => 'DESC'));
 		$this->set('projects', $this->paginate());
 	}
 
@@ -38,9 +40,9 @@ class ProjectsController extends AppController {
 			)
 		));
 		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
-		$project = $this->Project->find('first', $options);
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Project->save($this->request->data)) {
+				$project = $this->Project->find('first', $options);
 				foreach($project['Operation'] as $oi => $operation) {
 					$home = false;
 					$disableSteppers = false;
@@ -67,6 +69,7 @@ class ProjectsController extends AppController {
 				$this->Session->setFlash(__('There was an error saving this project.'), 'bs_error');
 			}
 		} else {
+			$project = $this->Project->find('first', $options);
 			$this->request->data = $project;
 		}
 		$this->loadModel('Preset');

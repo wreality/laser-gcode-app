@@ -57,6 +57,9 @@ class LaserSchema extends CakeSchema {
 		'gcode_postscript' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'clear_after' => array('type' => 'boolean', 'null' => true, 'default' => null),
 		'material_thickness' => array('type' => 'float', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'operation_count' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),

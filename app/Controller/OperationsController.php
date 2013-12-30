@@ -135,6 +135,15 @@ class OperationsController extends AppController {
 		} else {
 			$name = 'OP'.$operation['Operation']['order'].'.gcode';
 		}
+		
+		$modified = new DateTime();
+		$modified->setTimestamp(filemtime(PDF_PATH.DS.$id.'.gcode'));
+		
+		$this->response->modified($modified); // Allow for caching only when gocde hasn't been updated
+		if ($this->response->checkNotModified($this->request)) {
+			return $this->response;
+		} 
+		
 		$this->response->file(PDF_PATH.DS.$id.'.gcode', array('download' => true, 'name' => $name));
 		return $this->response;
 		

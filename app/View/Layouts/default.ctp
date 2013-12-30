@@ -81,10 +81,11 @@
 	        	</ul>
 	        </p>
 	        <p>GCode Generator is open source under the GPL.  Source code is available at <?php echo $this->Html->link('https://github.com/wreality/laser-gcode-app')?></p>
+	      	<p>Version: <?php echo Configure::read('App.version');?></p>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary">Save changes</button>
+	     
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

@@ -174,6 +174,18 @@ class GCode extends AppModel {
 		return $gcode;
 	}
 	
+	public function enablePower() {
+		$gcode = 'M80   ; enable accessories';
+		$this->gcode[] = $gcode;
+		return $gcode;
+	}
+	
+	public function disablePower() {
+		$gcode = 'M81   ; disable accessories';
+		$this->gcode[] = $gcode;
+		return $gcode;
+	}
+	
 	public function dwell($duration) {
 	   $gcode = 'G4 P'.$duration;
 	   $this->gcode[] = $gcode;
@@ -181,6 +193,7 @@ class GCode extends AppModel {
 	}
 	public function startOpCode($zero = true) {
 		$this->fanOn();
+		$this->enablePower();
 		$this->disableSteppers();
 		$this->unitsMM();
 		$this->positionAbsolute();
@@ -196,6 +209,7 @@ class GCode extends AppModel {
 		if ($stepperDisable) {
 			$this->disableSteppers();
 		}
+		$this->disablePower();
 	}
 	
 	public function insertComment($comment) {
