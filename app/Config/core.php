@@ -37,7 +37,7 @@
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 	
-	Configure::write('App.version', '1.0');
+	Configure::write('App.version', '1.1');
 	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
 	Configure::write('App.default_max_cut_feedrate', 1000);
