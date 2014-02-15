@@ -7,16 +7,44 @@ App::uses('AppController', 'Controller');
  */
 class ProjectsController extends AppController {
 
+	public function beforeFilter() {
+		$this->Auth->allow('index');
+		
+		parent::beforeFilter();
+	}
+	
+	public function isAuthorized($user = null) {
+		parent::isAuthorized($user);
+		if (in_array($this->request->params['action'], array('view', 'edit', 'delete'))) {
+			var_dump($this->request->params);
+		}
+	}
+	
 /**
  * index method
  *
  * @return void
  */
-	public function index() {
+	public function index($public = true) {
 		$this->Project->recursive = 1;
-		$this->paginate = array(
-			'order' => array('Project.created' => 'DESC'));
+		$paginate =  array(
+			'order' => array('Project.created' => 'DESC')
+		);
+		if ((!$public) && $this->Auth->user('id')) {
+			$paginate['conditions'] = array(
+				'Project.user_id' => $this->Auth->user('id'),
+			);
+		} else {
+			$paginate['conditions'] = array(
+				'OR' => array(
+					'user_id' => null,
+					'public' => true,
+				)
+			);
+		}
+		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
+		
 	}
 
 /**
@@ -27,8 +55,19 @@ class ProjectsController extends AppController {
  * @return void
  */
 	public function view($id = null) {
+		$this->Project->id = $id;
 		if (!$this->Project->exists($id)) {
 			throw new NotFoundException(__('Invalid project'));
+		}
+		$this->Project->recursive = -1;
+		$project = $this->Project->read();
+		
+		if (!empty($project['Project']['user_id'])) {
+			if (!$project['Project']['public']) {
+				if ($this->Auth->user('id') != $project['Project']['user_id']) {
+					throw new ForbiddenException(__('Project is not public.'));
+				}
+			}
 		}
 		$this->Project->Behaviors->load('Containable');
 		$this->Project->contain(array(
