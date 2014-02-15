@@ -124,7 +124,7 @@ class Setting extends AppModel {
 		$this->save($data);
 	}
 	
-	public function afterSave($created) {
+	public function afterSave($created, $options = array()) {
 		Cache::delete('settings');
 	}
 	
