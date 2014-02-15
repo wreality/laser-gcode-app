@@ -43,6 +43,9 @@
 	Configure::write('App.default_max_cut_feedrate', 1000);
 	Configure::write('App.default_traversal_feedrate', 6000);
 	Configure::write('App.allowed_file_types', array('application/pdf'));
+	Configure::write('App.user_secret', 'SECRET');
+	Configure::write('App.user_secret_prompt', 'Enter the secret password');
+	Configure::write('App.user_secret_enabled', true);
 	Configure::write('App.power_scale', 560);
 	Configure::write('App.colors', array(
 		'#000000',
