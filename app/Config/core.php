@@ -37,6 +37,10 @@
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 	
+	define('PROJ_PUBLIC', 1);
+	define('PROJ_PRIVATE', 0);
+	define('PROJ_UNDEFINED', 2);
+	
 	Configure::write('App.version', '1.1');
 	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
