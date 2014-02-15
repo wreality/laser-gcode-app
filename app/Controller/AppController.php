@@ -33,11 +33,16 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 	
-	public $components = array('Cakestrap.Cakestrap','Session');
+	public $components = array(
+		'Auth' => array(
+			'fields' => array('email', 'password'),
+		),
+		'Cakestrap.Cakestrap','Session');
 	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time');
 	public $uses = array('Setting');
 	
 	public function beforeFilter() {
+		
 		$this->Setting->getSettings();
 		
 		$this->request->addDetector('internalIp', array(
