@@ -14,6 +14,7 @@
     	'/vendor/bootstrap-3.0.0/js/dropdown.js',
     	'/vendor/bootstrap-3.0.0/js/modal.js',
     	'/vendor/bootstrap-3.0.0/js/alert.js',
+    	'/vendor/bootstrap-3.0.0/js/tab.js',
     ));?>
  
   </head>
@@ -31,20 +32,24 @@
     <?php echo $this->Html->link(__('GCode Generator'), '/', array('class' => 'navbar-brand'))?>
     
   </div>
-
+<?php $current_user = AuthComponent::user(); $this->set('current_user', $current_user); ?>
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav navbar-right">
       <li><a data-toggle="modal" href="#aboutModal">About</a>
       <li class="dropdown">
+        <?php if (!empty($current_user)) {?>
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">System Wide <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><?php echo $this->Html->link(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?></li>
+          <?php if ($current_user['admin']) {?>
+	          <li><?php echo $this->Html->link(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?></li>
+          <?php } ?>
           <li><?php echo $this->Html->link(__('Presets'), array('controller' => 'presets', 'action' => 'index'));?></li>
           <li class="divider">&nbsp;</li>
           <li><?php echo $this->Html->link(__('Utility GCode'), array('controller' => 'g_codes', 'action' => 'index'));?></li>
          
         </ul>
+        <?php } ?>
       </li>
     </ul>
    
