@@ -40,6 +40,8 @@ class Project extends AppModel {
 	);
 	*/
 	
+	public $belongsTo = array('User');
+	
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$this->data[$this->alias]['max_feedrate'] = Configure::read('App.default_max_cut_feedrate');
