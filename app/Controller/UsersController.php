@@ -40,7 +40,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The user has been saved'));
 				$this->render('email_confirm');
 			} else {
-				$this->Session->setFlash(__('Your account could not be created.  Please, try again.'));
+				$this->Session->setFlash(__('Your account could not be created.  Please, try again.'), 'bs_error');
 			}
 		}
 	}
@@ -61,7 +61,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The user has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'bs_error');
 			}
 		} else {
 			$options = array('conditions' => array('User.' . $this->User->primaryKey => $id));

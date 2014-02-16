@@ -1,4 +1,4 @@
-@import "../vendor/bootstrap-3.0.0/less/bootstrap.less";
+@import "../vendor/bootstrap-3.1.1/less/bootstrap.less";
 
 .aside {
 	color: @gray;
@@ -27,4 +27,38 @@ a.register {
 		max-height: 75px;
 		max-width: 150px;
 	}
+}
+
+.register {
+	.bg-info {
+		padding: 15px;
+	}
+	.form {
+		margin-top: 20px;
+		.form-group {
+			 input[type="text"],
+			 input[type="password"],
+			 input[type="email"] {
+			 	.make-md-column(4);
+			 }
+			 label {
+			 	.make-md-column(3);
+			 }
+			 .help-block {
+			 	.make-md-column(4);}
+		}
+		 input[type="submit"] {
+		 	.btn;
+		 	.btn-primary;
+		 }
+	}
+}
+
+.no-projects {
+	.alert;
+	.alert-info;
+}
+
+.error {
+	.has-error;
 }
