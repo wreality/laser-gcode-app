@@ -1,5 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 /**
  * User Model
  *
@@ -31,6 +32,13 @@ class User extends AppModel {
 			),
 		),
 		'email' => array(
+			'account_exists' => array(
+				'rule' => array('validateEmailDoesntExist'),
+				'message' => 'This email address has already been registered.',
+				'last' => true,
+				'required' => true,
+				'allowEmpty' => false,
+			),
 			'email' => array(
 				'rule' => array('email'),
 				//'message' => 'Your custom message here',
@@ -50,6 +58,14 @@ class User extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'confirm_password' => array(
+			'notempty' => array(
+				'rule' => array('validatePasswordConfirm'),
+				'message' => 'Passwords do not match.',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+		),
 		'admin' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
@@ -60,6 +76,7 @@ class User extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -84,5 +101,54 @@ class User extends AppModel {
 			'counterQuery' => ''
 		)
 	);
+
+	public function beforeValidate($options = array()) {
+		if (Configure::read('App.user_secret_enabled')) {
+			$this->validator()->add('user_secret', 'required', array(
+					'rule' => array('validateSecret'),
+					'message' => 'Secret entered was not correct.',
+					'allowEmpty' => false,
+					'on' => 'create'));
+			
+		}
+		return true;
+	}
+	
+	public function validateSecret ($check){
+		if ($this->data[$this->alias]['user_secret'] == Configure::read('App.user_secret')) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public function validatePasswordConfirm ($check) {
+		if ($this->data[$this->alias]['password'] == $this->data[$this->alias]['confirm_password']) {
+			return true;
+		} else {
+			$this->invalidate('password', null);
+			return false;
+		}
+	}
+	
+	public function validateEmailDoesntExist ($check) {
+		$user = $this->findByEmail($this->data[$this->alias]['email']);
+		
+		if (empty($user)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public function beforeSave($options = array()) {
+		if (!$this->id) {
+			$passwordHasher = new SimplePasswordHasher();
+			$this->data[$this->alias]['password'] = $passwordHasher->hash(
+				$this->data[$this->alias]['password']
+			);
+		}
+		return true;
+	}
 
 }
