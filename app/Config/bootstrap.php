@@ -71,6 +71,16 @@ Cache::config('default', array('engine' => 'File'));
  *
  */
 CakePlugin::loadAll();
+CakePlugin::load('Cakestrap');
+if (class_exists('Redis')) {
+	CakePlugin::load(array( # or CakePlugin::loadAll(array(
+    'CakeResque' => array('bootstrap' => array(
+        'bootstrap_config',
+        '../../../Config/resque-bootstrap', # Path to your own config file
+        'bootstrap'
+	))
+));
+}
 /**
  * You can attach event listeners to the request lifecyle as Dispatcher Filter . By Default CakePHP bundles two filters:
  *

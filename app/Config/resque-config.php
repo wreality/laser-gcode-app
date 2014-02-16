@@ -1,0 +1,128 @@
+<?php
+/**
+ * CakeResque configuration file
+ *
+ *
+ *
+/**
+ * Configure the default value for Resque
+ *
+ * ## Mandatory indexes :
+ * Redis
+ * 		Redis server settings
+ * Worker
+ * 		Workers default settings
+ * Resque
+ * 		Default values used to init the php-resque library path
+ *
+ * ## Optional indexes :
+ * Queues
+ * 		An array of queues to start with Resque::load()
+ * 		Used when you have multiple queues, as you don't need
+ * 		to start each queues individually each time you start Resque
+ * Env
+ * 		Additional environment variables to pass to Resque
+ * Log
+ * 		Log handler and its arguments, to save the log with Monolog
+ *
+ *
+ * There are many ways to configure the plugin:
+ *
+ * 1. This file is automagically loaded by the bootstrapping process, when no 'CakeResque'
+ * configuration key exists.
+ *
+ *   CakePlugin::load('CakeResque', array('bootstrap' => true));
+ *
+ * 2. If a 'CakeResque' configuration key already exists, the default configuration will not be loaded,
+ * and the 'CakeResque' key is expected to contain all the values present in the default configuration.
+ *
+ *   Configure::load('my_cakeresque_config');
+ *   CakePlugin::load('CakeResque', array('bootstrap' => true));
+ *
+ * 3. Another way to configure the plugin is to load it using a custom bootstrap file.
+ *
+ *   CakePlugin::load('CakeResque', array('bootstrap' => 'my_bootstrap'));
+ *
+ *   // APP/Plugin/CakeResque/Config/my_bootstrap.php
+ *   require_once dirname(__DIR__) . DS . 'Lib' . DS . 'CakeResque.php';
+ *   $config = array(); // Custom configuration
+ *   CakeResque::init($config);
+ *
+ * @see CakeResque::init(), CakeResque::loadConfig().
+ */
+
+$config['CakeResque'] = array(
+	'Redis' => array(
+		'host' => 'localhost',		// Redis server hostname
+		'port' => 6379,				// Redis server port
+		'database' => 0,			// Redis database number
+		'namespace' => 'laser-gcode'		// Redis keys namespace
+	),
+
+	'Worker' => array(
+		'queue' => 'default',		// Name of the default queue
+		'interval' => 5,			// Number of second between each poll
+		'workers' => 1,				// Number of workers to create
+		// 'user' => 'www-data' 	// User running the worker process
+		'log' => TMP . 'logs' . DS . 'resque-worker-error.log',
+		'verbose' => false
+	),
+	'Job' => array(
+		'track' => false
+	),
+	
+	'Queues' => array(
+		array(
+			'queue' => 'default',	// Use default values from above for missing interval and count indexes
+		//	'user' => 'www-data'	// If PHP is running as a different user on you webserver
+		),
+		array(
+			'queue' => 'gcode-processor',
+			'interval' => 1,
+			'workers' => 5
+		)
+	),
+	
+	'Resque' => array(
+		'lib' => 'kamisama/php-resque-ex',
+		'tmpdir' => App::pluginPath('CakeResque') . 'tmp' . DS
+	),
+	'Env' => array(),
+	'Log' => array(
+		'handler' => 'RotatingFile',
+		'target' => TMP . 'logs' . DS . 'resque.log'
+	),
+
+	'Scheduler' => array(
+		// Enable or disable delayed job
+		'enabled' => true,
+
+		// Path to the php-resque-ex-scheduler's library
+		'lib' => 'kamisama/php-resque-ex-scheduler',
+		// Path to the log file
+		'log' => TMP . 'logs' . DS . 'resque-scheduler-error.log',
+
+		// Optional
+		// Will not default to settings defined in the global scope above
+		'Env' => array(),
+
+		// Optional
+		// Will default to settings defined in the global scope above
+		// Only available setting is `interval`
+		// The worker will always poll a fixed special queue, and only one worker can run at one time
+		'Worker' => array(
+			'interval' => 3
+		),
+
+		// Optional
+		// Will default to settings defined in the global scope above
+		'Log' => array(
+			'handler' => 'RotatingFile',
+			'target' => TMP . 'logs' . DS . 'resque-scheduler.log'
+		)
+	),
+	'Status' => array(
+		// Path to the resque-status library
+		'lib' => 'kamisama/resque-status',
+	)
+);
