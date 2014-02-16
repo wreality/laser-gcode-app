@@ -139,7 +139,7 @@ class CakestrapFormHelper extends FormHelper {
 	 */
 	public function error($field, $text = null, $options = array()) {
 		$options = array_merge(
-			array('wrap' => 'span', 'class' => 'help-inline', 'escape' => true),
+			array('wrap' => 'span', 'class' => 'help-block', 'escape' => true),
 			$options
 		);
 		
