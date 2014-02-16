@@ -8,13 +8,13 @@
     <?php echo $this->Html->script(array('/vendor/jquery/jquery-1.9.0.min.js', 'app.js'));?>
     <?php echo $this->Html->less('/less/default.less');?>
     <?php echo $this->Html->script(array(
-    	'/vendor/less/less-1.3.3.min.js', 
-    	'/vendor/bootstrap-3.0.0/js/transition.js',
-    	'/vendor/bootstrap-3.0.0/js/collapse.js',
-    	'/vendor/bootstrap-3.0.0/js/dropdown.js',
-    	'/vendor/bootstrap-3.0.0/js/modal.js',
-    	'/vendor/bootstrap-3.0.0/js/alert.js',
-    	'/vendor/bootstrap-3.0.0/js/tab.js',
+    	'/vendor/less/less-1.6.3.min.js', 
+    	'/vendor/bootstrap-3.1.1/js/transition.js',
+    	'/vendor/bootstrap-3.1.1/js/collapse.js',
+    	'/vendor/bootstrap-3.1.1/js/dropdown.js',
+    	'/vendor/bootstrap-3.1.1/js/modal.js',
+    	'/vendor/bootstrap-3.1.1/js/alert.js',
+    	'/vendor/bootstrap-3.1.1/js/tab.js',
     ));?>
  
   </head>
