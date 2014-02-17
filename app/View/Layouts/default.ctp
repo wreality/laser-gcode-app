@@ -6,16 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <?php echo $this->Html->script(array('/vendor/jquery/jquery-1.9.0.min.js', 'app.js'));?>
-    <?php echo $this->Html->less('/less/default.less');?>
-    <?php echo $this->Html->script(array(
-    	'/vendor/less/less-1.6.3.min.js', 
-    	'/vendor/bootstrap-3.1.1/js/transition.js',
-    	'/vendor/bootstrap-3.1.1/js/collapse.js',
-    	'/vendor/bootstrap-3.1.1/js/dropdown.js',
-    	'/vendor/bootstrap-3.1.1/js/modal.js',
-    	'/vendor/bootstrap-3.1.1/js/alert.js',
-    	'/vendor/bootstrap-3.1.1/js/tab.js',
-    ));?>
+    <?php if (Configure::read('debug') > 0) {?>
+    	<?php echo $this->Html->less('/less/default.less');?>
+    	<?php echo $this->Html->script('/vendor/less/less-1.6.3.min.js')?>
+    <?php } else {?>
+    	<?php echo $this->Html->css('/css/default.css');?>
+	    <?php echo $this->Html->script(array(
+	    	'/vendor/bootstrap-3.1.1/js/transition.js',
+	    	'/vendor/bootstrap-3.1.1/js/collapse.js',
+	    	'/vendor/bootstrap-3.1.1/js/dropdown.js',
+	    	'/vendor/bootstrap-3.1.1/js/modal.js',
+	    	'/vendor/bootstrap-3.1.1/js/alert.js',
+	    	'/vendor/bootstrap-3.1.1/js/tab.js',
+	    ));?>
+	<?php } ?>
  
   </head>
   <body>
