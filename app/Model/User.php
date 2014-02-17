@@ -103,7 +103,7 @@ class User extends AppModel {
 	);
 
 	public function beforeValidate($options = array()) {
-		if (Configure::read('App.user_secret_enabled')) {
+		if (Configure::read('LaserApp.user_secret_enabled')  && (!$this->id)) {
 			$this->validator()->add('user_secret', 'required', array(
 					'rule' => array('validateSecret'),
 					'message' => 'Secret entered was not correct.',
@@ -115,7 +115,7 @@ class User extends AppModel {
 	}
 	
 	public function validateSecret ($check){
-		if ($this->data[$this->alias]['user_secret'] == Configure::read('App.user_secret')) {
+		if ($this->data[$this->alias]['user_secret'] == Configure::read('LaserApp.user_secret')) {
 			return true;
 		} else {
 			return false;

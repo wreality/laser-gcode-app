@@ -32,47 +32,39 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 2);
-	define('PDF_PATH', APP.'webroot'.DS.'files');
+	Configure::write('debug', 0);
+	
+/**
+ * Set Laser App default configuration values 
+ */
+	Configure::write('LaserApp.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
+	Configure::write('LaserApp.storage_path', APP.'webroot'.DS.'files');
+	Configure::write('LaserApp.default_max_cut_feedrate', 1000);
+	Configure::write('LaserApp.default_traversal_feedrate', 6000);
+	Configure::write('LaserApp.user_secret', 'SECRET');
+	Configure::write('LaserApp.user_secret_prompt', 'Enter the secret password');
+	Configure::write('LaserApp.user_secret_enabled', true);
+	Configure::write('LaserApp.power_scale', 100);
+	
+	//Read customized values
+	
+	Configure::load('config');
+	
+/**
+ * Application configuration values.  Shouldn't need to be modified by users.
+ */
+	
+	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
+	
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 	
-	define('PROJ_PUBLIC', 1);
-	define('PROJ_PRIVATE', 0);
-	define('PROJ_UNDEFINED', 2);
-	
 	Configure::write('App.version', '1.1');
-	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
-	Configure::write('App.file_path', Configure::read('App.file_path'));
-	Configure::write('App.default_max_cut_feedrate', 1000);
-	Configure::write('App.default_traversal_feedrate', 6000);
 	Configure::write('App.allowed_file_types', array('application/pdf'));
-	Configure::write('App.user_secret', 'SECRET');
-	Configure::write('App.user_secret_prompt', 'Enter the secret password');
-	Configure::write('App.user_secret_enabled', true);
-	Configure::write('App.power_scale', 560);
 	Configure::write('App.colors', array(
-		'#000000',
-		'#FF0000',
-		'#00FF00',
-		'#0000FF',
-		'#FFFF00',
-		'#FF00FF',
-		'#00FFFF',
-		'#800000',
-		'#008000',
-		'#000080',
-		'#808000',
-		'#800080',
-		'#008080',
-		'#C0C0C0',
-		'#808080',
-		'#9999FF',
-		'#993366',
-		'#FFFFCC',
-		'#CCFFFF',
-		'#660066',
-		'#FF8080',
+		'#000000','#FF0000','#00FF00','#0000FF','#FFFF00','#FF00FF','#00FFFF',
+		'#800000','#008000','#000080','#808000','#800080','#008080','#C0C0C0',
+		'#808080','#9999FF','#993366','#FFFFCC','#CCFFFF','#660066','#FF8080',
 	));
 
 /**

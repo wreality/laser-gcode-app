@@ -1,0 +1,37 @@
+<?php
+/**
+ * Laser App Configuration File
+ **/
+ 
+$config['LaserApp'] = array(
+	'pstoedit_command' => 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}',
+	'storage_path' =>  APP.'webroot'.DS.'files',
+	'default_max_cut_feedrate' => 1000,
+	'default_traversal_feedrate' =>  6000,
+	'user_secret' => 'SECRET',
+	'user_secret_prompt' => 'Enter the secret password',
+	'user_secret_enabled' =>  true,
+	'power_scale' => 100,
+);
+
+$config['Email'] = array(
+	/**
+	 * Mail Settings
+	 * 
+	 * The application sends emails to reset passwords and validate users.  
+	 * Make sure to configure an appropriate transport and parameters to allow
+	 * mail to be sent.
+	 **/
+	
+	'transport' => 'Mail',    // Transport can be one of Mail, Smtp, or Debug
+	'from' => array('site@localhost' => 'My Site'),
+	'host' => 'localhost',
+	'port' => 25,
+	'timeout' => 30,
+	'username' => null,
+	'password' => null,
+	'client' => null,
+	'log' => false,
+	'charset' => 'utf-8',
+	'headerCharset' => 'utf-8',
+);

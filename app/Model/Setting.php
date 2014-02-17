@@ -18,17 +18,17 @@ class Setting extends AppModel {
 		
 		
 		array(
-			'key' => 'App.power_scale',
+			'key' => 'LaserApp.power_scale',
 			'type' => 'text',
 			'title' => 'Power Upper Scale Limit'
 		),
 		array(
-			'key' => 'App.default_max_cut_feedrate',
+			'key' => 'LaserApp.default_max_cut_feedrate',
 			'type' => 'text',
 			'title' => 'Default max cut feedrate',
 			'units' => 'mm/min',
 		), array(
-			'key' => 'App.default_traversal_feedrate',
+			'key' => 'LaserApp.default_traversal_feedrate',
 			'type' => 'text',
 			'title' => 'Default traversal feedrate',
 			'units' => 'mm/min',
@@ -63,17 +63,17 @@ class Setting extends AppModel {
 			'title' => 'Z Move Feedrate',
 			'units' => 'mm/min'
 		), array(
-			'key' => 'App.user_secret',
+			'key' => 'LaserApp.user_secret',
 			'type' => 'text',
 			'title' => 'Secret Key',
 			'help_text' => 'This key will be required by users attempting to create an account.',
 		), array(
-			'key' => 'App.user_secret_prompt',
+			'key' => 'LaserApp.user_secret_prompt',
 			'type' => 'text',
 			'title' => 'Secret Key Prompt',
 			'help_text' => 'This text will be presented to the user to prompt for the secret key.',
 		), array(
-			'key' => 'App.user_secret_enabled',
+			'key' => 'LaserApp.user_secret_enabled',
 			'type' => 'boolean',
 			'title' => 'Secret Key Enabled',
 			'help_text' => 'Set to Yes to require users to enter the secret key when creating an account.'

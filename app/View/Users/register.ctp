@@ -20,8 +20,8 @@
 			echo $this->Form->input('email');
 			echo $this->Form->input('password');
 			echo $this->Form->input('confirm_password', array('type' => 'password'));
-			if (Configure::read('App.user_secret_enabled')) {
-				echo $this->Form->input('user_secret', array('label' => Configure::read('App.user_secret_prompt')));
+			if (Configure::read('LaserApp.user_secret_enabled')) {
+				echo $this->Form->input('user_secret', array('label' => Configure::read('LaserApp.user_secret_prompt')));
 			}
 		?>
 		</fieldset>

@@ -132,7 +132,7 @@ class Operation extends AppModel {
 		
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed']/100);
-			$power = ($path['power']/100) * Configure::read('App.power_scale');
+			$power = ($path['power']/100) * Configure::read('LaserApp.power_scale');
 			$GCode->insertComment('Start of path: '.$path['file_name']);
 			$GCode->insertComment(sprintf('; Speed: %d, Power: %d', $speed, $power));
 			$GCode->newLine();

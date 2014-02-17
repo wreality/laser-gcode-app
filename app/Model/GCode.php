@@ -133,7 +133,7 @@ class GCode extends AppModel {
 	}
 	
 	public function laserOn($power) {
-		$gcode = 'M3 S'.(($power/100)*Configure::read('App.power_scale'));
+		$gcode = 'M3 S'.(($power/100)*Configure::read('LaserApp.power_scale'));
 		$this->gcode[] = $gcode;
 		return $gcode;
 	}
@@ -242,7 +242,7 @@ class GCode extends AppModel {
 	
 	public function pstoedit($speed, $power, $traversal, $filename) {
 			$gcode = array();
-			$command = Configure::read('App.pstoedit_command');
+			$command = Configure::read('LaserApp.pstoedit_command');
 			$command = str_replace('{{POWER}}', (int)($power), $command);
 			$command = str_replace('{{SPEED}}', (int)($speed), $command);
 			$command = str_replace('{{TRAVERSAL}}', (int)($traversal), $command);
