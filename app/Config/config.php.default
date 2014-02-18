@@ -12,6 +12,7 @@ $config['LaserApp'] = array(
 	'user_secret_prompt' => 'Enter the secret password',
 	'user_secret_enabled' =>  true,
 	'power_scale' => 100,
+	'base_url' => 'http://localhost',
 );
 
 $config['Email'] = array(

@@ -32,7 +32,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 0);
+	Configure::write('debug', 2);
 	
 /**
  * Set Laser App default configuration values 
@@ -53,12 +53,13 @@
 /**
  * Application configuration values.  Shouldn't need to be modified by users.
  */
-	
 	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
-	
+	if (!defined('FULL_BASE_URL')) {
+		Configure::write('App.fullBaseUrl', Configure::read('LaserApp.base_url'));
+	}
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
-	
+	Configure::write('App.title', 'GCode Creator');
 	Configure::write('App.version', '1.1');
 	Configure::write('App.allowed_file_types', array('application/pdf'));
 	Configure::write('App.colors', array(
