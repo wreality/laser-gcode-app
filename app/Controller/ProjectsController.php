@@ -37,8 +37,7 @@ class ProjectsController extends AppController {
 		} else {
 			$paginate['conditions'] = array(
 				'OR' => array(
-					'user_id' => null,
-					'public' => true,
+					'public' => Project::PROJ_PUBLIC,
 				)
 			);
 		}

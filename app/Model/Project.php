@@ -6,7 +6,16 @@ App::uses('AppModel', 'Model');
  * @property Operation $Operation
  */
 class Project extends AppModel {
-
+	
+	const PROJ_PUBLIC = 1;
+	const PROJ_PRIVATE = 0;
+	const PROJ_UNDEFINED = 2;
+	
+	static $statuses = array(
+		Project::PROJ_PUBLIC => 'Public',
+		Project::PROJ_PRIVATE => 'Private',
+		Project::PROJ_UNDEFINED => 'Undefined',
+	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
