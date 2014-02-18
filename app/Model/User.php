@@ -28,7 +28,7 @@ class User extends AppModel {
 		),
 		'email' => array(
 			'account_exists' => array(
-				'rule' => array('validateEmailDoesntExist'),
+				'rule' => array('isUnique'),
 				'message' => 'This email address has already been registered.',
 				'last' => true,
 				'required' => true,
