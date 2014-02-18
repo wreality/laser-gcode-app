@@ -73,7 +73,7 @@ Cache::config('default', array('engine' => 'File'));
 CakePlugin::loadAll();
 CakePlugin::load('Cakestrap');
 CakePlugin::load('Emogrifier');
-if (class_exists('Redis')) {
+if (class_exists('Redis') && file_exists(APP.'Config'.DS.'resque-config.php')) {
 	CakePlugin::load(array( # or CakePlugin::loadAll(array(
     'CakeResque' => array('bootstrap' => array(
         'bootstrap_config',
