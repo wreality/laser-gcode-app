@@ -1,10 +1,16 @@
-App::uses('AppShell', 'Console');
-
-<?php
-class EmailSenderShell extends AppShell {
-	public $uses = array('User');
+<?php 
 	
-	public function sendValidationEmail() {
-		$this->User->sendValidationEmail($this->args[0], false);
+	App::uses('AppShell', 'Console/Command');
+
+class EmailSenderShell extends AppShell {
+	
+	
+	
+	public function send() {
+		$class = ClassRegistry::init($this->args[0]);
+		
+		$class->{'email'.$this->args[1]}($this->args[2]);
 	}
+	
+	
 }

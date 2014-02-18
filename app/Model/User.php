@@ -141,14 +141,63 @@ class User extends AppModel {
 		}
 	}
 	
+	public function createValidationKey () {
+		return sha1(mt_rand(10000,99999).time());
+	}
+	
 	public function beforeSave($options = array()) {
 		if (!$this->id) {
 			$passwordHasher = new SimplePasswordHasher();
 			$this->data[$this->alias]['password'] = $passwordHasher->hash(
 				$this->data[$this->alias]['password']
 			);
+			$this->data[$this->alias]['validate_key'] = $this->createValidationKey();
 		}
 		return true;
 	}
+
+	public function enqueueEmail($email, $user_id = null) {
+		if (empty($user_id)) {
+			$user_id = $this->id;
+		}
+		$email =  ucfirst($email);
+		if (method_exists('User', 'email'.$email)) {
+			if (class_exists('CakeResque')) {
+				CakeResque::enqueue('default', 'EmailSenderShell', array('send', 'User', $email, $user_id));
+			} else {
+				$this->{'email'.$email}($user_id);
+			}
+		} else {
+			throw new InternalErrorException(__('Unknown email method.'));
+		}
+	}
+	
+	public function emailValidation($user_id) {
+		App::uses('CakeEmail', 'Network/Email');
+
+		$this->recursive = -1;
+		$user = $this->findById($user_id);
+		if (!$user) {
+			throw new NotFoundException(__('User not found.'));
+		}
+		
+		$email = new CakeEmail();
+		try {
+			$email->config('default')
+				->template('verify_email')
+				->emailFormat('html')
+				->to($user['User']['email'])
+				->viewVars(array('user' => $user))
+				->send();
+		} catch (SocketException $e) {
+			if (class_exists(CakeResque)) {
+				$this->enqueueEmail('Validation', $user_id);
+			} else {
+				throw $e;
+			}
+		}
+	}
+	
+	
 
 }
