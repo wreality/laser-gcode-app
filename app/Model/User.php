@@ -1,4 +1,4 @@
-<?php
+ <?php
 App::uses('AppModel', 'Model');
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 /**
@@ -127,14 +127,18 @@ class User extends AppModel {
 		return true;
 	}
 
-	public function enqueueEmail($email, $user_id = null) {
+	public function enqueueEmail($email, $user_id = null, $delay = 0) {
 		if (empty($user_id)) {
 			$user_id = $this->id;
 		}
 		$email =  ucfirst($email);
 		if (method_exists('User', 'email'.$email)) {
 			if (class_exists('CakeResque')) {
-				CakeResque::enqueue('default', 'EmailSenderShell', array('send', 'User', $email, $user_id));
+				if ($delay) {
+					CakeResque::enqueueIn($delay, 'EmailSenderShell', array('send', 'User', $email, $user_id));
+				} else {
+					CakeResque::enqueue('default', 'EmailSenderShell', array('send', 'User', $email, $user_id));
+				}
 			} else {
 				$this->{'email'.$email}($user_id);
 			}
@@ -161,8 +165,8 @@ class User extends AppModel {
 				->viewVars(array('user' => $user))
 				->send();
 		} catch (SocketException $e) {
-			if (class_exists(CakeResque)) {
-				$this->enqueueEmail('Validation', $user_id);
+			if (class_exists('CakeResque')) {
+				$this->enqueueEmail('Validation', $user_id, 30);
 			} else {
 				throw $e;
 			}
