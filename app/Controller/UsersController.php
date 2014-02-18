@@ -55,7 +55,7 @@ class UsersController extends AppController {
 			$user['User']['active'] = true;
 			$user['User']['validate_key'] = null;
 			if ($this->User->save($user)) {
-				return $this->render('verify_succes');	
+				return $this->render('verify_success');	
 			} else {
 				var_dump($this->User->validationErrors);
 				return $this->render('verify_error');
