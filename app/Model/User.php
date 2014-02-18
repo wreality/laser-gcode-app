@@ -47,7 +47,7 @@ class User extends AppModel {
 			'notempty' => array(
 				'rule' => array('validatePasswordConfirm'),
 				'message' => 'Passwords do not match.',
-				'required' => true,
+				'required' => false,
 				'allowEmpty' => false,
 			),
 		),

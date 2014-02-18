@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class UsersController extends AppController {
 	
 	public function beforeFilter() {
-		$this->Auth->allow('register');
+		$this->Auth->allow('register', 'verify');
 		parent::beforeFilter();
 	
 	}
@@ -37,14 +37,66 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'));
-				$this->render('email_confirm');
+				$this->Session->setFlash(__('Account Created'), 'bs_success');
+				$this->User->enqueueEmail('Validation');
+				$this->render('register_confirm');
 			} else {
 				$this->Session->setFlash(__('Your account could not be created.  Please, try again.'), 'bs_error');
 			}
 		}
 	}
 
+	public function verify($validate_key) {
+		$user = $this->User->findByValidateKey($validate_key);
+		
+		if (!$user) {
+			return $this->render('verify_error');
+		} else {
+			$user['User']['active'] = true;
+			$user['User']['validate_key'] = null;
+			if ($this->User->save($user)) {
+				return $this->render('verify_succes');	
+			} else {
+				var_dump($this->User->validationErrors);
+				return $this->render('verify_error');
+			}
+		}
+	}
+	
+	public function lost_password() {
+		if ($this->request->is('post')) {
+			$user = $this->findByEmail($this->request->data['User']['email']);
+			if (empty($user)) {
+				$this->User->enqueueEmail('ResetNotFound');
+			} else {
+				$user['User']['validate_key'] = $this->User->createValidationKey();
+				if (!$this->User->save($user)) {
+					throw new InternalErrorException(__('Unable to save validation key.'));
+				}
+				$this->User->enqueueEmail('ResetPassword');
+			}
+			return $this->render('reset_sent');
+		}
+	}
+	
+	public function reset($validate_key) {
+		$user = $this->findByValidateKey($validate_key);
+		if (empty($user)) {
+			return $this->render('reset_invalid');
+		}
+		
+		if ($this->request->is('post')) {
+			$this->request->data['User']['validate_key'] = null;
+			if ($this->request->save($this->request->data)) {
+				return $this->render('reset_success');
+			} else {
+				$this->Session->setFlash(__('Ubable to save password.  Check below for errors.'), 'bs_error');
+			}
+		}
+		
+	}
+	
+	
 /**
  * edit method
  *
