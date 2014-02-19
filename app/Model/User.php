@@ -127,18 +127,14 @@ class User extends AppModel {
 		return true;
 	}
 
-	public function enqueueEmail($email, $user_id = null, $delay = 0) {
+	public function enqueueEmail($email, $user_id = null) {
 		if (empty($user_id)) {
 			$user_id = $this->id;
 		}
 		$email =  ucfirst($email);
 		if (method_exists('User', 'email'.$email)) {
 			if (class_exists('CakeResque')) {
-				if ($delay) {
-					CakeResque::enqueueIn($delay, 'EmailSenderShell', array('send', 'User', $email, $user_id));
-				} else {
 					CakeResque::enqueue('default', 'EmailSenderShell', array('send', 'User', $email, $user_id));
-				}
 			} else {
 				$this->{'email'.$email}($user_id);
 			}
@@ -157,20 +153,14 @@ class User extends AppModel {
 		}
 		
 		$email = new CakeEmail();
-		try {
-			$email->config('default')
-				->template('verify_email')
-				->emailFormat('html')
-				->to($user['User']['email'])
-				->viewVars(array('user' => $user))
-				->send();
-		} catch (SocketException $e) {
-			if (class_exists('CakeResque')) {
-				$this->enqueueEmail('Validation', $user_id, 30);
-			} else {
-				throw $e;
-			}
-		}
+		
+		$email->config('default')
+			->template('verify_email')
+			->emailFormat('html')
+			->to($user['User']['email'])
+			->viewVars(array('user' => $user))
+			->send();
+	
 	}
 	
 	
