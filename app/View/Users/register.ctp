@@ -17,6 +17,7 @@
 		<fieldset>
 			<legend class="sr-only"><?php echo __('Register User Account'); ?></legend>
 		<?php
+			echo $this->Form->input('username');
 			echo $this->Form->input('email');
 			echo $this->Form->input('password');
 			echo $this->Form->input('confirm_password', array('type' => 'password'));

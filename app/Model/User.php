@@ -26,6 +26,15 @@ class User extends AppModel {
 				'rule' => array('uuid'),
 			),
 		),
+		'username' => array(
+			'username_exists' => array(
+				'rule' => array('isUnique'),
+				'message' => 'This username is already taken.',
+				'allowEmpty' => false,
+				'required' => true,
+				'on' => 'create',
+			)
+		),
 		'email' => array(
 			'account_exists' => array(
 				'rule' => array('isUnique'),
