@@ -167,7 +167,8 @@ class User extends AppModel {
 			->template('verify_email')
 			->emailFormat('html')
 			->to($user['User']['email'])
-			->viewVars(array('user' => $user))
+			->subject(__('[%s] Verify Email Address', Configure::read('App.title')))
+			->viewVars(array('user' => $user, 'title_for_layout' => __('Verify Email Address')))
 			->send();
 	
 	}
