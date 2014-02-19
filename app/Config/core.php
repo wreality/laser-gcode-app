@@ -54,7 +54,9 @@
  * Application configuration values.  Shouldn't need to be modified by users.
  */
 	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
-	if (!defined('FULL_BASE_URL')) {
+	$base_url = Configure::read('LaserApp.base_url');
+	
+	if (!empty($base_url)) {
 		Configure::write('App.fullBaseUrl', Configure::read('LaserApp.base_url'));
 	}
 	
