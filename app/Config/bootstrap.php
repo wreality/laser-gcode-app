@@ -26,7 +26,7 @@
 
 CakePlugin::load('Cakestrap');
 CakePlugin::load('Emogrifier');
-if (Configure::read('CakeResque') !== false) {
+if (!is_null(Configure::read('CakeResque'))) {
 	CakePlugin::load(array(
 		'CakeResque' => array('bootstrap' => array(
 		'bootstrap'

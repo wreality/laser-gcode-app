@@ -237,18 +237,17 @@ Configure::write('Routing.prefixes', array('admin'));
 
 
 //If CakeResque is defined, use redis for caching as well..
-if (Configure::read('CakeResque') !== false) {
+if (!is_null(Configure::read('CakeResque'))) {
 	$engine = 'Redis';
 } else {
 	$engine = 'File';
 }
-
 Cache::config('default', array(
 	'engine' => $engine,
 	'duration' => 3600,
 	'prefix' => 'laser-gcode_cache_',
-	'server' => Configure::read('CakeResque.Redis.host'),
-	'port' => Configure::read('CakeResque.Redis.port'),
+//	'server' => Configure::read('CakeResque.Redis.host'),
+//	'port' => Configure::read('CakeResque.Redis.port'),
 ));
 
 // In development mode, caches should expire quickly.

@@ -85,7 +85,7 @@ $config['CakeResque'] = array(
 	
 	'Resque' => array(
 		'lib' => 'kamisama/php-resque-ex',
-		'tmpdir' => App::pluginPath('CakeResque') . 'tmp' . DS
+		'tmpdir' => TMP . DS
 	),
 	'Env' => array(),
 	'Log' => array(
