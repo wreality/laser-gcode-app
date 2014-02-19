@@ -36,6 +36,9 @@ class AppController extends Controller {
 	public $components = array(
 		'Auth' => array(
 			'fields' => array('email', 'password'),
+			'Form' => array(
+				'passwordHasher' => 'Blowfish'
+			)
 		),
 		'Cakestrap.Cakestrap','Session');
 	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time');
