@@ -56,7 +56,7 @@
 	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
 	$base_url = Configure::read('LaserApp.base_url');
 	
-	if (!empty($base_url)) {
+	if ((!empty($base_url)) && (!defined('FULL_BASE_URL'))) {
 		Configure::write('App.fullBaseUrl', Configure::read('LaserApp.base_url'));
 	}
 	

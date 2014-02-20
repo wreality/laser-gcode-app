@@ -9,17 +9,19 @@
     <?php if (Configure::read('debug') > 0) {?>
     	<?php echo $this->Html->less('/less/default.less');?>
     	<?php echo $this->Html->script('/vendor/less/less-1.6.3.min.js')?>
+    	<?php echo $this->Html->script('debug.js')?>
     <?php } else {?>
     	<?php echo $this->Html->css('/css/default.css');?>
-	    <?php echo $this->Html->script(array(
-	    	'/vendor/bootstrap-3.1.1/js/transition.js',
-	    	'/vendor/bootstrap-3.1.1/js/collapse.js',
-	    	'/vendor/bootstrap-3.1.1/js/dropdown.js',
-	    	'/vendor/bootstrap-3.1.1/js/modal.js',
-	    	'/vendor/bootstrap-3.1.1/js/alert.js',
-	    	'/vendor/bootstrap-3.1.1/js/tab.js',
-	    ));?>
-	<?php } ?>
+    <?php }?>
+    <?php echo $this->Html->script(array(
+    	'/vendor/bootstrap-3.1.1/js/transition.js',
+    	'/vendor/bootstrap-3.1.1/js/collapse.js',
+    	'/vendor/bootstrap-3.1.1/js/dropdown.js',
+    	'/vendor/bootstrap-3.1.1/js/modal.js',
+    	'/vendor/bootstrap-3.1.1/js/alert.js',
+    	'/vendor/bootstrap-3.1.1/js/tab.js',
+    ));?>
+
  
   </head>
   <body>
@@ -40,21 +42,27 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav navbar-right">
-      <li><a data-toggle="modal" href="#aboutModal">About</a>
-      <li class="dropdown">
+      <li><a data-toggle="modal" href="#aboutModal">About</a></li>
         <?php if (!empty($current_user)) {?>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">System Wide <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <?php if ($current_user['admin']) {?>
-	          <li><?php echo $this->Html->link(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?></li>
-          <?php } ?>
-          <li><?php echo $this->Html->link(__('Presets'), array('controller' => 'presets', 'action' => 'index'));?></li>
-          <li class="divider">&nbsp;</li>
-          <li><?php echo $this->Html->link(__('Utility GCode'), array('controller' => 'g_codes', 'action' => 'index'));?></li>
-         
-        </ul>
+			<?php if ($current_user['admin']) {?>
+		      <li class="dropdown">
+				<?php echo $this->Html->dropdownStart(__('System Wide'))?>
+					<?php echo $this->Html->dropdownItem(__('Manage Users'), array('controller' => 'users', 'action' => 'index', 'admin' => true))?>
+					<?php echo $this->Html->dropdownItem(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?>
+					<?php echo $this->Html->dropdownItem(__('Presets'), array('controller' => 'presets', 'action' => 'index'));?>
+					<?php echo $this->Html->dropdownDivider()?>
+					<?php echo $this->Html->dropdownItem(__('Utility GCode'), array('controller' => 'g_codes', 'action' => 'index'));?>
+				<?php echo $this->Html->dropdownEnd();?>
+			  </li>
+			<?php } ?>
+			<li class="dropdown">
+			<?php echo $this->Html->dropdownStart(__('%s (%s)', $current_user['username'], $current_user['email']))?>
+				<?php echo $this->Html->dropdownItem(__('Account Details'), array('controller' => 'users', 'action' => 'account', 'admin' => false))?>
+				<?php echo $this->Html->dropdownDivider()?>
+				<?php echo $this->Html->dropdownItem(__('Logout'), array('controller' => 'users', 'action' => 'logout', 'admin' => false))?>
+			<?php echo $this->Html->dropdownEnd()?>
+			</li>
         <?php } ?>
-      </li>
     </ul>
    
   </div><!-- /.navbar-collapse -->
@@ -64,12 +72,20 @@
   				<?php echo $this->Session->flash();?>
   			</div>
   			<div class="row">
-	  			<div class="col-md-3">
-		    		<?php echo $this->fetch('sidebar');?>
-		    	</div>
-		    	<div class="col-md-9">
-		    		<?php echo $this->fetch('content');?>
-		    	</div>
+  				<?php if ($this->fetch('sidebar')): ?>
+		  			<div class="sidebar">
+			    		<?php echo $this->fetch('sidebar');?>
+			    	</div>
+			    	<div class="main-pane">
+			    		<?php echo $this->fetch('content');?>
+			    	</div>
+			    <?php else: ?>
+			    	<div class="pad">&nbsp;</div>
+			    	<div class="full-pane">
+			    		<?php Echo $this->fetch('content');?>
+			    	</div>
+			    	<div class="oad">&nbsp;</div>
+			    <?php endif; ?>
 		    </div>
 	    </div>
 	     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -99,5 +115,6 @@
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<?php echo $this->element('sql_dump')?>
     </body>
 </html>

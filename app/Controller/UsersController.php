@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class UsersController extends AppController {
 	
 	public function beforeFilter() {
-		$this->Auth->allow('register', 'verify');
+		$this->Auth->allow('register', 'verify', 'lost_password', 'reset');
 		parent::beforeFilter();
 	
 	}
@@ -29,11 +29,13 @@ class UsersController extends AppController {
 	}
 
 /**
- * add method
+ * register method
  *
  * @return void
  */
 	public function register() {
+		$this->_throttleAction();
+		
 		if ($this->request->is('post')) {
 			$this->User->create();
 			if ($this->User->save($this->request->data)) {
@@ -47,7 +49,7 @@ class UsersController extends AppController {
 	}
 
 	public function verify($validate_key) {
-		$user = $this->User->findByValidateKey($validate_key);
+		$user = $this->User->findByValidateKey('v',$validate_key);
 		
 		if (!$user) {
 			return $this->render('verify_error');
@@ -64,12 +66,12 @@ class UsersController extends AppController {
 	}
 	
 	public function lost_password() {
+		
 		if ($this->request->is('post')) {
-			$user = $this->findByEmail($this->request->data['User']['email']);
-			if (empty($user)) {
-				$this->User->enqueueEmail('ResetNotFound');
-			} else {
-				$user['User']['validate_key'] = $this->User->createValidationKey();
+			$this->_throttleAction();
+			$user = $this->User->findByEmail($this->request->data['User']['email']);
+			if (!empty($user)) {
+				$user['User']['validate_key'] = $this->User->createValidationKey('r');
 				if (!$this->User->save($user)) {
 					throw new InternalErrorException(__('Unable to save validation key.'));
 				}
@@ -80,75 +82,111 @@ class UsersController extends AppController {
 	}
 	
 	public function reset($validate_key) {
-		$user = $this->findByValidateKey($validate_key);
+		$user = $this->User->findByValidateKey('r',$validate_key);
 		if (empty($user)) {
 			return $this->render('reset_invalid');
 		}
 		
 		if ($this->request->is('post')) {
+			$this->request->data['User']['id'] = $user['User']['id'];
 			$this->request->data['User']['validate_key'] = null;
-			if ($this->request->save($this->request->data)) {
+			if ($this->User->save($this->request->data, true, array('password', 'validate_key', 'confirm_password'))) {
 				return $this->render('reset_success');
 			} else {
+				var_dump($this->User->validationErrors, $this->request->data);
 				$this->Session->setFlash(__('Ubable to save password.  Check below for errors.'), 'bs_error');
 			}
 		}
 		
 	}
 	
-	
 /**
- * edit method
+ * accout  method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
-		if (!$this->User->exists($id)) {
-			throw new NotFoundException(__('Invalid user'));
-		}
+	public function account() {
+		$id = $this->Auth->user('id');
+		$this->User->id = $id;
+		$this->User->recursive = -1;
+		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
+			if (empty($this->request->data['User']['password'])) {
+				unset($this->request->data['User']['confirm_password']);
+				unset($this->request->data['User']['password']);
+			}
 			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$user = $this->User->read();
+				$this->Session->setFlash(__('Account changes saved'), 'bs_success');
 			} else {
-				$this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'bs_error');
+				$this->Session->setFlash(__('There was a problem saving your account.'), 'bs_error');
 			}
 		} else {
-			$options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
-			$this->request->data = $this->User->find('first', $options);
+			$this->request->data = $user;
 		}
+		$this->request->data['User']['password'] = '';
+		$this->request->data['User']['confirm_password'] = '';
+		$this->set(compact('user'));
 	}
-
-/**
- * delete method
- *
- * @throws NotFoundException
- * @throws MethodNotAllowedException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		$this->User->id = $id;
-		if (!$this->User->exists()) {
-			throw new NotFoundException(__('Invalid user'));
-		}
-		$this->request->onlyAllow('post', 'delete');
-		if ($this->User->delete()) {
-			$this->Session->setFlash(__('User deleted'));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->Session->setFlash(__('User was not deleted'));
-		$this->redirect(array('action' => 'index'));
-	}
-
 	
-	public function login() {
-		if ($this->request->is('POST')) {
-			$this->Auth->login($this->request->data);
+	public function update_email() {
+		
+		$id = $this->Auth->user('id');
+		$this->User->id = $id;
+		$this->User->recursive = -1;
+		$user = $this->User->read();
+		if ($this->request->is('post') || $this->request->is('put')) {
+			unset($this->request->data['User']['id']);
+			if ($this->request->data['User']['email'] == $user['User']['email']) {
+				$this->User->invalidate('email', __('New email matches current email.'));
+			} else {
+				$this->User->set($this->request->data);
+				if ($this->User->validates()) {
+					$this->_throttleAction();
+					$this->request->data['User']['validate_key'] = $this->User->createValidationKey('u');
+					$this->request->data['User']['validate_data'] = $this->request->data['User']['email'];
+					if ($this->User->save($this->request->data, false, array('validate_key', 'validate_data'))) {
+						$this->User->enqueueEmail('UpdateEmail', $id);
+						return $this->render('update_email_sent');
+					} else {
+						throw new InternalErrorException(__('Unable to update user record.'));
+					}
+				}
+			}
+			$this->Session->setFlash(__('Unable to update email.'), 'bs_error');
 		}
 	}
+	
+	public function update_email_verify($validate_key) {
+		$user = $this->User->findByValidateKey('u', $validate_key);
+		
+		if (empty($user)) {
+			return $this->render('reset_invalid');
+		}
+		
+		$user['User']['email'] = $user['User']['validate_data'];
+		$user['User']['validate_data'] = null;
+		$user['User']['validate_key'] = null;
+		
+		if ($this->User->save($user, true, array('email', 'validate_data', 'validate_key'))) {
+			return $this->render('verify_success');
+		} else {
+			throw new InternalErrorException(__('Unable to update email'));
+		}
+	}
+
+	public function login() {
+		if ($this->request->is('post')) {
+			if ($this->Auth->login()) {
+				return $this->redirect($this->Auth->redirectUrl());
+			} else {
+				$this->Session->setFlash(__('Username or password is incorrect'),'bs_error');
+			}
+		}
+	}	
+	
 /**
  * admin_index method
  *
@@ -240,4 +278,6 @@ class UsersController extends AppController {
 	public function logout() {
 		$this->redirect($this->Auth->logout());
 	}
+
+	
 }

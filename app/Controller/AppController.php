@@ -35,10 +35,12 @@ class AppController extends Controller {
 	
 	public $components = array(
 		'Auth' => array(
-			'fields' => array('email', 'password'),
-			'Form' => array(
-				'passwordHasher' => 'Blowfish'
-			)
+			'authenticate' => array(
+				'Form' => array(
+					'passwordHasher' => 'Blowfish',
+					'fields' => array('username' => 'email', 'password' => 'password'),
+				),
+			),
 		),
 		'Cakestrap.Cakestrap','Session');
 	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time');
@@ -53,5 +55,21 @@ class AppController extends Controller {
 			'pattern' => '/^(192\.168\.0\.|192\.168\.1\.|127\.0\.0\.1|::1)/',
 		));
 		parent::beforeFilter();
+	}
+
+	protected function _throttleAction() {
+		$cache_key = 'email_sending_'.$this->request->clientIp();
+	
+		$count = Cache::read($cache_key);
+	
+		if ($count === false) {
+			$count = 1;
+		} else {
+			$count++;
+		}
+		Cache::write($cache_key, $count);
+		if ($count >= 140) {
+			throw new BadRequestException(__('To prevent abuse this request has been throttled.  Try again later.'));
+		}
 	}
 }

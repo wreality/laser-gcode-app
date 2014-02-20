@@ -1,6 +1,6 @@
  <?php
 App::uses('AppModel', 'Model');
-App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
+App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 /**
  * User Model
  *
@@ -33,7 +33,14 @@ class User extends AppModel {
 				'allowEmpty' => false,
 				'required' => true,
 				'on' => 'create',
-			)
+			),
+			'username_exists2' => array(
+				'rule' => array('isUnique'),
+				'message' => 'This username is already taken.',
+				'allowEmpty' => false,
+				'required' => false,
+				'on' => 'update'
+			),
 		),
 		'email' => array(
 			'account_exists' => array(
@@ -42,6 +49,14 @@ class User extends AppModel {
 				'last' => true,
 				'required' => true,
 				'allowEmpty' => false,
+				'on' => 'create',
+			),
+			'account_exists2' => array(
+				'rule' => array('isUnique'),
+				'message' => 'This email address has already been registered.',
+				'required' => false,
+				'allowEmpty' => false,
+				'on' => 'update'
 			),
 			'email' => array(
 				'rule' => array('email'),
@@ -121,19 +136,38 @@ class User extends AppModel {
 		}
 	}
 	
-	public function createValidationKey () {
-		return sha1(mt_rand(10000,99999).time());
+	public function createValidationKey ($type) {
+		return $type.':'.sha1(mt_rand(10000,99999).time());
 	}
 	
 	public function beforeSave($options = array()) {
-		if (!$this->id) {
+		if (isset($this->data[$this->alias]['confirm_password'])) {
 			$passwordHasher = new BlowfishPasswordHasher();
 			$this->data[$this->alias]['password'] = $passwordHasher->hash(
 				$this->data[$this->alias]['password']
 			);
-			$this->data[$this->alias]['validate_key'] = $this->createValidationKey();
+		}
+		if (!$this->id) {
+			$this->data[$this->alias]['validate_key'] = $this->createValidationKey('v');
 		}
 		return true;
+	}
+	
+	public function findByValidateKey($type, $key) {
+		$user = parent::findByValidateKey($type.':'.$key);
+		if (!empty($user)) {
+			$user['User']['validate_key'] = substr($user['User']['validate_key'], 2, strlen($user['User']['validate_key'] - 2));
+		}
+		return $user;
+	}
+	
+	public function findForEmail($id) {
+		$user = $this->findById($id);
+		
+		if (!empty($user)) {
+			$user['User']['validate_key'] = substr($user['User']['validate_key'], 2, strlen($user['User']['validate_key']) - 2);
+		}
+		return $user;
 	}
 
 	public function enqueueEmail($email, $user_id = null) {
@@ -156,7 +190,7 @@ class User extends AppModel {
 		App::uses('CakeEmail', 'Network/Email');
 
 		$this->recursive = -1;
-		$user = $this->findById($user_id);
+		$user = $this->findForEmail($user_id);
 		if (!$user) {
 			throw new NotFoundException(__('User not found.'));
 		}
@@ -171,6 +205,46 @@ class User extends AppModel {
 			->viewVars(array('user' => $user, 'title_for_layout' => __('Verify Email Address')))
 			->send();
 	
+	}
+	
+	public function emailResetPassword($user_id) {
+		App::uses('CakeEmail', 'Network/Email');
+	
+		$this->recursive = -1;
+		$user = $this->findForEmail($user_id);
+		if (!$user) {
+			throw new NotFoundException(__('User not found.'));
+		}
+	
+		$email = new CakeEmail();
+	
+		$email->config('default')
+			->template('reset_password')
+			->emailFormat('html')
+			->to($user['User']['email'])
+			->subject(__('[%s] Reset Password', Configure::read('App.title')))
+			->viewVars(array('user' => $user, 'title_for_layout' => __('Reset Password')))
+			->send();
+	
+	}
+	
+	public function emailUpdateEmail($user_id) {
+		App::uses('CakeEmail', 'Network/Email');
+		
+		$this->recursive = -1;
+		$user = $this->findForEmail($user_id);
+		if (!$user) {
+			throw new NotFoundException(__('User not found'));
+		}
+		
+		$email = new CakeEmail();
+		$email->config('default')
+			->template('update_email')
+			->emailFormat('html')
+			->to($user['User']['validate_data'])
+			->subject(__('[%s] Verify New Email', Configure::read('App.title')))
+			->viewVars(array('user' => $user, 'title_for_layout' => ('Verify New Email')))
+			->send();
 	}
 	
 	

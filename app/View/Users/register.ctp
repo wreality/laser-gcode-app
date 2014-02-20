@@ -1,7 +1,8 @@
 <?php $this->set('title_for_layout', __('Register User Account'))?>
 
-<div class="register">
-	<div class="bg-info">
+<div class="users">
+	<div class=" form">
+	
 		<h3>Create Account</h3>
 		<p>Account creation is limited to Lansing Makers Network members (or those 
 		   with the appropriate secret key).  </p>
@@ -10,9 +11,8 @@
 		   service the maker community as a whole.
 		</p>
 			
-	</div>
 	
-	<div class="users form">
+	
 	<?php echo $this->Form->create('User', array('class' => 'form-horizontal')) ?>
 		<fieldset>
 			<legend class="sr-only"><?php echo __('Register User Account'); ?></legend>

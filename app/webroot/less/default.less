@@ -1,11 +1,27 @@
 @import "../vendor/bootstrap-3.1.1/less/bootstrap.less";
-
+.container .row {
+	> .sidebar {
+		.make-md-column(3);
+	}
+	> .main-pane {
+		.make-md-column(9);
+	}
+	> .full-pane {
+		.make-md-column(10);
+	}
+	> .pad {
+		.make-md-column(1);
+	}
+}
 .aside {
 	color: @gray;
 	font-size: 0.9em;
 	padding: 8px;
 }
-
+.short-login {
+	.well;
+	
+}
 a.register {
 	padding-top: 8px;
 	display: block;
@@ -29,28 +45,81 @@ a.register {
 	}
 }
 
-.register {
-	.bg-info, .bg-warning, .bs-success {
-		padding: 15px;
+.users.admin.search {
+	.well;
+}
+
+.users {
+	
+	.header {
+		.row();
+		h3 {
+			.make-md-column(9);	
+		}
+		.avatar {
+			.make-md-column(3);
+			img,p {
+			.center-block();
+				display: block;
+			} 
+			p {
+				text-align:center;
+				font-size: 80%;
+			}
+		}
+	}
+	h3 {
+		margin-top: 5px;
+	}
+	.confirm-email,
+	.login,
+	.reset-sent,
+	> .error,
+	.success,
+	.form {
+		.well;
+		.make-md-column(9);
+		.center-block();
+		float:none !important;
+		.bg-info;
+	}
+	.reset-sent {
+		.bg-warning;
+	}
+	.success {
+		.bg-success;
+	}
+	.error {
+		.bg-danger;
 	}
 	.form {
-		margin-top: 20px;
+		form {
+			.form-horizontal;
+		}
+		.submit {
+			.clearfix();
+			.pull-right();
+		}
+		.form-group.error {
+			.bg-danger;
+		}
 		.form-group {
+			 padding-top: 10px;
 			 input[type="text"],
 			 input[type="password"],
 			 input[type="email"] {
-			 	.make-md-column(4);
+			 	.make-md-column(6);
 			 }
 			 label {
-			 	.make-md-column(3);
+			 	.make-md-column(5);
+			 	height: 40px;
 			 }
 			 .help-block {
-			 	.make-md-column(4);}
+			 	float:none;
+			 	.clearfix();
+			 	.make-md-column(6);
+			 }
 		}
-		 input[type="submit"] {
-		 	.btn;
-		 	.btn-primary;
-		 }
 	}
 }
 
@@ -61,4 +130,9 @@ a.register {
 
 .error {
 	.has-error;
+}
+
+input[type="submit"] {
+	.btn;
+	.btn-primary;
 }

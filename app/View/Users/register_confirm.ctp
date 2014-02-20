@@ -1,7 +1,7 @@
 <?php $this->set('title_for_layout', __('Email Verification'))?>
 
-<div class="register">
-	<div class="bg-info">
+<div class="users">
+	<div class="confirm-email">
 		<h3>Email Verification</h3>
 		<p>Your account has been successfully created, but before you can login
 		   you'll need to verify your email address. </p>

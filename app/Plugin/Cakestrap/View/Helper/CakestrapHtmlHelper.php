@@ -302,6 +302,52 @@ class CakestrapHtmlHelper extends HtmlHelper {
 		}
 	}
 	
+	public function dropdownStart($text) {
+		return $this->link(__('%s <b class="caret"></b>', $text), '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)).'<ul class="dropdown-menu">';
+	}
+	
+	public function dropdownItem($text, $link, $options = array()) {
+		return '<li>'.$this->link($text, $link, $options).'</li>';
+	}
+	
+	public function dropdownDivider() {
+		return '<li class="divider">&nbsp;</li>';
+	}
+	
+	public function dropdownEnd() {
+		return '</ul>';
+	}
+	
+	public function gravatar($email, $options = array(), $img_options = array()) {
+		$gravatar_url = 'www.gravatar.com';
+		$options = array_merge(array(
+			'default' => 'retro',
+			'size' => null,
+			'rating' => null,
+			'secure' => false,
+		), $options);
+		$hash = md5(strtolower(trim($email)));
+		if ($options['secure']) {
+			$server = 'https://'.$gravatar_url;
+		} else {
+			$server = 'http://'.$gravatar_url;
+		}
+		$opt_array = array();
+		if (!is_null($options['default'])) {
+			$opt_array[] = ('d='.urlencode($options['default']));
+		}
+		if (!is_null($options['size'])) {
+			$opt_array[] = ('s='.$options['size']);
+		}
+		if (!is_null($options['rating'])) {
+			$opt_array[] = ('r='.$options['rating']);
+		}
+		$html_options = implode('&', $opt_array);
+		
+		return $this->image($server.'/avatar/'.$hash.(empty($html_options)?'':('?'.$html_options)), $img_options);
+		
+	}
+	
 	/**
 	 * tabs method
 	 * 

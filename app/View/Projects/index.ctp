@@ -1,21 +1,18 @@
 <?php $this->append('sidebar');?>
 	<?php $current_user = AuthComponent::user(); ?>
 	<?php if (empty($current_user)) {?>
-		<div class="well">
+		<div class="short-login">
 			<h4>Login</h4>
 			
 			<?php echo $this->Form->create('User', array('url' => array('controller' => 'users', 'action' => 'login', 'admin' => false)))?>
 				<?php echo $this->Form->input('email')?>
 				<?php echo $this->Form->input('password');?>
-				<?php echo $this->Form->submit(__('Login'), array('class' => 'btn btn-primary'))?>
+				<?php echo $this->Form->submit(__('Login'))?>
 			<?php echo $this->Form->end();?>
 			<?php echo $this->Html->link(__('Create an account'), array('controller' => 'users', 'action' => 'register'), array('class' => 'register'))?>
-		<p class="aside">
-			(You'll need to know the Lansing Makers Network wifi password to 
-			 create an account)
-		</p>
+			<?php echo $this->Html->link(__('Forgot Password?'), array('controller' => 'users', 'action' => 'lost_password'), array('class' => 'register'))?>
 		</div>
-		
+	<?php }  else {?>
 	<?php } ?>
 <?php $this->end();?>
 <h3><?php echo __('Public Projects')?></h3>
