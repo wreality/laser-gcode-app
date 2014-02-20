@@ -91,6 +91,7 @@ class LaserSchema extends CakeSchema {
 		'admin' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'active' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'validate_key' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'validate_data' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 90, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
