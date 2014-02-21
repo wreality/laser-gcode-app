@@ -1,6 +1,14 @@
 
 <?php $colors = Configure::read('App.colors');?>
 <div class="projects form">
+	<?php if (!$project['Project']['user_id']): ?>
+		<div class="anon-notice">
+				<h4>Anonymous Project</h4>
+			<p>Anonymous project's aren't listed on the main page.  The only way
+			   to find this project later is to bookmark the page!
+			</p> 
+		</div>
+	<?php endif;?>
 		<?php if (empty($project['Operation'])) { ?>
 			<p>No operations exist yet.</p>
 		<?php } else {?>

@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class ProjectsController extends AppController {
 
 	public function beforeFilter() {
-		$this->Auth->allow('index');
+		$this->Auth->allow('index', 'add', 'view');
 		
 		parent::beforeFilter();
 	}
@@ -25,23 +25,14 @@ class ProjectsController extends AppController {
  *
  * @return void
  */
-	public function index($public = true) {
+	public function index() {
 		$this->Project->recursive = 1;
-		$paginate =  array(
-			'order' => array('Project.created' => 'DESC')
+		$this->paginate = array(
+			'order' => array('Project.modified' => 'DESC'),
+			'conditions' => array(
+				'public' => Project::PROJ_PUBLIC
+			)
 		);
-		if ((!$public) && $this->Auth->user('id')) {
-			$paginate['conditions'] = array(
-				'Project.user_id' => $this->Auth->user('id'),
-			);
-		} else {
-			$paginate['conditions'] = array(
-				'OR' => array(
-					'public' => Project::PROJ_PUBLIC,
-				)
-			);
-		}
-		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 		
 	}
@@ -102,12 +93,11 @@ class ProjectsController extends AppController {
 					}
 					$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
 				}
-					$project['Project'] = $this->request->data['Project'];
+				
 			} else {
 				$this->Session->setFlash(__('There was an error saving this project.'), 'bs_error');
 			}
 		} else {
-			$project = $this->Project->find('first', $options);
 			$this->request->data = $project;
 		}
 		$this->loadModel('Preset');
@@ -121,8 +111,13 @@ class ProjectsController extends AppController {
  * @return void
  */
 	public function add() {
+		$this->request->onlyAllow('post', 'put');
 		$this->Project->create();
-		$this->request->data = array('Project' => array('project_name' => ''));
+		if ($this->Auth->user('id')) {
+			$this->request->data['Project']['user_id'] = $this->Auth->user('id');
+		}
+		$this->request->data['Project']['project_name'] = '';
+		$this->request->data['Project']['public'] = Project::PROJ_PRIVATE;
 		if ($this->Project->save($this->request->data)) {
 			$this->redirect(array('action' => 'view', $this->Project->id));
 		} else {
@@ -175,4 +170,9 @@ class ProjectsController extends AppController {
 		$this->Session->setFlash(__('Project was not deleted'));
 		$this->redirect($this->referer());
 	}
+
+	public function admin_index() {
+		$this->set('projects', $this->paginate());
+	}
+
 }

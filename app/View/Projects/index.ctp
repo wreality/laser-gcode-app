@@ -1,4 +1,5 @@
 <?php $this->append('sidebar');?>
+	<?php echo $this->Form->postButton(__('Create new Project'), array('action' => 'add'), array('class' => 'create-proj'))?>
 	<?php $current_user = AuthComponent::user(); ?>
 	<?php if (empty($current_user)) {?>
 		<div class="short-login">
@@ -16,8 +17,11 @@
 	<?php } ?>
 <?php $this->end();?>
 <h3><?php echo __('Public Projects')?></h3>
-<?php if (!empty($projects)) {?>
-	
+<?php if (empty($projects)):  ?>
+	<div class="no-projects">
+		<p>No projects found.</p>
+	</div>
+<?php else: ?>	
 	<ul class="nav nav-tabs">
 	  <li class="active"><a href="#tiles" data-toggle="tab">Tile View</a></li>
 	  <li><a href="#table" data-toggle="tab">Table View</a></li>
@@ -78,8 +82,4 @@
 		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
-<?php } else { ?>
-	<div class="no-projects">
-		<p>No projects found.</p>
-	</div>
-<?php } ?>
+<?php endif; // empty(projects)?>
