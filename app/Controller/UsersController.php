@@ -73,7 +73,6 @@ class UsersController extends AppController {
 			if (!empty($user)) {
 				$user['User']['validate_key'] = $this->User->createValidationKey('r');
 				if (!$this->User->save($user, false, array('validate_key'))) {
-					var_dump($this->User->validationErrors);
 					throw new InternalErrorException(__('Unable to save validation key.'));
 				}
 				$this->User->enqueueEmail('ResetPassword');
