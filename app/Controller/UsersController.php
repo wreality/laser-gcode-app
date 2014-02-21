@@ -72,7 +72,8 @@ class UsersController extends AppController {
 			$user = $this->User->findByEmail($this->request->data['User']['email']);
 			if (!empty($user)) {
 				$user['User']['validate_key'] = $this->User->createValidationKey('r');
-				if (!$this->User->save($user)) {
+				if (!$this->User->save($user, false, array('validate_key'))) {
+					var_dump($this->User->validationErrors);
 					throw new InternalErrorException(__('Unable to save validation key.'));
 				}
 				$this->User->enqueueEmail('ResetPassword');
@@ -90,10 +91,10 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			$this->request->data['User']['id'] = $user['User']['id'];
 			$this->request->data['User']['validate_key'] = null;
-			if ($this->User->save($this->request->data, true, array('password', 'validate_key', 'confirm_password'))) {
+			$this->request->data['User']['active'] = true;
+			if ($this->User->save($this->request->data, true, array('password', 'validate_key', 'confirm_password', 'active'))) {
 				return $this->render('reset_success');
 			} else {
-				var_dump($this->User->validationErrors, $this->request->data);
 				$this->Session->setFlash(__('Ubable to save password.  Check below for errors.'), 'bs_error');
 			}
 		}
@@ -194,40 +195,29 @@ class UsersController extends AppController {
  */
 	public function admin_index() {
 		$this->User->recursive = 0;
+		
+		if ($this->request->is('post')) {
+			$paginate = array();
+			if (!empty($this->request->data['User']['username'])) {
+				$paginate['conditions']['User.username LIKE'] = '%'.$this->request->data['User']['username'].'%';
+			}
+			if (!empty($this->request->data['User']['email'])) {
+				$paginate['conditions']['User.email LIKE'] = '%'.$this->request->data['User']['email'].'%';
+			}
+			$this->Session->write('user_search', $paginate);
+			$this->Session->write('user_search_data', $this->request->data);
+		} else {
+			$paginate = $this->Session->read('user_search');
+			$this->request->data = $this->Session->read('user_search_data');
+		}
+		if (!empty($paginate)) {
+			$this->paginate = $paginate;
+		} else {
+			$this->request->data = array();
+		}
 		$this->set('users', $this->paginate());
 	}
 
-/**
- * admin_view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function admin_view($id = null) {
-		if (!$this->User->exists($id)) {
-			throw new NotFoundException(__('Invalid user'));
-		}
-		$options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
-		$this->set('user', $this->User->find('first', $options));
-	}
-
-/**
- * admin_add method
- *
- * @return void
- */
-	public function admin_add() {
-		if ($this->request->is('post')) {
-			$this->User->create();
-			if ($this->User->save($this->request->data)) {
-				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
-			}
-		}
-	}
 
 /**
  * admin_edit method
@@ -240,17 +230,20 @@ class UsersController extends AppController {
 		if (!$this->User->exists($id)) {
 			throw new NotFoundException(__('Invalid user'));
 		}
+		$this->User->recursive = -1;
+		$this->User->id = $id;
+		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->User->save($this->request->data)) {
+			if ($this->User->save($this->request->data, true, array('email', 'username', 'admin'))) {
 				$this->Session->setFlash(__('The user has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$user = $this->User->read();
 			} else {
 				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
 			}
 		} else {
-			$options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
-			$this->request->data = $this->User->find('first', $options);
+			$this->request->data = $user;
 		}
+		$this->set(compact('user'));
 	}
 
 /**
@@ -273,6 +266,25 @@ class UsersController extends AppController {
 		}
 		$this->Session->setFlash(__('User was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+	
+	public function admin_invalidate_password($id = null ) {
+		$this->User->id = $id;
+		$this->User->recursive = -1;
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user'));
+		}
+		$this->request->onlyAllow('post', 'put');
+		$user = $this->User->read();
+		$user['User']['validate_key'] = $this->User->createValidationKey('r');
+		$user['User']['active'] = false;
+		if ($this->User->save($user, true, array('validate_key', 'active'))) {
+			$this->Session->setFlash(__('Password Invalidated'), 'bs_success');
+			$this->User->enqueueEmail('InvalidatePassword');
+		} else {
+			$this->Session->setFLash(__('Error invalidating password'));
+		}
+		return $this->redirect($this->referer());
 	}
 	
 	public function logout() {

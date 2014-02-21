@@ -1,5 +1,5 @@
 <?php $this->set('title_for_layout', __('Register User Account'))?>
-
+<?php $this->extend('/Common/narrow')?>
 <div class="users">
 	<div class=" form">
 	

@@ -1,3 +1,4 @@
+<?php $this->extend('/Common/narrow')?>
 <div class="users">
 	<div class="login form">
 		<?php echo $this->Form->create('User'); ?>

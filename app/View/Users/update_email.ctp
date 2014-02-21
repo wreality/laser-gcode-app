@@ -1,5 +1,5 @@
 <?php $this->set('title_for_layout', __('Updaet Email Address'))?>
-
+<?php $this->extend('/Common/narrow')?>
 <div class="users">
 	<div class="form">
 	<?php echo $this->Form->create('User') ?>

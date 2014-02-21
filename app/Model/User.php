@@ -13,7 +13,7 @@ class User extends AppModel {
  *
  * @var string
  */
-	public $displayField = 'email';
+	public $displayField = 'username';
 
 /**
  * Validation rules
@@ -83,7 +83,9 @@ class User extends AppModel {
 		
 	);
 
-
+	public $order = 'User.username';
+	
+	
 /**
  * hasMany associations
  *
@@ -247,6 +249,25 @@ class User extends AppModel {
 			->send();
 	}
 	
+	public function emailInvalidatePassword($user_id) {
+		App::uses('CakeEmail', 'Network/Email');
 	
+		$this->recursive = -1;
+		$user = $this->findForEmail($user_id);
+		if (!$user) {
+			throw new NotFoundException(__('User not found.'));
+		}
+	
+		$email = new CakeEmail();
+	
+		$email->config('default')
+		->template('invalidate_password')
+		->emailFormat('html')
+		->to($user['User']['email'])
+		->subject(__('[%s] Reset Password', Configure::read('App.title')))
+		->viewVars(array('user' => $user, 'title_for_layout' => __('Reset Password')))
+		->send();
+	
+	}
 
 }

@@ -101,6 +101,8 @@ class CakestrapHtmlHelper extends HtmlHelper {
 		if (array_key_exists('type', $options)) {
 			$options['class'] = $options['class'] .' '. $options['type'];
 			unset($options['type']);
+		} else {
+			$options['class'] = $options['class'] .' btn-default';
 		}
 		if (array_key_exists('icon', $options)) {
 			$options['escape'] = false;

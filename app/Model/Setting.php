@@ -74,7 +74,7 @@ class Setting extends AppModel {
 			'help_text' => 'This text will be presented to the user to prompt for the secret key.',
 		), array(
 			'key' => 'LaserApp.user_secret_enabled',
-			'type' => 'boolean',
+			'type' => 'bool',
 			'title' => 'Secret Key Enabled',
 			'help_text' => 'Set to Yes to require users to enter the secret key when creating an account.'
 		),

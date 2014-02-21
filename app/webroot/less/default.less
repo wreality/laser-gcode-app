@@ -1,18 +1,31 @@
 @import "../vendor/bootstrap-3.1.1/less/bootstrap.less";
-.container .row {
-	> .sidebar {
-		.make-md-column(3);
-	}
+.container { 
 	> .main-pane {
-		.make-md-column(9);
+		> .sidebar {
+			.make-md-column(3);
+		}
+		> .content {
+			.make-md-column(9);
+		}
 	}
 	> .full-pane {
-		.make-md-column(10);
+		> .pad {
+			.make-md-column(1);
+		}
+		> .content {
+			.make-md-column(10);
+		}
 	}
-	> .pad {
-		.make-md-column(1);
+	> .narrow-pane {
+		> .pad {
+			.make-md-column(2);
+		}
+		> .content {
+			.make-md-column(8);
+		}
 	}
 }
+
 .aside {
 	color: @gray;
 	font-size: 0.9em;
@@ -44,9 +57,21 @@ a.register {
 		max-width: 150px;
 	}
 }
-
+.users.admin {
+	.actions {
+		a.btn {
+			.btn-block;
+			margin-bottom: 5px;
+		}
+	}
+}
 .users.admin.search {
 	.well;
+	a.btn {
+		.btn-xs;
+		margin-top: 6px;
+		
+	}
 }
 
 .users {
@@ -71,17 +96,10 @@ a.register {
 	h3 {
 		margin-top: 5px;
 	}
-	.confirm-email,
-	.login,
-	.reset-sent,
-	> .error,
-	.success,
-	.form {
+	.confirm-email, .login, .reset-sent,> .error, .success, .form {
 		.well;
-		.make-md-column(9);
-		.center-block();
-		float:none !important;
 		.bg-info;
+		.make-md-column(12);
 	}
 	.reset-sent {
 		.bg-warning;
@@ -97,7 +115,6 @@ a.register {
 			.form-horizontal;
 		}
 		.submit {
-			.clearfix();
 			.pull-right();
 		}
 		.form-group.error {
@@ -107,7 +124,8 @@ a.register {
 			 padding-top: 10px;
 			 input[type="text"],
 			 input[type="password"],
-			 input[type="email"] {
+			 input[type="email"],
+			 select {
 			 	.make-md-column(6);
 			 }
 			 label {
@@ -135,4 +153,18 @@ a.register {
 input[type="submit"] {
 	.btn;
 	.btn-primary;
+}
+table.cake-sql-log {
+	.table;
+	.table-striped;
+}
+
+.highlight {
+	.bg-warning;
+}
+
+.table.table-striped tr:hover {
+	td {
+		.bg-info;
+	}
 }

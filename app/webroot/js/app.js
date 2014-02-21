@@ -15,4 +15,16 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('.table.table-striped tr').click(function(e) {
+		if ($(e.target).prop('tagName') != 'A') {
+			$click = $(this).find('.actions a.default-action').first();
+			
+			if (!$click.length) {
+				$click = $(this).find('.actions a').first();
+			}
+			window.location = $click.attr('href');
+			
+		}
+	});
+	
 });

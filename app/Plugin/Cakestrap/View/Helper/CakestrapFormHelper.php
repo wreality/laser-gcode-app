@@ -169,6 +169,8 @@ class CakestrapFormHelper extends FormHelper {
 		if (array_key_exists('type', $options)) {
 			$options['class'] = $options['class'] .' '. $options['type'];
 			unset($options['type']);
+		} else {
+			$options['class'] .= ' btn-default';
 		}
 	
 		return $this->postLink($title, $url, $options, $confirmMessage);

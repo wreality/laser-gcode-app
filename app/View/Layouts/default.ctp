@@ -70,18 +70,35 @@
   		<div class="container">
   			<div class="row">
   				<?php echo $this->Session->flash();?>
+  				<?php echo $this->fetch('top_content')?>
   			</div>
-  			<div class="row">
-  				<?php if ($this->fetch('sidebar')): ?>
+  			<?php 
+  				if ($this->fetch('sidebar')) {
+					$class = 'main-pane';
+				}
+				elseif ($this->fetch('narrow')) {
+					$class = 'narrow-pane';
+				} else {
+					$class = 'full-pane';
+				}  			
+  			?>
+  			<div class="row <?php echo $class?>">
+  			
+  				<?php if ($class == 'main-pane'): ?>
 		  			<div class="sidebar">
 			    		<?php echo $this->fetch('sidebar');?>
 			    	</div>
-			    	<div class="main-pane">
+			    	<div class="content">
 			    		<?php echo $this->fetch('content');?>
+			    	</div>
+			    <?php elseif ($class == 'narrow-pane'):?>
+			    	<div class="pad">&nbsp;</div>
+			    	<div class="content">
+			    		<?php echo$this->fetch('narrow');?>
 			    	</div>
 			    <?php else: ?>
 			    	<div class="pad">&nbsp;</div>
-			    	<div class="full-pane">
+			    	<div class="content">
 			    		<?php Echo $this->fetch('content');?>
 			    	</div>
 			    	<div class="oad">&nbsp;</div>

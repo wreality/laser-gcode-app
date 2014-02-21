@@ -1,5 +1,5 @@
+<?php $this->extend('/Common/narrow')?>
 <?php $this->set('title_for_layout', __('Reset Password'))?>
-
 <div class="users">
 	<div class="form">
 	<?php echo $this->Form->create('User') ?>
