@@ -24,11 +24,13 @@
 
 <div class="users admin">
 	<h2><?php echo __('User Management'); ?></h2>
-	<table class="table table-striped">
+	<table>
 	<tr>
 			<th>&nbsp;</th>
 			<th><?php echo $this->Paginator->sort('username')?>
 			<th><?php echo $this->Paginator->sort('email'); ?></th>
+			<th><?php echo $this->Paginator->sort('created', __('Member Since'))?>
+			<th><?php echo $this->Paginator->sort('last_login', __('Last Login'));?>
 			<th class="actions">&nbsp;</th>
 	</tr>
 	<?php foreach ($users as $user): ?>
@@ -65,7 +67,8 @@
 				<?php echo h($user['User']['email']); ?>&nbsp;
 			<?php } ?>
 		</td>
-
+		<td><?php echo $this->Time->format('M jS, Y', $user['User']['created'])?></td>
+		<td><?php echo $this->Time->format('M-d-Y g:ia', $user['User']['last_login'])?></td>
 		<td class="actions">
 			<?php echo $this->Html->button(__('Edit'), array('action' => 'edit', $user['User']['id']), array('size' => 'btn-xs')); ?>
 		</td>

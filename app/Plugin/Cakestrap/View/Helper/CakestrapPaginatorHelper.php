@@ -175,5 +175,17 @@ class CakestrapPaginatorHelper extends PaginatorHelper {
 		return $out;
 	}
 		
-
+	public function sort($key, $title = null, $options = array()) {
+		if (empty($title)) {
+			$title = Inflector::humanize($key);
+		}
+		$title = $title . ' <span></span>';
+		
+		$options = array_merge(
+				array('escape' => false),
+				$options
+		);
+		return parent::sort($key, $title, $options);
+	}
+	
 }

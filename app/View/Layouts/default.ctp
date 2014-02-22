@@ -13,6 +13,8 @@
     <?php } else {?>
     	<?php echo $this->Html->css('/css/default.css');?>
     <?php }?>
+    
+    <?php echo $this->Html->css('/css/fonts.css');?>
     <?php echo $this->Html->script(array(
     	'/vendor/bootstrap-3.1.1/js/transition.js',
     	'/vendor/bootstrap-3.1.1/js/collapse.js',
@@ -41,6 +43,13 @@
 <?php $current_user = AuthComponent::user(); $this->set('current_user', $current_user); ?>
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
+  	<ul class="nav navbar-nav">
+  		<?php if (!empty($current_user)) {?>
+  			<li><?php echo $this->Html->link(__('My Projects'), array('controller' => 'projects', 'action' => 'home', 'admin' => false));?></li>
+  			<li><?php echo $this->Html->link(__('Claim Projects'), array('controller' => 'projects', 'action' => 'claim', 'admin' => false));?></li>
+  		<?php }?>
+  		<li><?php echo $this->Html->link(__('Browse Public Projects'), array('controller' => 'projects', 'action' => 'index', 'admin' => false));?></li>
+  	</ul>
     <ul class="nav navbar-nav navbar-right">
       <li><a data-toggle="modal" href="#aboutModal">About</a></li>
         <?php if (!empty($current_user)) {?>
@@ -48,6 +57,8 @@
 		      <li class="dropdown">
 				<?php echo $this->Html->dropdownStart(__('System Wide'))?>
 					<?php echo $this->Html->dropdownItem(__('Manage Users'), array('controller' => 'users', 'action' => 'index', 'admin' => true))?>
+					<?php echo $this->Html->dropdownItem(__('Manage Projects'), array('controller' => 'projects', 'action' => 'index', 'admin' => true))?>
+						<?php echo $this->Html->dropdownDivider()?>
 					<?php echo $this->Html->dropdownItem(__('Settings'), array('controller' => 'settings', 'action' => 'index'));?>
 					<?php echo $this->Html->dropdownItem(__('Presets'), array('controller' => 'presets', 'action' => 'index'));?>
 					<?php echo $this->Html->dropdownDivider()?>

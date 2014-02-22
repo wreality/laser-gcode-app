@@ -1,7 +1,7 @@
 
 <?php $colors = Configure::read('App.colors');?>
 <div class="projects form">
-	<?php if (!$project['Project']['user_id']): ?>
+	<?php if (!$project['User']['id']): ?>
 		<div class="anon-notice">
 				<h4>Anonymous Project</h4>
 			<p>Anonymous project's aren't listed on the main page.  The only way

@@ -29,11 +29,17 @@
 .sidebar {
 	.create-proj {
 		.btn-block;
-		.btn-primary;
+		.btn-success;
 		.btn-lg;
 		text-align: center;
 		margin-bottom: 10px;
 	}
+	
+	.projects-nav {
+	.nav();
+	.nav-pills();
+	.nav-stacked();
+}
 	
 }
 
@@ -51,22 +57,60 @@ a.register {
 	display: block;
 }
 .projects.chips {
-	.thumbnail {	
-		height: 240px;
-		margin: 20px 0;
+	
+	.chip {
+		padding: 12px;
+		background: lighten(@gray-lighter, 2%);
+		.make-sm-column(3);
+		.make-xs-column(5);
+		.make-md-column(2);
+		
+		margin: 10px;
 		img {
-			max-height: 150px;
-			max-width: 150px;
+			margin: 0 0 10px 0 ;
+			padding: 2px 11px 2px 2px;
+			max-height: 100px;
+			max-width: 100px;
+			.center-block();
+		}
+	
+		.caption {
+			font-family: sans-serif;
+			min-height: 65px;
+			a {
+				display: block;
+				font-weight: bold;
+			}
+			.details {
+				font-size: 80%;
+			}
+		}
+		.claim {
+			.btn;
+			.btn-xs;
+			.btn-danger;
+			.btn-block;
 		}
 	}
-
+	.chip:hover {
+		background: lighten(@brand-primary, 30%);
+		cursor: pointer;
+	}
+	
 }
 
 .projects.admin {
 	table {
 		.table;
 		.table-striped;
+		.active-table;
+		
+		
 	}
+	img.thumb {
+			max-height: 50px;
+			max-width: 50px;
+		}
 }
 .projects {
 	.anon-notice {
@@ -81,6 +125,11 @@ a.register {
 	}
 }
 .users.admin {
+	table {
+		.table;
+		.table-striped;
+		.active-table;
+	}
 	.actions {
 		a.btn {
 			.btn-block;
@@ -88,12 +137,19 @@ a.register {
 		}
 	}
 }
-.users.admin.search {
+.search {
 	.well;
 	a.btn {
 		.btn-xs;
 		margin-top: 6px;
 		
+	}
+	.submit {
+		margin-top: 9px;
+	}
+	h3 {
+		margin-top: 0;
+		font-size: 110%;
 	}
 }
 
@@ -183,11 +239,28 @@ table.cake-sql-log {
 }
 
 .highlight {
-	.bg-warning;
+	.bg-primary;
 }
 
-.table.table-striped tr:hover {
-	td {
-		.bg-info;
+.active-table {
+	tr:hover {
+		td {
+			.bg-info !important;
+		}
 	}
+	td.actions,
+	th.actions {
+		.sr-only;
+	}
+}
+
+a.desc span {
+	.glyphicon;
+	.glyphicon-arrow-down;
+	
+}
+a.asc span {
+	.glyphicon;
+	.glyphicon-arrow-up;
+	
 }

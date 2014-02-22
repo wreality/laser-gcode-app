@@ -15,15 +15,27 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('.table.table-striped tr').click(function(e) {
+	$('.admin table tr').click(function(e) {
 		if ($(e.target).prop('tagName') != 'A') {
 			$click = $(this).find('.actions a.default-action').first();
 			
 			if (!$click.length) {
 				$click = $(this).find('.actions a').first();
 			}
-			window.location = $click.attr('href');
+			if ($click.length) {
+				window.location = $click.attr('href');
+			}
 			
+		}
+	});
+	
+	$('.chip').click(function(e) {
+		if ($(e.target).prop('tagName') != 'A') {
+			$click = $(this).find('.caption a').first();
+			
+			if ($click.length) {
+				window.location = $click.attr('href');
+			}
 		}
 	});
 	

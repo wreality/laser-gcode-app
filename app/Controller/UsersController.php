@@ -180,7 +180,9 @@ class UsersController extends AppController {
 	public function login() {
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
-				return $this->redirect($this->Auth->redirectUrl());
+				$this->User->id = $this->Auth->user('id');
+				$this->User->saveField('last_login', date('Y-m-d H:i:s'));
+				return $this->redirect(array('controller' => 'projects', 'action' => 'home'));
 			} else {
 				$this->Session->setFlash(__('Username or password is incorrect'),'bs_error');
 			}
@@ -195,25 +197,8 @@ class UsersController extends AppController {
 	public function admin_index() {
 		$this->User->recursive = 0;
 		
-		if ($this->request->is('post')) {
-			$paginate = array();
-			if (!empty($this->request->data['User']['username'])) {
-				$paginate['conditions']['User.username LIKE'] = '%'.$this->request->data['User']['username'].'%';
-			}
-			if (!empty($this->request->data['User']['email'])) {
-				$paginate['conditions']['User.email LIKE'] = '%'.$this->request->data['User']['email'].'%';
-			}
-			$this->Session->write('user_search', $paginate);
-			$this->Session->write('user_search_data', $this->request->data);
-		} else {
-			$paginate = $this->Session->read('user_search');
-			$this->request->data = $this->Session->read('user_search_data');
-		}
-		if (!empty($paginate)) {
-			$this->paginate = $paginate;
-		} else {
-			$this->request->data = array();
-		}
+		$paginate['conditons'] = $this->_processSearch();
+		$this->paginate = $paginate;
 		$this->set('users', $this->paginate());
 	}
 
@@ -287,7 +272,8 @@ class UsersController extends AppController {
 	}
 	
 	public function logout() {
-		$this->redirect($this->Auth->logout());
+		$this->Auth->logout();
+		$this->redirect('/');
 	}
 
 	

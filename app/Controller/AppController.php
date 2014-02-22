@@ -43,7 +43,7 @@ class AppController extends Controller {
 			),
 		),
 		'Cakestrap.Cakestrap','Session');
-	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time');
+	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time', 'Projects');
 	public $uses = array('Setting');
 	
 	public function beforeFilter() {
@@ -70,6 +70,32 @@ class AppController extends Controller {
 		Cache::write($cache_key, $count);
 		if ($count >= 140) {
 			throw new BadRequestException(__('To prevent abuse this request has been throttled.  Try again later.'));
+		}
+	}
+
+	protected function _processSearch() {
+		$session_key = $this->name.'.'.$this->action.'.';
+		if ($this->request->is('post')) {
+			$conditions = array();
+			foreach($this->request->data as $model => $fields) {
+				foreach ($fields as $field => $value) {
+					if (!empty($value)) {
+						$conditions[$model.'.'.$field.' LIKE'] = '%'.$value.'%';
+						$conditions[$model.'.'.$field.' !='] = null;
+					}
+				}
+			}
+			$this->Session->write($session_key.'conditions', $conditions);
+			$this->Session->write($session_key.'data', $this->request->data);
+		} else {
+			$conditions = $this->Session->read($session_key.'conditions');
+			$this->request->data = $this->Session->read($session_key.'data');
+		}
+		if (!empty($conditions)) {
+			return $conditions;
+		} else {
+			$this->request->data = array();
+			return array();
 		}
 	}
 }
