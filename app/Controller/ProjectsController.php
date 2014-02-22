@@ -7,9 +7,16 @@ App::uses('AppController', 'Controller');
  */
 class ProjectsController extends AppController {
 
+/**
+ * beforeFilter method
+ * 
+ * Allow access to public actions.
+ * 
+ * (non-PHPdoc)
+ * @see Controller::beforeFilter()
+ */
 	public function beforeFilter() {
-		$this->Auth->allow('index', 'add', 'view');
-		
+		$this->Auth->allow('index', 'add', 'view');	
 		parent::beforeFilter();
 	}
 	
@@ -32,6 +39,11 @@ class ProjectsController extends AppController {
 		
 	}
 	
+/**
+ * home method
+ * 
+ * Display user's own projects
+ */
 	public function home() {
 		$this->Project->recursive = 1;
 		$paginate = array(
@@ -46,6 +58,11 @@ class ProjectsController extends AppController {
 	
 	}
 	
+/**
+ * claim method
+ * 
+ * Display list of unclaimed projects
+ */
 	public function claim() {
 		$this->Project->recursive = 1;
 		$paginate = array(
@@ -61,6 +78,14 @@ class ProjectsController extends AppController {
 		$this->set('projects', $this->paginate());
 	}
 	
+/**
+ * make_claim method
+ * 
+ * Process user's claim on a project
+ *
+ * @param project_id $id
+ * @throws NotFoundException
+ */
 	public function make_claim($id) {
 		$this->request->onlyAllow('post', 'put');
 		$this->Project->id = $id;
@@ -176,7 +201,6 @@ class ProjectsController extends AppController {
 		}
 	}
 
-	
 /**
  * edit method
  *
@@ -223,6 +247,11 @@ class ProjectsController extends AppController {
 		$this->redirect($this->referer());
 	}
 
+/**
+ * admin_index method
+ *
+ * Display full list of system projects.
+ */
 	public function admin_index() {
 		
 		$paginate['conditions'] = $this->_processSearch();
