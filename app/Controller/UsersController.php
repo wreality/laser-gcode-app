@@ -239,7 +239,6 @@ class UsersController extends AppController {
  * Prcesses user logins
  */
 	public function login() {
-		$this->request->data['User']['password'] = '';
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				$this->User->id = $this->Auth->user('id');
@@ -248,6 +247,9 @@ class UsersController extends AppController {
 			} else {
 				$this->Session->setFlash(__('Username or password is incorrect'),'bs_error');
 			}
+		} else {
+			
+			$this->request->data['User']['password'] = '';
 		}
 	}	
 	
