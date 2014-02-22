@@ -70,7 +70,7 @@ class AppController extends Controller {
 			$count++;
 		}
 		Cache::write($cache_key, $count);
-		if ($count >= 140) {
+		if ($count >= 25) {
 			throw new BadRequestException(__('To prevent abuse this request has been throttled.  Try again later.'));
 		}
 	}
