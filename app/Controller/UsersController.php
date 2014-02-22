@@ -72,7 +72,7 @@ class UsersController extends AppController {
 		if (!$user) {
 			return $this->render('verify_error');
 		} else {
-			$user['User']['active'] = true;
+			$user['User']['active'] = User::USER_ACTIVE;
 			$user['User']['validate_key'] = null;
 			if ($this->User->save($user)) {
 				return $this->render('verify_success');	
@@ -98,11 +98,15 @@ class UsersController extends AppController {
 			$this->_throttleAction();
 			$user = $this->User->findByEmail($this->request->data['User']['email']);
 			if (!empty($user)) {
-				$user['User']['validate_key'] = $this->User->createValidationKey('r');
-				if (!$this->User->save($user, false, array('validate_key'))) {
-					throw new InternalErrorException(__('Unable to save validation key.'));
+				if ($user['User']['active'] != User::USER_BAN) {
+					$user['User']['validate_key'] = $this->User->createValidationKey('r');
+					if (!$this->User->save($user, false, array('validate_key'))) {
+						throw new InternalErrorException(__('Unable to save validation key.'));
+					}
+					$this->User->enqueueEmail('ResetPassword');
+				} else {
+					return $this->render('reset_banned');
 				}
-				$this->User->enqueueEmail('ResetPassword');
 			}
 			return $this->render('reset_sent');
 		}
@@ -125,7 +129,7 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			$this->request->data['User']['id'] = $user['User']['id'];
 			$this->request->data['User']['validate_key'] = null;
-			$this->request->data['User']['active'] = true;
+			$this->request->data['User']['active'] = User::USER_ACTIVE;
 			if ($this->User->save($this->request->data, true, array('password', 'validate_key', 'confirm_password', 'active'))) {
 				return $this->render('reset_success');
 			} else {
@@ -288,7 +292,8 @@ class UsersController extends AppController {
 		} else {
 			$this->request->data = $user;
 		}
-		$this->set(compact('user'));
+		$statuses = User::$statuses;	
+		$this->set(compact('user', 'statuses'));
 	}
 
 /**
@@ -332,7 +337,7 @@ class UsersController extends AppController {
 		$this->request->onlyAllow('post', 'put');
 		$user = $this->User->read();
 		$user['User']['validate_key'] = $this->User->createValidationKey('r');
-		$user['User']['active'] = false;
+		$user['User']['active'] = User::USER_INACTIVE;
 		if ($this->User->save($user, true, array('validate_key', 'active'))) {
 			$this->Session->setFlash(__('Password Invalidated'), 'bs_success');
 			$this->User->enqueueEmail('InvalidatePassword');

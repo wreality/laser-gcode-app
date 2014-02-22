@@ -90,7 +90,26 @@ class User extends AppModel {
  * @var string
  */
 	public $order = 'User.username';
-	
+
+/**
+ * Constants for user active field.
+ * 
+ * @var integer
+ */
+	const USER_ACTIVE = 1;
+	const USER_INACTIVE = 0;
+	const USER_BAN = 2;
+
+/**
+ * Enumeration of status constants
+ * 
+ * @var array
+ */
+	static $statuses = array(
+		User::USER_ACTIVE => 'Active',
+		User::USER_INACTIVE => 'Inactive',
+		User::USER_BAN => 'Banned',
+	);
 	
 /**
  * hasMany associations

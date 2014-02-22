@@ -29,7 +29,7 @@
 				echo $this->Form->input('id');
 				echo $this->Form->input('username');				
 				echo $this->Form->input('email', array('help_text' => __('<b>IMPORTANT:</b> Updating an email here is immediately effective.  <em>No verification is performed.</em>')));
-				echo $this->Form->input('active');
+				echo $this->Form->input('active', array('options' => $statuses));
 				echo $this->Form->input('admin');
 			?>
 			</fieldset>

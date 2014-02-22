@@ -18,6 +18,9 @@
 
 App::uses('Controller', 'Controller');
 
+//Class is included for the benefit of the user constants used in authentication
+App::uses('User', 'Model');
+
 /**
  * Application Controller
  *
@@ -37,7 +40,7 @@ class AppController extends Controller {
 				'Form' => array(
 					'passwordHasher' => 'Blowfish',
 					'fields' => array('username' => 'email', 'password' => 'password'),
-					'scope' => array('User.active' => true),
+					'scope' => array('User.active' => User::USER_ACTIVE),
 				),
 			),
 		),
