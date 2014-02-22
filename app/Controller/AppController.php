@@ -27,6 +27,7 @@ class AppController extends Controller {
 	
 	public $components = array(
 		'Auth' => array(
+			'authorize' => 'controller',
 			'authenticate' => array(
 				'Form' => array(
 					'passwordHasher' => 'Blowfish',
@@ -105,6 +106,27 @@ class AppController extends Controller {
 		} else {
 			$this->request->data = array();
 			return array();
+		}
+	}
+
+/**
+ * isAuthorized method
+ * 
+ * Check admin routes and deny access to non-admins
+ * 
+ * @param array $user
+ * @return boolean
+ */
+	public function isAuthorized($user) {
+		//Check for admin routes.
+		if (!empty($this->request->params['admin'])) {
+			if ($user['admin']) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
 		}
 	}
 }
