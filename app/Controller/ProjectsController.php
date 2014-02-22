@@ -13,13 +13,6 @@ class ProjectsController extends AppController {
 		parent::beforeFilter();
 	}
 	
-	public function isAuthorized($user = null) {
-		parent::isAuthorized($user);
-		if (in_array($this->request->params['action'], array('view', 'edit', 'delete'))) {
-			var_dump($this->request->params);
-		}
-	}
-	
 /**
  * index method
  *
