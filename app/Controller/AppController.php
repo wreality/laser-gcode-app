@@ -138,4 +138,20 @@ class AppController extends Controller {
 			return true;
 		}
 	}
+
+/**
+ * _onlyGuest method
+ * 
+ * Redirect to the force_logout action if a request is coming from a logged in
+ * user.
+ *
+ */
+	protected function _requireGuest() {
+		if ($this->Auth->loggedIn()) {
+			$this->Session->write('force_logout_url', array('controller' => strtolower($this->name), 'action' => $this->action));
+			return $this->redirect(array('controller' => 'users', 'action' => 'force_logout'));
+		} else {
+			return false;
+		}
+	}
 }

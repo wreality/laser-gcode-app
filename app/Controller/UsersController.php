@@ -45,6 +45,9 @@ class UsersController extends AppController {
  */
 	public function register() {
 		$this->_throttleAction();
+		if ($this->_requireGuest()) {
+			return $this->_requireGuest();
+		}
 		
 		if ($this->request->is('post')) {
 			$this->User->create();
@@ -67,8 +70,10 @@ class UsersController extends AppController {
  * @return CakeResponse
  */
 	public function verify($validate_key) {
+		if ($this->_requireGuest()) {
+			return $this->_requireGuest();
+		}
 		$user = $this->User->findByValidateKey('v',$validate_key);
-		
 		if (!$user) {
 			return $this->render('verify_error');
 		} else {
@@ -93,7 +98,9 @@ class UsersController extends AppController {
  * @return CakeResponse
  */
 	public function lost_password() {
-		
+		if ($this->_requireGuest()) {
+			return $this->_requireGuest();
+		}		
 		if ($this->request->is('post')) {
 			$this->_throttleAction();
 			$user = $this->User->findByEmail($this->request->data['User']['email']);
@@ -121,6 +128,9 @@ class UsersController extends AppController {
  * @return CakeResponse
  */
 	public function reset($validate_key) {
+		if ($this->_requireGuest()) {
+			return $this->_requireGuest();
+		}
 		$user = $this->User->findByValidateKey('r',$validate_key);
 		if (empty($user)) {
 			return $this->render('reset_invalid');
@@ -248,7 +258,6 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Username or password is incorrect'),'bs_error');
 			}
 		} else {
-			
 			$this->request->data['User']['password'] = '';
 		}
 	}	
@@ -384,6 +393,19 @@ class UsersController extends AppController {
 	public function logout() {
 		$this->Auth->logout();
 		$this->redirect('/');
+	}
+
+/**
+ * force_logout method
+ * 
+ * Prompt user to logout before contiuning to a guest user method.
+ */
+	public function force_logout() {
+		if ($this->request->is('post')) {
+			$redirect = $this->Session->read('force_logout_url');
+			$this->Auth->logout();
+			return $this->redirect($redirect);
+		} 
 	}
 
 }
