@@ -7,10 +7,6 @@ App::uses('AppController', 'Controller');
  */
 class SettingsController extends AppController {
 	
-	public function beforeFilter() {
-		parent::beforeFilter();
-	}
-
 /**
  * admin_index method
  *
