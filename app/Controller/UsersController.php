@@ -177,7 +177,9 @@ class UsersController extends AppController {
 		}
 	}
 
+
 	public function login() {
+		$this->request->data['User']['password'] = '';
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				$this->User->id = $this->Auth->user('id');
