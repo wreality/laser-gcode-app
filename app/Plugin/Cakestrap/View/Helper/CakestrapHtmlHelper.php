@@ -114,10 +114,17 @@ class CakestrapHtmlHelper extends HtmlHelper {
 			$title = '<i class="icon-'.$options['icon'].$iw.'">&nbsp;</i> '.$title;
 			unset($options['icon']);
 		}
-		return $this->link($title, $url, $options, $confirmMessage);		
-		
+		return $this->link($title, $url, $options, $confirmMessage);			
 	}
 
+	/**
+	 * link method
+	 * 
+	 * Adds an icon option to the link method:
+	 * 
+	 * (non-PHPdoc)
+	 * @see HtmlHelper::link()
+	 */
 	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
 		if (array_key_exists('icon', $options)) {
 			$options['escape'] = false;
@@ -273,6 +280,15 @@ class CakestrapHtmlHelper extends HtmlHelper {
 		return $this->css('http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css', null, $options);
 	}
 	
+	/**
+	 * less method
+	 * 
+	 * Imports less files, similar to css method.
+	 * 
+	 * @param unknown $path
+	 * @param unknown $options
+	 * @return void|Ambigous <string, void>
+	 */
 	public function less($path, $options = array()) {
 		$options += array('inline' => true);
 		if (is_array($path)) {
@@ -304,22 +320,66 @@ class CakestrapHtmlHelper extends HtmlHelper {
 		}
 	}
 	
+	/**
+	 * dropdownStart method
+	 * 
+	 * Returns HTML to begin a Bootstrap dropdown menu
+	 * 
+	 * @param string $text Display text for dropdown item
+	 * @return string
+	 */
 	public function dropdownStart($text) {
 		return $this->link(__('%s <b class="caret"></b>', $text), '#', array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'escape' => false)).'<ul class="dropdown-menu">';
 	}
 	
+	/**
+	 * dropdownItem method
+	 * 
+	 * Returns HTML to add a Bootstrap dropdown menu item.  Uses link method, so
+	 * any value for text, link and options accepted there will work here.
+	 * 
+	 * @param string $text Display text for item
+	 * @param array $link 
+	 * @param array $options
+	 * @return string
+	 */
 	public function dropdownItem($text, $link, $options = array()) {
 		return '<li>'.$this->link($text, $link, $options).'</li>';
 	}
 	
+	/**
+	 * dropdownDivider method
+	 * 
+	 * Returns HTML for a dropdown divider
+	 * 
+	 * @return string
+	 */
 	public function dropdownDivider() {
 		return '<li class="divider">&nbsp;</li>';
 	}
 	
+	/**
+	 * dropdownEnd method
+	 * 
+	 * Returns HTML to close dropdown menu markup.
+	 * 
+	 * @return string
+	 */
 	public function dropdownEnd() {
 		return '</ul>';
 	}
 	
+	/**
+	 * gravatar method
+	 * 
+	 * Returns an IMG tag for a gravatar belonging to supplied email.
+	 * 
+	 * @param string $email
+	 * @param array $options Options for gravatar API
+	 * @param array $img_options Options for HtmlHelper::image
+	 * 
+	 * @return string
+	 */
 	public function gravatar($email, $options = array(), $img_options = array()) {
 		$gravatar_url = 'www.gravatar.com';
 		$options = array_merge(array(
@@ -376,6 +436,15 @@ class CakestrapHtmlHelper extends HtmlHelper {
 		return $out;
 	}
 
+	/**
+	 * breadcrumbs method
+	 * 
+	 * Returns bootstrap formatted breadcrumbs for given array of [titles]=>link
+	 * 
+	 * @param array $links
+	 * @param array $options
+	 * @return string
+	 */
 	public function breadcrumbs($links, $options = array()) {
 		$out = '';
 		$options = array_merge(array(

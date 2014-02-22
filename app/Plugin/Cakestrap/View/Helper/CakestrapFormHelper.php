@@ -175,7 +175,15 @@ class CakestrapFormHelper extends FormHelper {
 	
 		return $this->postLink($title, $url, $options, $confirmMessage);
 	}
-
+	/**
+	 * bool method
+	 * 
+	 * Generate a boolean field in the dropdown style.
+	 * 
+	 * @param string $field
+	 * @param array $options
+	 * @return string
+	 */
 	public function bool($field, $options = array()) {
 		$options = array_merge(
 			array(
