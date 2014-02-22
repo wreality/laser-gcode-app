@@ -161,16 +161,6 @@ class User extends AppModel {
 		}
 	}
 	
-	public function validateEmailDoesntExist ($check) {
-		$user = $this->findByEmail($this->data[$this->alias]['email']);
-		
-		if (empty($user)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 /**
  * createValidationKey method
  * 
