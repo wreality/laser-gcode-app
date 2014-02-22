@@ -1,6 +1,7 @@
  <?php
 App::uses('AppModel', 'Model');
 App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
+
 /**
  * User Model
  *
@@ -83,6 +84,11 @@ class User extends AppModel {
 		
 	);
 
+/**
+ * Default sorting order for model
+ * 
+ * @var string
+ */
 	public $order = 'User.username';
 	
 	
@@ -98,7 +104,16 @@ class User extends AppModel {
 			'dependent' => false,
 		)
 	);
-
+	
+/**
+ * beforeValidate method
+ * 
+ * Enables validation for user_secret if this functionality is enabled in
+ * application configuration.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeValidate()
+ */
 	public function beforeValidate($options = array()) {
 		if (Configure::read('LaserApp.user_secret_enabled')  && (!$this->id)) {
 			$this->validator()->add('user_secret', 'required', array(
@@ -111,6 +126,15 @@ class User extends AppModel {
 		return true;
 	}
 	
+/**
+ * validateSecret method
+ * 
+ * Custom validation function to check that secret, if entered, matches the 
+ * secret configured for the application.
+ * 
+ * @param array $check
+ * @return boolean
+ */
 	public function validateSecret ($check){
 		if ($this->data[$this->alias]['user_secret'] == Configure::read('LaserApp.user_secret')) {
 			return true;
@@ -119,6 +143,15 @@ class User extends AppModel {
 		}
 	}
 	
+/**
+ * validatePasswordConfirm method
+ * 
+ * Custom validation function to check that the password and confirm_password
+ * match when submitted together.
+ * 
+ * @param array $check
+ * @return boolean
+ */
 	public function validatePasswordConfirm ($check) {
 		if ($this->data[$this->alias]['password'] == $this->data[$this->alias]['confirm_password']) {
 			return true;
@@ -138,10 +171,27 @@ class User extends AppModel {
 		}
 	}
 	
+/**
+ * createValidationKey method
+ * 
+ * Creates a validation key of the requested type.
+ * 
+ * @param char $type
+ * @return string
+ */
 	public function createValidationKey ($type) {
 		return $type.':'.sha1(mt_rand(10000,99999).time());
 	}
 	
+/**
+ * beforeSave method
+ * 
+ * Hashes plaintext passwords if supplied and creates a verification validation 
+ * key if the save operation is creating a user record.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeSave()
+ */
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['confirm_password'])) {
 			$passwordHasher = new BlowfishPasswordHasher();
@@ -154,7 +204,17 @@ class User extends AppModel {
 		}
 		return true;
 	}
-	
+
+/**
+ * findByValidationKey method 
+ * 
+ * Overloaded magic function that finds and returns a user matching the 
+ * requested validation key type and key.
+ * 
+ * @param char $type
+ * @param string $key
+ * @return string
+ */
 	public function findByValidateKey($type, $key) {
 		$user = parent::findByValidateKey($type.':'.$key);
 		if (!empty($user)) {
@@ -163,6 +223,16 @@ class User extends AppModel {
 		return $user;
 	}
 	
+/**
+ * findForEmail method
+ * 
+ * Standard findById function extended to remove validation key type prefix 
+ * from validation key before returning resulting records.  Used by email 
+ * functions to present a clean validation key to email templates.
+ * 
+ * @param user_id $id
+ * @return mixed (array|boolean)
+ */
 	public function findForEmail($id) {
 		$user = $this->findById($id);
 		
@@ -172,6 +242,16 @@ class User extends AppModel {
 		return $user;
 	}
 
+/**
+ * enqueueEmail method
+ * 
+ * Enqueue or immediately send the requested email function depending on if
+ * CakeResque is available. 
+ * 
+ * @param string $email
+ * @param user_id $user_id
+ * @throws InternalErrorException
+ */
 	public function enqueueEmail($email, $user_id = null) {
 		if (empty($user_id)) {
 			$user_id = $this->id;
@@ -187,7 +267,15 @@ class User extends AppModel {
 			throw new InternalErrorException(__('Unknown email method.'));
 		}
 	}
-	
+
+/**
+ * emailValidation method 
+ * 
+ * Send a validation email to the supplied user_id.
+ * 
+ * @param user_id $user_id
+ * @throws NotFoundException
+ */
 	public function emailValidation($user_id) {
 		App::uses('CakeEmail', 'Network/Email');
 
@@ -208,7 +296,15 @@ class User extends AppModel {
 			->send();
 	
 	}
-	
+
+/**
+ * emailResetPassword method
+ * 
+ * Send email prompting user to reset password by following validation link.
+ * 
+ * @param user_id $user_id
+ * @throws NotFoundException
+ */
 	public function emailResetPassword($user_id) {
 		App::uses('CakeEmail', 'Network/Email');
 	
@@ -230,6 +326,14 @@ class User extends AppModel {
 	
 	}
 	
+/**
+ * emailUpdateEmail method
+ *
+ * Send email requesting confirmation of an updated email address.
+ * 
+ * @param user_id $user_id
+ * @throws NotFoundException
+ */
 	public function emailUpdateEmail($user_id) {
 		App::uses('CakeEmail', 'Network/Email');
 		
@@ -249,6 +353,15 @@ class User extends AppModel {
 			->send();
 	}
 	
+/**
+ * emailInvalidatePassword method
+ * 
+ * Send email notifying user that their password has been invalidated by an
+ * admin user.
+ *
+ * @param unknown $user_id
+ * @throws NotFoundException
+ */
 	public function emailInvalidatePassword($user_id) {
 		App::uses('CakeEmail', 'Network/Email');
 	
