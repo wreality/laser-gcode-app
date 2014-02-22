@@ -73,7 +73,9 @@
 				<?php echo $this->Html->dropdownItem(__('Logout'), array('controller' => 'users', 'action' => 'logout', 'admin' => false))?>
 			<?php echo $this->Html->dropdownEnd()?>
 			</li>
-        <?php } ?>
+        <?php } else {?>
+        	<li><?php echo $this->Html->link(__('Login/Create Account'), array('controller' => 'users', 'action' => 'login', 'admin' => false))?>
+        <?php }?>		
     </ul>
    
   </div><!-- /.navbar-collapse -->
