@@ -7,6 +7,14 @@ App::uses('AppController', 'Controller');
  */
 class UsersController extends AppController {
 	
+/**
+ * beforeFilter method
+ * 
+ * Allow public actions.  Calls parent method.
+ * 
+ * (non-PHPdoc)
+ * @see AppController::beforeFilter()
+ */
 	public function beforeFilter() {
 		$this->Auth->allow('register', 'verify', 'lost_password', 'reset');
 		parent::beforeFilter();
@@ -30,6 +38,8 @@ class UsersController extends AppController {
 
 /**
  * register method
+ * 
+ * Processes user registrations. 
  *
  * @return void
  */
@@ -48,6 +58,14 @@ class UsersController extends AppController {
 		}
 	}
 
+/**
+ * verify method
+ * 
+ * Verify email at registration.  
+ * 
+ * @param string $validate_key
+ * @return CakeResponse
+ */
 	public function verify($validate_key) {
 		$user = $this->User->findByValidateKey('v',$validate_key);
 		
@@ -65,6 +83,15 @@ class UsersController extends AppController {
 		}
 	}
 	
+/**
+ * lost_password method
+ * 
+ * Allows users to request password reset.  Sets verification key and sends 
+ * reset email to email address on record.
+ * 
+ * @throws InternalErrorException
+ * @return CakeResponse
+ */
 	public function lost_password() {
 		
 		if ($this->request->is('post')) {
@@ -81,6 +108,14 @@ class UsersController extends AppController {
 		}
 	}
 	
+/**
+ * reset method
+ * 
+ * Processes return from password reset request email.
+ * 
+ * @param string $validate_key
+ * @return CakeResponse
+ */
 	public function reset($validate_key) {
 		$user = $this->User->findByValidateKey('r',$validate_key);
 		if (empty($user)) {
@@ -101,11 +136,10 @@ class UsersController extends AppController {
 	}
 	
 /**
- * accout  method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
+ * account method
+ * 
+ * Allows users to edit user account details.
+ * 
  */
 	public function account() {
 		$id = $this->Auth->user('id');
@@ -131,6 +165,14 @@ class UsersController extends AppController {
 		$this->set(compact('user'));
 	}
 	
+/**
+ * update_email method
+ * 
+ * Allows users to update email address on record.  Sends verification email.
+ * 
+ * @throws InternalErrorException
+ * @return CakeResponse
+ */
 	public function update_email() {
 		
 		$id = $this->Auth->user('id');
@@ -159,6 +201,16 @@ class UsersController extends AppController {
 		}
 	}
 	
+/**
+ * update_email_verify method
+ * 
+ * Process return from update_email.  Sets email address after validation key is
+ * successfully returned.
+ * 
+ * @param string $validate_key
+ * @throws InternalErrorException
+ * @return CakeResponse
+ */
 	public function update_email_verify($validate_key) {
 		$user = $this->User->findByValidateKey('u', $validate_key);
 		
@@ -177,7 +229,11 @@ class UsersController extends AppController {
 		}
 	}
 
-
+/**
+ * login method
+ * 
+ * Prcesses user logins
+ */
 	public function login() {
 		$this->request->data['User']['password'] = '';
 		if ($this->request->is('post')) {
@@ -193,6 +249,8 @@ class UsersController extends AppController {
 	
 /**
  * admin_index method
+ * 
+ * Main user index page. Admin only routing
  *
  * @return void
  */
@@ -204,10 +262,11 @@ class UsersController extends AppController {
 		$this->set('users', $this->paginate());
 	}
 
-
 /**
  * admin_edit method
  *
+ * Allows editing of user accounts by admins.
+ *	
  * @throws NotFoundException
  * @param string $id
  * @return void
@@ -234,6 +293,8 @@ class UsersController extends AppController {
 
 /**
  * admin_delete method
+ * 
+ * Allows admin to delete user account.  Requires POST.
  *
  * @throws NotFoundException
  * @throws MethodNotAllowedException
@@ -254,6 +315,14 @@ class UsersController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 	
+/**
+ * admin_invalidate_password
+ * 
+ * Allows admin to require password reset before a user is allowed to login.
+ * 
+ * @param string $id
+ * @throws NotFoundException
+ */
 	public function admin_invalidate_password($id = null ) {
 		$this->User->id = $id;
 		$this->User->recursive = -1;
@@ -272,11 +341,15 @@ class UsersController extends AppController {
 		}
 		return $this->redirect($this->referer());
 	}
-	
+
+/**
+ * logout method
+ * 
+ * Processes logout.
+ */
 	public function logout() {
 		$this->Auth->logout();
 		$this->redirect('/');
 	}
 
-	
 }
