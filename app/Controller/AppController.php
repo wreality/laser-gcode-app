@@ -2,8 +2,7 @@
 /**
  * Application level Controller
  *
- * This file is application-wide controller file. You can put all
- * application-wide controller-related methods here.
+ * This file is application-wide controller file. 
  *
  * PHP 5
  *
@@ -14,9 +13,6 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Controller
- * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -25,11 +21,7 @@ App::uses('Controller', 'Controller');
 /**
  * Application Controller
  *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
  * @package       app.Controller
- * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
 	
@@ -46,8 +38,15 @@ class AppController extends Controller {
 	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time', 'Projects');
 	public $uses = array('Setting');
 	
+/**
+ * beforeFilter method
+ * 
+ * Load DB stored settings
+ * 
+ * (non-PHPdoc)
+ * @see Controller::beforeFilter()
+ */
 	public function beforeFilter() {
-		
 		$this->Setting->getSettings();
 		
 		$this->request->addDetector('internalIp', array(
@@ -57,6 +56,14 @@ class AppController extends Controller {
 		parent::beforeFilter();
 	}
 
+/**
+ * _throttleAction method
+ * 
+ * Uses caching to error out multiple requests to email sending actions to 
+ * prevent abuse.
+ * 
+ * @throws BadRequestException
+ */
 	protected function _throttleAction() {
 		$cache_key = 'email_sending_'.$this->request->clientIp();
 	
@@ -73,6 +80,13 @@ class AppController extends Controller {
 		}
 	}
 
+/**
+ * _processSearch method
+ * 
+ * Process request data and return a conditions array ready for find/paginate.
+ * 
+ * @return Ambigous <mixed, boolean, NULL, unknown, multitype:>|multitype:
+ */
 	protected function _processSearch() {
 		$session_key = $this->name.'.'.$this->action.'.';
 		if ($this->request->is('post')) {
