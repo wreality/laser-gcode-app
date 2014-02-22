@@ -279,7 +279,7 @@ class UsersController extends AppController {
 		$this->User->id = $id;
 		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->User->save($this->request->data, true, array('email', 'username', 'admin'))) {
+			if ($this->User->save($this->request->data, true, array('email', 'username', 'admin', 'active'))) {
 				$this->Session->setFlash(__('The user has been saved'));
 				$user = $this->User->read();
 			} else {
@@ -342,6 +342,33 @@ class UsersController extends AppController {
 		return $this->redirect($this->referer());
 	}
 
+/**
+ * admin_clear_validates method
+ * 
+ * Clear pending validation tokens. Requires POST|PUT
+ * 
+ * @param user_id $id
+ * @throws NotFoundException
+ */
+	public function admin_clear_validates($id = null) {
+		$this->request->onlyAllow('post', 'put');
+		$this->User->id = $id;
+		$this->User->recursive = -1;
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user'));
+		}
+		$user = $this->User->read();
+		$user['User']['validate_key'] = null;
+		$user['User']['validate_data'] = null;
+		if ($this->User->save($user, true, array('validate_key', 'validate_data'))) {
+			$this->Session->setFlash(__('Cleared validation keys'), 'bs_success');
+		} else {
+			$this->Session->setFLash(__('Error clearing tokens.'));
+		}
+		return $this->redirect($this->referer());
+		
+	}
+	
 /**
  * logout method
  * 
