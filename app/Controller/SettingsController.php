@@ -12,7 +12,7 @@ class SettingsController extends AppController {
  *
  * @return void
  */
-	public function index() {
+	public function admin_index() {
 		$this->Setting->recursive = 0;
 		$settings = Cache::read('settings');
 		if ($settings === false) {
@@ -29,7 +29,7 @@ class SettingsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	public function admin_view($id = null) {
 		$this->Setting->id = $id;
 		if (!$this->Setting->exists()) {
 			throw new NotFoundException(__('Invalid setting'));
@@ -42,7 +42,7 @@ class SettingsController extends AppController {
  *
  * @return void
  */
-	public function add() {
+	public function admin_add() {
 		if ($this->request->is('post')) {
 			$this->Setting->create();
 			if ($this->Setting->save($this->request->data)) {
@@ -60,7 +60,7 @@ class SettingsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
+	public function admin_edit($id = null) {
 		$this->Setting->id = $id;
 		
 		if (!$this->Setting->exists()) {
@@ -113,13 +113,25 @@ class SettingsController extends AppController {
 		}
 	}
 
-	public function update() {
+/**
+ * admin_update method
+ * 
+ * Update settings by extracting from model.
+ */	
+	public function admin_update() {
 		$this->Setting->updateSettings();
 		$this->Session->setFlash(__('Settings updated'), 'bs_success');
 		$this->redirect(array('action' => 'index'));
 	}
 	
-	public function import() {
+/**
+ * admin_import method
+ * 
+ * Import settings from currently configured values.
+ * 
+ * @throws MethodNotAllowedException
+ */	
+	public function admin_import() {
 		if (!($this->request->is('post') || ($this->request->is('put')))) {
 			throw new MethodNotAllowedException('POST or PUT required for this method.');
 		}
@@ -148,7 +160,7 @@ class SettingsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null) {
+	public function admin_delete($id = null) {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
