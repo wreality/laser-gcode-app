@@ -1,5 +1,6 @@
 <?php if (!isset($claim)) $claim = false;?>
 <?php if (!isset($show_user)) $show_user = false;?>
+<?php if (!isset($action)) $action = 'view';?>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#tiles" data-toggle="tab">Tile View</a></li>
 	<li><a href="#table" data-toggle="tab">Table View</a></li>
@@ -24,7 +25,7 @@
 								$project_name = $project['Project']['project_name'];
 							}
 						?>
-						<?php echo $this->Html->link($project_name, array('action' => 'view', $project['Project']['id']), array('escape' => false))?>
+						<?php echo $this->Html->link($project_name, array('action' => $action, $project['Project']['id']), array('escape' => false))?>
 						<span class="details"><?php echo __('Created %s', $this->Time->timeAgoInWords($project['Project']['created']));?>
 						</span>
 					</p>

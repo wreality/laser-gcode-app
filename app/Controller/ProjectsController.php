@@ -113,17 +113,21 @@ class ProjectsController extends AppController {
 	}
 
 /**
- * view method
+ * edit method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	public function edit($id = null) {
 		$this->Project->id = $id;
 		if (!$this->Project->exists($id)) {
 			throw new NotFoundException(__('Invalid project'));
 		}
+		if (!$this->Project->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not allowed to access this project.'));
+		}
+		
 		$this->Project->Behaviors->load('Containable');
 		$this->Project->contain(array(
 			'Operation' => array(
@@ -135,50 +139,82 @@ class ProjectsController extends AppController {
 		));
 		$project = $this->Project->read();
 		
-		if (!empty($project['User']['id'])) {
-			if (!$project['Project']['public']) {
-				if ($this->Auth->user('id') != $project['Project']['user_id']) {
-					throw new ForbiddenException(__('Project is not public.'));
-				}
-			}
-		}
-		$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Project->save($this->request->data)) {
-				$project = $this->Project->find('first', $options);
-				foreach($project['Operation'] as $oi => $operation) {
-					$home = false;
-					$disableSteppers = false;
-					$preamble = array();
-					$postscript = array();
-			       if ($oi == 0) {
-						if ($project['Project']['home_before']) {
-								$home = true;
-						}
-						if (!empty($project['Project']['gcode_preamble'])) {
-							$preamble =  $project['Project']['gcode_preamble'];
-						}
-					}
-					if ($oi == (count($project['Operation'])-1)) {
-						if (!empty($project['Project']['gcode_postscript'])) {
-							$append = $project['Project']['gcode_postscript'];
-						}
-						$disableSteppers = true;
-					}
-					$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
-				}
-				
+			$fields = array('project_name', 'max_traversal');
+			if (!$project['Project']['isAnonymous']) {
+				$fields[] = 'public';
+			}
+			if ($this->Project->save($this->request->data, true, $fields)) {
+				$this->Session->setFlash(__('Project settings saved.'), 'bs_success');
 			} else {
-				$this->Session->setFlash(__('There was an error saving this project.'), 'bs_error');
+				$this->Session->setFlash(__('There was an error trying to save your project settings.'), 'bs_error');
 			}
 		} else {
 			$this->request->data = $project;
 		}
+		
+		$this->set('public_options', Project::$statuses);
+		
 		$this->loadModel('Preset');
 		$this->set('presets', $this->Preset->getList());
+		
 		$this->set('project', $project);
 	}
 
+/**
+ * generate method
+ *
+ * Generate gcode for a project
+ * 
+ * @param unknown $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
+	public function generate($id) {
+		$this->request->onlyAllow('post', 'put');
+		$this->Project->id = $id;
+		if (!$this->Project->exists()) {
+			throw new NotFoundException(__('Invalid project id.'));
+		}
+		if (!$this->Project->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to access this project.'));
+		}
+		
+		$this->Project->Behaviors->load('Containable');
+		$this->Project->contain(array(
+			'Operation' => array(
+				'Path' => array(
+					'Preset',
+					'order' => array('order' => 'ASC'),
+				)
+			), 'User'
+		));
+		$project = $this->Project->read();
+		
+		foreach($project['Operation'] as $oi => $operation) {
+			$home = false;
+			$disableSteppers = false;
+			$preamble = array();
+			$postscript = array();
+			if ($oi == 0) {
+				if ($project['Project']['home_before']) {
+					$home = true;
+				}
+				if (!empty($project['Project']['gcode_preamble'])) {
+					$preamble =  $project['Project']['gcode_preamble'];
+				}
+			}
+			if ($oi == (count($project['Operation'])-1)) {
+				if (!empty($project['Project']['gcode_postscript'])) {
+					$append = $project['Project']['gcode_postscript'];
+				}
+				$disableSteppers = true;
+			}
+			$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
+		}
+		$this->redirect(array('action' => 'edit', $id));;
+	}
+	
 /**
  * add method
  *
@@ -189,11 +225,12 @@ class ProjectsController extends AppController {
 		$this->Project->create();
 		if ($this->Auth->user('id')) {
 			$this->request->data['Project']['user_id'] = $this->Auth->user('id');
+			$this->request->data['Project']['public'] = Project::PROJ_PRIVATE;
 		} else {
 			$this->request->data['Project']['user_id'] = $this->request->clientIp();
+			$this->request->data['Project']['public'] = Project::PROJ_UNDEFINED;
 		}
 		$this->request->data['Project']['project_name'] = '';
-		$this->request->data['Project']['public'] = Project::PROJ_PRIVATE;
 		if ($this->Project->save($this->request->data)) {
 			$this->redirect(array('action' => 'view', $this->Project->id));
 		} else {
@@ -202,13 +239,13 @@ class ProjectsController extends AppController {
 	}
 
 /**
- * edit method
+ * view method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
+	public function view($id = null) {
 		if (!$this->Project->exists($id)) {
 			throw new NotFoundException(__('Invalid project'));
 		}

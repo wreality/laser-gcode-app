@@ -248,11 +248,11 @@ class UsersController extends AppController {
  * 
  * Prcesses user logins
  */
-	public function login() {
-		
+	public function login() {		
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				$this->User->id = $this->Auth->user('id');
+				$this->Session->setFlash(__('Welcome back %s.  Your last login was %s', $this->User->field('username'), date('M jS, Y g:ia', strtotime($this->User->field('last_login')))), 'bs_success');
 				$this->User->saveField('last_login', date('Y-m-d H:i:s'));
 				return $this->redirect(array('controller' => 'projects', 'action' => 'home'));
 			} else {

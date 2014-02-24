@@ -7,5 +7,5 @@
 		<p>You currently have no projects.</p>
 	</div>
 <?php else: ?>	
-	<?php echo $this->element('Project/projects_index');?>
+	<?php echo $this->element('Project/projects_index', array('action' => 'edit'));?>
 <?php endif; // empty(projects)?>
