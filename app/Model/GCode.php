@@ -108,7 +108,7 @@ class GCode extends AppModel {
 	}
 	
 	public function moveTo($x, $y, $z, $feedRate) {
-		$gcode = 'G1';
+		$gcode = 'G0';
 		if ($x !== false) {
 			$gcode .= ' X'.$x;
 		}
