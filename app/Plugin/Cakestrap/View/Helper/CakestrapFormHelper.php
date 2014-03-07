@@ -58,7 +58,7 @@ class CakestrapFormHelper extends FormHelper {
 			if (empty($options['type']) || $options['type'] == 'bool'){
 				$chk_options = array(
 					'options' => array('0' => 'No', '1' => 'Yes'),
-					'class' => 'form-control col-lg-2'
+					'class' => 'form-control'
 				);
 				$options['type'] = 'select';
 			} else if ($options['type'] == 'checkbox') {
