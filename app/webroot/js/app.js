@@ -39,4 +39,13 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('form.warn-change').change(function() {
+		window.onbeforeunload = function() { return "You've made changes to this page, are you sure you want to leave without saving?";};
+	});
+	$('form.warn-change').submit(function() {
+
+		window.onbeforeunload = null;
+	});
+
+	
 });
