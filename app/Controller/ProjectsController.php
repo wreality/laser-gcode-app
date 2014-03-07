@@ -16,7 +16,7 @@ class ProjectsController extends AppController {
  * @see Controller::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('index', 'add', 'view');	
+		$this->Auth->allow('index', 'add', 'view', 'edit', 'generate', 'delete');	
 		parent::beforeFilter();
 	}
 	
@@ -125,7 +125,7 @@ class ProjectsController extends AppController {
 			throw new NotFoundException(__('Invalid project'));
 		}
 		if (!$this->Project->isOwner($this->Auth->user('id'))) {
-			throw new ForbiddenException(__('Not allowed to access this project.'));
+			throw new ForbiddenException(__('Not allowed to modify this project.'));
 		}
 		
 		$this->Project->Behaviors->load('Containable');
@@ -177,7 +177,7 @@ class ProjectsController extends AppController {
 			throw new NotFoundException(__('Invalid project id.'));
 		}
 		if (!$this->Project->isOwner($this->Auth->user('id'))) {
-			throw new ForbiddenException(__('Not authorized to access this project.'));
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
 		
 		$this->Project->Behaviors->load('Containable');
@@ -246,20 +246,27 @@ class ProjectsController extends AppController {
  * @return void
  */
 	public function view($id = null) {
-		if (!$this->Project->exists($id)) {
+		$this->Project->id = $id;
+		if (!$this->Project->exists()) {
 			throw new NotFoundException(__('Invalid project'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Project->save($this->request->data)) {
-				$this->Session->setFlash(__('The project has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The project could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Project.' . $this->Project->primaryKey => $id));
-			$this->request->data = $this->Project->find('first', $options);
+		if (!$this->Project->isOwnerOrPublic($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to access this project.'));
 		}
+		$this->Project->Behaviors->load('Containable');
+		$this->Project->contain(array(
+			'Operation' => array(
+				'Path' => array(
+					'Preset',
+					'order' => array('order' => 'ASC'),
+				)
+			), 'User'
+		));
+		$project = $this->Project->read();
+		
+		$this->set(compact('project'));
+		
+		
 	}
 
 /**
@@ -275,10 +282,17 @@ class ProjectsController extends AppController {
 		if (!$this->Project->exists()) {
 			throw new NotFoundException(__('Invalid project'));
 		}
+		if (!$this->Project->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to edit this project.'));
+		}
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Project->delete()) {
 			$this->Session->setFlash(__('Project deleted'));
-			$this->redirect(array('action' => 'add'));
+			if (!$this->Auth->user('id')) {
+				return $this->redirect(array('action' => 'index'));	
+			} else {
+				return $this->redirect(array('action' => 'home'));
+			}
 		}
 		$this->Session->setFlash(__('Project was not deleted'));
 		$this->redirect($this->referer());

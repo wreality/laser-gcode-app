@@ -26,49 +26,27 @@ class Path extends AppModel {
 		'operation_id' => array(
 			'uuid' => array(
 				'rule' => array('uuid'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
 				'required' => true,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'on' => 'create',
 			),
 			'uuid_update' => array(
 				'rule' => array('uuid'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => true,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'update', // Limit validation to 'create' or 'update' operations
+				'on' => 'update', 
 			),
 		),
 		'file_hash' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'order' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'file_name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'speed' => array(
@@ -77,7 +55,6 @@ class Path extends AppModel {
 				'message' => 'Speed must be between 10 and 100%',
 			),
 		),
-
 		'power' => array(
 				'sane' => array(
 						'rule' => array('range', 5, 101),
@@ -86,8 +63,6 @@ class Path extends AppModel {
 		),
 		
 	);
-
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
  * belongsTo associations
@@ -105,8 +80,15 @@ class Path extends AppModel {
 		'Preset',
 	);
 
+/**
+ * validateValidUpload method
+ *
+ * Validate error status of file upload and confirm that file produces GCode
+ * 
+ * @param unknown $check
+ * @return mixed|boolean
+ */	
 	public function validateValidUpload($check) {
-		
 		switch ($this->data[$this->alias]['file']['error']) {
 			case UPLOAD_ERR_INI_SIZE:
 				return __('File upload exceeds the max size allowed.');
@@ -144,6 +126,14 @@ class Path extends AppModel {
 		
 	}
 
+/**
+ * validateImportPreset method
+ *
+ * Retrieve preset and replace path speed and power with appropriate values.
+ * 
+ * @param unknown $check
+ * @return boolean|mixed
+ */
 	public function validateImportPreset($check) {
 		if (($this->data[$this->alias]['preset_id'] == 1)) {
 			return true;
@@ -164,7 +154,14 @@ class Path extends AppModel {
 		}
 	}
 	
-	
+/**
+ * beforeDelete method
+ * 
+ * When deleteing a path, reorder the remaining paths.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeDelete()
+ */
 	public function beforeDelete($cascade = true) {
 		$operation_id = $this->field('operation_id');
 		$this->recursive = -1;
@@ -182,7 +179,15 @@ class Path extends AppModel {
 			$this->saveField('order', $pi+1);
 		}
 	}
-	
+
+/**
+ * beforeSave method
+ * 
+ * Create thumbnail and order new paths to the bottom of the path order.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeSave()
+ */
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$this->data[$this->alias]['order'] = $this->field('order', array('operation_id' => $this->data[$this->alias]['operation_id']), array('Path.order' => 'DESC')) +1;
@@ -211,15 +216,42 @@ class Path extends AppModel {
 		}
 		return true;
 	}
-	
+
+/**
+ * movePathUp method
+ *
+ * Move the given path up in the order.  Wrapper for Path::movePath
+ * 
+ * @see Path::movePath()
+ * @param Path $id
+ * @return boolean
+ */	
 	public function movePathUp($id = null) {
 		return $this->movePath(PATH_MOVE_UP, $id);
 	}
 	
+/**
+ * movePathDown method
+ *
+ * Move the given path down in the order.  Wrapper for Path::movePath
+ * 
+ * @see Path::movePath()
+ * @param Path $id
+ * @return boolean
+ */
 	public function movePathDown($id = null) {
 		return $this->movePath(PATH_MOVE_DOWN, $id);
 	}
 	
+/**
+ * movePath method
+ * 
+ * Move the given path in the direction indicated.
+ * 
+ * @param int $dir
+ * @param Path $id
+ * @return boolean
+ */
 	public function movePath($dir, $id = null) {
 		if (empty($id)) {
 			$id = $this->id;
@@ -250,4 +282,39 @@ class Path extends AppModel {
 		}
 		
 	}
+
+/**
+ * isOwner method
+ *
+ * Returns true if given user is allowed to edit / view the enclosing project.
+ * 
+ * @param User $user_id
+ * @param Path $id
+ * @return boolean
+ */
+	public function isOwner( $user_id, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->Operation->isOwner($user_id, $this->field('operation_id', array('id' => $id)));
+	}
+	
+/**
+ * isOwnerOrPublic method
+ *
+ * Returns true if given user is allowed to view the enclosing project.
+ * 
+ * @param unknown $user_id
+ * @param string $id
+ * @return boolean
+ */
+	public function isOwnerOrPublic( $user_id, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->Operation->isOwnerOrPublic($user_id, $this->field('operation_id', array('id' => $id)));
+	}
+	
 }

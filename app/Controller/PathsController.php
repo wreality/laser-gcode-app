@@ -7,29 +7,9 @@ App::uses('AppController', 'Controller');
  */
 class PathsController extends AppController {
 
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
-		$this->Path->recursive = 0;
-		$this->set('paths', $this->paginate());
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
-		if (!$this->Path->exists($id)) {
-			throw new NotFoundException(__('Invalid path'));
-		}
-		$options = array('conditions' => array('Path.' . $this->Path->primaryKey => $id));
-		$this->set('path', $this->Path->find('first', $options));
+	public function beforeFilter() {
+		$this->Auth->allow('add', 'delete', 'edit', 'move_up', 'move_down');
+		parent::beforeFilter();
 	}
 
 /**
@@ -38,11 +18,15 @@ class PathsController extends AppController {
  * @return void
  */
 	public function add($operation_id) {
+		$this->Path->Operation->id = $operation_id;
+		if (!$this->Path->Operation->exists()) {
+			throw new NotFoundException(__('Invalid operation id.'));
+		}
+		if (!$this->Path->Operation->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authroized to modify this project.'));
+		}
+		
 		if ($this->request->is('post')) {
-			if (!$this->Path->Operation->exists($operation_id)) {
-				throw new BadRequestException('Operation does not exist');
-			}
-			
 			$this->Path->create();
 			$this->request->data['Path']['operation_id'] = $operation_id;
 			
@@ -68,15 +52,19 @@ class PathsController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
-		if (!$this->Path->exists($id)) {
+		$this->Path->id = $id;
+		if (!$this->Path->exists()) {
 			throw new NotFoundException(__('Invalid path'));
+		}
+		if (!$this->Path->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to edit this project.'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Path->save($this->request->data)) {
 				$this->Session->setFlash(__('The path has been saved'));
 				$this->Path->Operation->id = $this->request->data['Path']['operation_id'];
 				$this->Path->Operation->updateOverview();
-				$this->redirect(array('controller' => 'projects', 'action' => 'view',$this->Path->Operation->field('project_id')));
+				$this->redirect(array('controller' => 'projects', 'action' => 'edit',$this->Path->Operation->field('project_id')));
 			} else {
 				$this->Session->setFlash(__('The path could not be saved. Please, try again.'));
 			}
@@ -88,15 +76,24 @@ class PathsController extends AppController {
 		
 	}
 
+/**
+ * move_down method
+ *
+ * Move the supplied path down in the operation's path order.
+ * 
+ * @param Path $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
 	public function move_down($id = null) {
+		$this->request->onlyAllow('post', 'put');
 		$this->Path->id = $id;
 		if (!$this->Path->exists()) {
 			throw new NotFoundException();
 		}
-		if (!($this->request->is('post') || $this->request->is('put'))) {
-			throw new MethodNotAllowedException();
+		if (!$this->Path->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not allowed to modify this project.'));
 		}
-		
 		if ($this->Path->movePathDown($id)) {
 			$this->Session->setFlash(__('Path order updated.'));
 		} else {
@@ -105,24 +102,34 @@ class PathsController extends AppController {
 		$this->redirect($this->referer());
 	
 	}
-	
+
+/**
+ * move_up method
+ *
+ * Move the supplied path up in the operation's order.
+ * 
+ * @param Path $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
 	public function move_up($id = null) {
+		$this->request->onlyAllow('post', 'put');
 		$this->Path->id = $id;
 		if (!$this->Path->exists()) {
 			throw new NotFoundException();
 		}
-		if (!($this->request->is('post') || $this->request->is('put'))) {
-			throw new MethodNotAllowedException();
+		if (!$this->Path->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
-		
 		if ($this->Path->movePathUp($id)) {
-			$this->Session->setFlash(__('Path order updated.'));
+			$this->Session->setFlash(__('Path order updated.'), 'bs_success');
 		} else {
-			$this->Session->setFlash(__('Problem updating path order'));
+			$this->Session->setFlash(__('Problem updating path order'), 'bs_error');
 		}
 		$this->redirect($this->referer());
 		
 	}
+	
 /**
  * delete method
  *
@@ -132,15 +139,18 @@ class PathsController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
+		$this->request->onlyAllow('post', 'delete');
 		$this->Path->id = $id;
 		if (!$this->Path->exists()) {
 			throw new NotFoundException(__('Invalid path'));
 		}
-		$this->request->onlyAllow('post', 'delete');
+		if (!$this->Path->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
+		}
 		$operation_id = $this->Path->field('operation_id');	
 		if ($this->Path->delete()) {
 			$this->Path->Operation->updateOverview($operation_id);
-			$this->Session->setFlash(__('Path deleted'));
+			$this->Session->setFlash(__('Path deleted'), 'bs_success');
 			$this->redirect($this->referer());
 		}
 		$this->Session->setFlash(__('Path was not deleted'));

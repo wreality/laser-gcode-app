@@ -26,8 +26,6 @@ class Operation extends AppModel {
 		),
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
 /**
  * belongsTo associations
  *
@@ -37,9 +35,6 @@ class Operation extends AppModel {
 		'Project' => array(
 			'className' => 'Project',
 			'foreignKey' => 'project_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
 			'counterCache' => 'operation_count',
 		)
 	);
@@ -65,7 +60,14 @@ class Operation extends AppModel {
 		)
 	);
 
-
+/**
+ * updateOverview method
+ *
+ * Update the operation overview image.
+ * 
+ * @param string $id
+ * @return boolean
+ */	
 	public function updateOverview($id = null) {
 		if (empty($id)) {
 			$id = $this->id;
@@ -111,6 +113,18 @@ class Operation extends AppModel {
 		}
 	}
 	
+/**
+ * generateGcode method
+ *
+ * Save Gcode for operation.
+ * 
+ * @param string $id
+ * @param string $home
+ * @param string $disableSteppers
+ * @param unknown $preamble
+ * @param unknown $postscript
+ * @return number
+ */
 	public function generateGcode($id = null, $home = false, $disableSteppers = true, $preamble = array(), $postscript = array()) {
 		if (!empty($id)) {
 			$this->id = $id;
@@ -151,6 +165,14 @@ class Operation extends AppModel {
 		
 	}
 
+/**
+ * beforeDelete method
+ * 
+ * When deleting an operation, reorder remaining operations appropriately.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeDelete()
+ */
 	public function beforeDelete($cascade = true) {
 		$project_id = $this->field('project_id');
 		$this->recursive = -1;
@@ -166,11 +188,68 @@ class Operation extends AppModel {
 		}
 	}
 	
+/**
+ * beforeSave method
+ * 
+ * Add newly created operation to bottom of operation list.
+ * 
+ * (non-PHPdoc)
+ * @see Model::beforeSave()
+ */
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$order = $this->field('order', array('project_id' => $this->data[$this->alias]['project_id']), array('order' => 'DESC'))+1;
 			$this->data[$this->alias]['order'] = $order;
 		}
 		return true;
+	}
+	
+/**
+ * isOwner method
+ *
+ * Returns true if enclosing project is owned by the supplied user.
+ * 
+ * @param User $user_id
+ * @param Operation $id
+ * @return boolean
+ */
+	public function isOwner($user_id, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->Project->isOwner($user_id, $this->_getProjectId($id));
+	}
+
+/**
+ * isOwnerOrPublic method
+ *
+ * Return true if enclosing project is owned by the supplied user, or if the
+ * project is public.
+ * 
+ * @param User $user_id
+ * @param Operation $id
+ */
+	public function isOwnerOrPublic($user_id, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->Project->isOwnerOrPublic($user_id, $this->_getProjectId($id));
+	}
+	
+/**
+ * _getProjectId method
+ *
+ * Returns the enclosing project id for a supplied operation.
+ * 
+ * @param Operation $id
+ * @return Ambigous <string, boolean, mixed>
+ */
+	protected function _getProjectId($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		return $this->field('project_id', array('id' => $id));
 	}
 }

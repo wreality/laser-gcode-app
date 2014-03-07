@@ -37,14 +37,6 @@ class Project extends AppModel {
 			'className' => 'Operation',
 			'foreignKey' => 'project_id',
 			'dependent' => true,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
 		)
 	);
 
@@ -137,6 +129,43 @@ class Project extends AppModel {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+/**
+ * isPublic method
+ *
+ * Returns true if the selected project is public.
+ * 
+ * @param string $id
+ * @return boolean
+ */
+	public function isPublic($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return ($this->field('public', array('id' => $id)) == Project::PROJ_PUBLIC);
+	}
+	
+/**
+ * isOwnerOrPublic method
+ *
+ * Returns true if project is owned by supplied user or is public.
+ * 
+ * @param unknown $user_id
+ * @param string $id
+ * @return boolean
+ */
+	public function isOwnerOrPublic($user_id, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		if ($this->isOwner($user_id)) {
+			return true;
+		} else {
+			return $this->isPublic($id);
 		}
 	}
 }
