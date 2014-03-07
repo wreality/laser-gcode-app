@@ -33,7 +33,7 @@ class ProjectsController extends AppController {
 				'public' => Project::PROJ_PUBLIC
 			)
 		);
-		$paginate['conditons'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 		
@@ -71,7 +71,7 @@ class ProjectsController extends AppController {
 						'User.id' => null
 				)
 		);
-		$paginate['conditons'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
 		$this->paginate = $paginate;
 		
 		
