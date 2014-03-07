@@ -205,6 +205,30 @@ class Operation extends AppModel {
 	}
 	
 /**
+ * afterSave method
+ * 
+ * Trigger update of enclosing project's modified datetime.
+ * 
+ * (non-PHPdoc)
+ * @see Model::afterSave()
+ */
+	public function afterSave($created, $options = array()) {
+		return $this->updateParentModified();
+	}
+	
+/**
+ * afterDelete method
+ * 
+ * Trigger update of enclosing project's modified datetime.
+ * 
+ * (non-PHPdoc)
+ * @see Model::afterDelete()
+ */
+	public function afterDelete() {
+		return $this->updateParentModified();
+	}
+	
+/**
  * isOwner method
  *
  * Returns true if enclosing project is owned by the supplied user.
@@ -251,5 +275,36 @@ class Operation extends AppModel {
 			$id = $this->id;
 		}
 		return $this->field('project_id', array('id' => $id));
+	}
+
+/**
+ * updateModified method
+ *
+ * Force update of given operations modified datetime.
+ * 
+ * @param Operation $id
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
+	public function updateModified($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->save(array('Operation' => array('id' => $id)));
+	}
+	
+/**
+ * updateParentModified method
+ *
+ * Update parent project's modified datetime.
+ * 
+ * @param Operation $id
+ */
+	public function updateParentModified($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->Project->updateModified($this->field('project_id', array('id' => $id)));
 	}
 }

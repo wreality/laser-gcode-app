@@ -168,4 +168,20 @@ class Project extends AppModel {
 			return $this->isPublic($id);
 		}
 	}
+
+/**
+ * updateModified method
+ *
+ * Force update of project's modified datetime.
+ * 
+ * @param Project $id
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
+	public function updateModified($id = null) {
+		if (empty	($id)) {
+			$id = $this->id;
+		}
+		
+		return $this->save(array('Project' => array('id' => $id)));
+	}
 }
