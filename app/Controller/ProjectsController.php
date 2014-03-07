@@ -104,7 +104,7 @@ class ProjectsController extends AppController {
 	
 			if ($this->Project->save($project, true, array('user_id', 'public'))) {
 				$this->Session->setFlash(__('You have successfully claimed this project.'), 'bs_success');
-				return $this->redirect(array('action' => 'view', $id));
+				return $this->redirect(array('action' => 'edit', $id));
 			} else {
 				$this->Session->setFlash(__('There was an error while claiming your project.'), 'bs_error');
 			}
@@ -232,7 +232,7 @@ class ProjectsController extends AppController {
 		}
 		$this->request->data['Project']['project_name'] = '';
 		if ($this->Project->save($this->request->data)) {
-			$this->redirect(array('action' => 'view', $this->Project->id));
+			$this->redirect(array('action' => 'edit', $this->Project->id));
 		} else {
 			$this->Session->setFlash(__('The project could not be saved. Please, try again.'));
 		}
