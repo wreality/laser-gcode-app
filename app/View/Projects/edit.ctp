@@ -14,7 +14,7 @@
 		<?php } else {?>
 			<?php foreach ($project['Operation'] as $oi => $operation) {?>
 				<div class="well">
-					<h2>Operation <?php echo $oi + 1; ?></h2>
+					
 					
 					<?php if (empty($operation['Path'])) {?>
 						<p>No paths exist yet.</p>
@@ -46,10 +46,16 @@
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $path['order']?></td>
 								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
-									<?php if (!empty($path['Preset']['name'])) {?> 
-										<?php echo $this->Html->label($path['Preset']['name']);?> 
+									<?php if (!empty($path['Preset']['name'])) {?>
+										<?php echo $this->Html->label($path['Preset']['displayName']);?> 
 									<?php } else { ?>
-										<?php echo $this->Html->label(__('Custom'));?> <?php echo $this->Html->button(__('Create Preset'), array('controller' => 'presets', 'action' => 'import', $path['id']), array('size' => 'btn-warning btn-xs'));?>
+										<?php echo $this->Html->label(__('Custom'));?>
+										<?php if (AuthComponent::user('id')) {?>
+											<?php if (AuthComponent::user('admin')) {?>
+												<?php echo $this->Html->button(__('Create Global Preset'), array('controller' => 'presets', 'action' => 'import', $path['id'], 'global' => true), array('size' => 'btn-danger btn-xs'));?>
+											<?php } ?>
+											 <?php echo $this->Html->button(__('Create Preset'), array('controller' => 'presets', 'action' => 'import', $path['id']), array('size' => 'btn-warning btn-xs'));?>
+										<?php }?>
 									<?php } ?>
 								</td>
 								<td>	
@@ -75,6 +81,7 @@
 					<div class="clearfix">&nbsp;</div>
 					<div class="custom-options" style="display:none;">
 						<?php echo $this->Form->input('power', array('div' => array('class' => 'col-lg-4 form-group'),'placeholder' => 'Power', 'class' => 'col-lg-8', 'append' => '%', 'label' => array('class' => 'col-lg-4', 'text' => 'Power')));?>
+						
 						<?php echo $this->Form->input('speed', array('div' => array('class' => 'col-lg-4 form-group'), 'placeholder' => 'Speed', 'class' => 'col-lg-8', 'append' => '%','label' => array('class' => 'col-lg-4', 'text' => 'Speed')));?>
 					</div>
 					<?php echo $this->Form->end();?>
@@ -88,10 +95,9 @@
 		
 </div>
 <?php $this->start('sidebar');?>
-	<h2>Project Settings</h2>
-	<?php echo $this->Form->create('Project', array('novalidate' => true))?>
+	<?php echo $this->Form->create('Project', array('novalidate' => true, 'class' => 'warn-change'))?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h4 class="panel-title"><?php echo __('General')?></h4></div>
+		<div class="panel-heading"><h4 class="panel-title"><?php echo __('Settings')?></h4></div>
 		<div class="panel-body">
 			<?php echo $this->Form->input('project_name', array('help_text' => __('GCode files will be prefixed with this name.')));?>
 			<?php //echo $this->Form->input('material_thickness', array('append' => 'mm', 'help_text' => __('Only applies if "Home Before" is yes.')))?>
@@ -139,6 +145,7 @@
   </div>
 </div>
 	<?php echo $this->Form->input('id');?>
+	<?php echo $this->Form->end();?>
 	<?php if (!empty($gcode)) {?>
 		<table class="table table-bordered">
 			<tr>
@@ -155,5 +162,6 @@
 			<?php } ?>
 		</table>
 	<?php } ?>
-	<?php echo $this->Form->postButton(__('Delete Project'), array('action' => 'delete', $project['Project']['id']), array('size' => 'btn-lg btn-danger'), __('Are you sure, this really can\'t be undone..'))?>
+	<?php echo $this->Form->postButton(__('Generate GCode'), array('action' => 'generate', $project['Project']['id']), array('size' => 'btn btn-primary'))?>
+	<?php echo $this->Form->postButton(__('Delete Project'), array('action' => 'delete', $project['Project']['id']), array('size' => 'btn btn-danger'), __('Are you sure, this really can\'t be undone..'))?>
 <?php $this->end();?>
