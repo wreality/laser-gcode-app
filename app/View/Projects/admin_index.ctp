@@ -38,7 +38,7 @@
 		</tr>
 		<?php foreach ($projects as $project): ?>
 			<tr>
-				<td><?php echo $this->Projects->getThumbnailImage($project['Project'], array('class' => 'thumb'));?></td>
+				<td><?php echo $this->Projects->getThumbnailImage($project, array('class' => 'thumb'));?></td>
 				<td><?php 
 						if (!empty($this->request->data['Project']['project_name'])) {
 							echo $this->Text->highlight($project['Project']['project_name'], $this->request->data['Project']['project_name']);
