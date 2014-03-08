@@ -21,7 +21,15 @@
 App::uses('PaginatorHelper', 'View/Helper');
 class CakestrapPaginatorHelper extends PaginatorHelper {
 	
-	function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+	/**
+	 * prev method
+	 * 
+	 * Overload parent with bootstrap formatting.
+	 * 
+	 * (non-PHPdoc)
+	 * @see PaginatorHelper::prev()
+	 */
+	public function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$options = array_merge(
 			array(
 				'tag' => 'li',
@@ -39,7 +47,15 @@ class CakestrapPaginatorHelper extends PaginatorHelper {
 		return parent::prev($title, $options, $disabledTitle, $disabledOptions);
 	}
 	
-	function next($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+	/**
+	 * next method
+	 * 
+	 * Overload parent with bootstrap formatting.
+	 * 
+	 * (non-PHPdoc)
+	 * @see PaginatorHelper::next()
+	 */
+	public function next($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$options = array_merge(
 				array(
 						'tag' => 'li',
@@ -57,8 +73,16 @@ class CakestrapPaginatorHelper extends PaginatorHelper {
 		$disabledTitle = '<a href="#">'.(empty($disabledTitle)?$title:$disabledTitle).'</a>';
 		return parent::next($title, $options, $disabledTitle, $disabledOptions);
 	}
-	
-	function numbers($options = array()) {
+
+	/**
+	 * numbers method
+	 * 
+	 * Overload parent with bootstrap formatting
+	 * 
+	 * (non-PHPdoc)
+	 * @see PaginatorHelper::numbers()
+	 */
+	public function numbers($options = array()) {
 		
 		$options = array_merge(
 			array(
@@ -175,5 +199,25 @@ class CakestrapPaginatorHelper extends PaginatorHelper {
 		return $out;
 	}
 		
-
+	/**
+	 * sort method
+	 * 
+	 * Overload parent with bootstrap formatting.
+	 * 
+	 * (non-PHPdoc)
+	 * @see PaginatorHelper::sort()
+	 */
+	public function sort($key, $title = null, $options = array()) {
+		if (empty($title)) {
+			$title = Inflector::humanize($key);
+		}
+		$title = $title . ' <span></span>';
+		
+		$options = array_merge(
+				array('escape' => false),
+				$options
+		);
+		return parent::sort($key, $title, $options);
+	}
+	
 }

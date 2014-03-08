@@ -1,4 +1,7 @@
 /app/tmp
+/app/Config/config.php
+/app/Config/database.php
+/app/Config/resque-config.php
 /app/webroot/files
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
@@ -10,3 +13,4 @@
 .project
 .settings
 .buildpath
+Thumbs.db

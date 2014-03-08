@@ -58,7 +58,7 @@ class CakestrapFormHelper extends FormHelper {
 			if (empty($options['type']) || $options['type'] == 'bool'){
 				$chk_options = array(
 					'options' => array('0' => 'No', '1' => 'Yes'),
-					'class' => 'form-control col-lg-2'
+					'class' => 'form-control'
 				);
 				$options['type'] = 'select';
 			} else if ($options['type'] == 'checkbox') {
@@ -139,7 +139,7 @@ class CakestrapFormHelper extends FormHelper {
 	 */
 	public function error($field, $text = null, $options = array()) {
 		$options = array_merge(
-			array('wrap' => 'span', 'class' => 'help-inline', 'escape' => true),
+			array('wrap' => 'span', 'class' => 'help-block', 'escape' => true),
 			$options
 		);
 		
@@ -169,11 +169,21 @@ class CakestrapFormHelper extends FormHelper {
 		if (array_key_exists('type', $options)) {
 			$options['class'] = $options['class'] .' '. $options['type'];
 			unset($options['type']);
+		} else {
+			$options['class'] .= ' btn-default';
 		}
 	
 		return $this->postLink($title, $url, $options, $confirmMessage);
 	}
-
+	/**
+	 * bool method
+	 * 
+	 * Generate a boolean field in the dropdown style.
+	 * 
+	 * @param string $field
+	 * @param array $options
+	 * @return string
+	 */
 	public function bool($field, $options = array()) {
 		$options = array_merge(
 			array(

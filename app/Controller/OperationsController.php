@@ -8,28 +8,16 @@ App::uses('AppController', 'Controller');
 class OperationsController extends AppController {
 
 /**
- * index method
- *
- * @return void
+ * beforeFilter method
+ * 
+ * Allow access to operation functions for anonymous projects
+ * 
+ * (non-PHPdoc)
+ * @see Controller::beforeFilter()
  */
-	public function index() {
-		$this->Operation->recursive = 0;
-		$this->set('operations', $this->paginate());
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
-		if (!$this->Operation->exists($id)) {
-			throw new NotFoundException(__('Invalid operation'));
-		}
-		$options = array('conditions' => array('Operation.' . $this->Operation->primaryKey => $id));
-		$this->set('operation', $this->Operation->find('first', $options));
+	public function beforeFilter() {
+		$this->Auth->allow('add', 'preview', 'download', 'view', 'delete');
+		parent::beforeFilter();
 	}
 
 /**
@@ -38,47 +26,23 @@ class OperationsController extends AppController {
  * @return void
  */
 	public function add($project_id = null) {
-		//if ($this->Operation->Project->exists($project_id)) {
-		//	throw new BadMethodCallException(__('Project not found..'));
-		//}
-		if ($this->request->is('post')) {
-			$this->Operation->create();
-			$this->request->data = array('Operation' => array('project_id' => $project_id));
-			if ($this->Operation->save($this->request->data)) {
-				$this->Session->setFlash(__('The operation has been saved'));
-				$this->redirect(array('controller' => 'projects', 'action' => 'view', $project_id));
-			} else {
-				$this->Session->setFlash(__('The operation could not be saved. Please, try again.'));
-			}
-		} else {
-			throw new MethodNotAllowedException();
+		$this->Operation->Project->id = $project_id;
+		if (!$this->Operation->Project->exists()) {
+			throw new NotFoundException(__('Invalid project id.'));
 		}
-	}
+		if (!$this->Operation->Project->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
+		}
+		$this->request->onlyAllow('post', 'put');
 
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		if (!$this->Operation->exists($id)) {
-			throw new NotFoundException(__('Invalid operation'));
-		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Operation->save($this->request->data)) {
-				$this->Session->setFlash(__('The operation has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The operation could not be saved. Please, try again.'));
-			}
+		$this->Operation->create();
+		$this->request->data = array('Operation' => array('project_id' => $project_id));
+		if ($this->Operation->save($this->request->data)) {
+			$this->Session->setFlash(__('The operation has been saved'));
+			$this->redirect(array('controller' => 'projects', 'action' => 'edit', $project_id));
 		} else {
-			$options = array('conditions' => array('Operation.' . $this->Operation->primaryKey => $id));
-			$this->request->data = $this->Operation->find('first', $options);
+			$this->Session->setFlash(__('The operation could not be saved. Please, try again.'));
 		}
-		$projects = $this->Operation->Project->find('list');
-		$this->set(compact('projects'));
 	}
 
 /**
@@ -94,6 +58,9 @@ class OperationsController extends AppController {
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException(__('Invalid operation'));
 		}
+		if (!$this->Operation->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
+		}
 		$this->Operation->recursive = -1;
 		$op = $this->Operation->read();
 		$this->request->onlyAllow('post', 'delete');
@@ -105,6 +72,15 @@ class OperationsController extends AppController {
 		$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 	}
 
+/**
+ * preview method
+ *
+ * Load Gcode previewer.
+ * 
+ * @param Operation $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
 	public function preview($id = null) {
 		$this->Operation->id = $id;
 		if (!$this->Operation->exists()) {
@@ -113,20 +89,38 @@ class OperationsController extends AppController {
 		if (!file_exists(PDF_PATH.DS.$id.'.gcode')) {
 			throw new NotFoundException();
 		}
+		
+		if (!$this->Operation->isOwnerOrPublic($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to access this project'));
+		}
 	
 		$this->layout = 'gcode_pre';
 		$this->set('operation_id', $id);
 	
 	}
 	
+/**
+ * download method
+ *
+ * Start file download of gcode file.
+ * 
+ * @param string $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ * @return CakeResponse
+ */
 	public function download($id = null) {
 		$this->Operation->id = $id;
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException();
 		}
+		if (!$this->Operation->isOwnerOrPublic($this->Auth->user('id'))) {
+			throw new ForbiddenException();
+		}
 		if (!file_exists(PDF_PATH.DS.$id.'.gcode')) {
 			throw new NotFoundException();
 		}
+		
 		$this->Operation->Behaviors->attach('Containable');
 		$this->Operation->contain(array('Project'));
 		$operation = $this->Operation->read();

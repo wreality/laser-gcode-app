@@ -21,11 +21,25 @@
 <html>
 <head>
 	<title><?php echo $title_for_layout; ?></title>
+	<?php echo $this->Html->css('email')?>	
 </head>
 
 <body>
-	<?php echo $this->fetch('content'); ?>
 
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+<div class="email-header">
+	
+	<div class="container">
+    
+		<div class="navbar-header">
+      		<a class="navbar-brand" href="#"><?php echo Configure::read('App.title')?></a>
+      	</div>
+      	<p class="navbar-text"><?php echo $title_for_layout?></p>
+	</div>
+</div>
+<div class="body-wrap">
+	<div class="innerWrap">
+		<?php echo $this->fetch('content'); ?>
+	</div>
+</div>
 </body>
 </html>

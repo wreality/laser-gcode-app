@@ -33,39 +33,53 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
-	define('PDF_PATH', APP.'webroot'.DS.'files');
+	
+/**
+ * Set Laser App default configuration values 
+ */
+	Configure::write('LaserApp.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
+	Configure::write('LaserApp.storage_path', APP.'webroot'.DS.'files');
+	Configure::write('LaserApp.default_max_cut_feedrate', 1000);
+	Configure::write('LaserApp.default_traversal_feedrate', 6000);
+	Configure::write('LaserApp.user_secret', 'SECRET');
+	Configure::write('LaserApp.user_secret_prompt', 'Enter the secret password');
+	Configure::write('LaserApp.user_secret_enabled', true);
+	Configure::write('LaserApp.power_scale', 100);
+	
+	//Read customized values
+	
+	Configure::load('config');
+	
+/**
+ * Application configuration values.  Shouldn't need to be modified by users.
+ */
+	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
+	$base_url = Configure::read('LaserApp.base_url');
+	
+	if ((!empty($base_url)) && (!defined('FULL_BASE_URL'))) {
+		Configure::write('App.fullBaseUrl', Configure::read('LaserApp.base_url'));
+	}
+	
+
+	if (class_exists('Redis') && file_exists(APP.'Config'.DS.'resque-config.php')) {
+		Configure::load('resque-config');
+	}
+	
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 	
-	Configure::write('App.version', '1.1.1');
+	Configure::write('App.version', '2.0-RC1');
 	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
 	Configure::write('App.file_path', Configure::read('App.file_path'));
 	Configure::write('App.default_max_cut_feedrate', 1000);
 	Configure::write('App.default_traversal_feedrate', 6000);
+	Configure::write('App.max_email_retries', 5);
+	Configure::write('App.title', 'GCode Creator');
 	Configure::write('App.allowed_file_types', array('application/pdf'));
-	Configure::write('App.power_scale', 560);
 	Configure::write('App.colors', array(
-		'#000000',
-		'#FF0000',
-		'#00FF00',
-		'#0000FF',
-		'#FFFF00',
-		'#FF00FF',
-		'#00FFFF',
-		'#800000',
-		'#008000',
-		'#000080',
-		'#808000',
-		'#800080',
-		'#008080',
-		'#C0C0C0',
-		'#808080',
-		'#9999FF',
-		'#993366',
-		'#FFFFCC',
-		'#CCFFFF',
-		'#660066',
-		'#FF8080',
+		'#000000','#FF0000','#00FF00','#0000FF','#FFFF00','#FF00FF','#00FFFF',
+		'#800000','#008000','#000080','#808000','#800080','#008080','#C0C0C0',
+		'#808080','#9999FF','#993366','#FFFFCC','#CCFFFF','#660066','#FF8080',
 	));
 
 /**
@@ -146,7 +160,7 @@
  *	`manager_index()` and `/manager/controller/index`
  *
  */
-	//Configure::write('Routing.prefixes', array('admin'));
+Configure::write('Routing.prefixes', array('admin'));
 
 /**
  * Turn off all caching application-wide.
@@ -181,43 +195,6 @@
  */
 	define('LOG_ERROR', LOG_ERR);
 
-/**
- * Session configuration.
- *
- * Contains an array of settings to use for session configuration. The defaults key is
- * used to define a default preset to use for sessions, any settings declared here will override
- * the settings of the default config.
- *
- * ## Options
- *
- * - `Session.cookie` - The name of the cookie to use. Defaults to 'CAKEPHP'
- * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
- * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
- * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the
- *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
- * - `Session.defaults` - The default configuration set to use as a basis for your session.
- *    There are four builtins: php, cake, cache, database.
- * - `Session.handler` - Can be used to enable a custom session handler. Expects an array of of callables,
- *    that can be used with `session_save_handler`. Using this option will automatically add `session.save_handler`
- *    to the ini array.
- * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and
- *    sessionids that change frequently. See CakeSession::$requestCountdown.
- * - `Session.ini` - An associative array of additional ini values to set.
- *
- * The built in defaults are:
- *
- * - 'php' - Uses settings defined in your php.ini.
- * - 'cake' - Saves session files in CakePHP's /tmp directory.
- * - 'database' - Uses CakePHP's database sessions.
- * - 'cache' - Use the Cache class to save sessions.
- *
- * To define a custom session handler, save it at /app/Model/Datasource/Session/<name>.php.
- * Make sure the class implements `CakeSessionHandlerInterface` and set Session.handler to <name>
- *
- * To use database sessions, run the app/Config/Schema/sessions.php schema using
- * the cake shell command: cake schema create Sessions
- *
- */
 	Configure::write('Session', array(
 		'defaults' => 'php'
 	));
@@ -258,90 +235,25 @@
 	//Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 
 /**
- * The classname and database used in CakePHP's
- * access control lists.
- */
-	Configure::write('Acl.classname', 'DbAcl');
-	Configure::write('Acl.database', 'default');
-
-/**
  * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
 
-/**
- *
- * Cache Engine Configuration
- * Default settings provided below
- *
- * File storage engine.
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'File', //[required]
- *		'duration' => 3600, //[optional]
- *		'probability' => 100, //[optional]
- * 		'path' => CACHE, //[optional] use system tmp directory - remember to use absolute path
- * 		'prefix' => 'cake_', //[optional]  prefix every cache file with this string
- * 		'lock' => false, //[optional]  use file locking
- * 		'serialize' => true, [optional]
- *	));
- *
- * APC (http://pecl.php.net/package/APC)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Apc', //[required]
- *		'duration' => 3600, //[optional]
- *		'probability' => 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *	));
- *
- * Xcache (http://xcache.lighttpd.net/)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Xcache', //[required]
- *		'duration' => 3600, //[optional]
- *		'probability' => 100, //[optional]
- *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional] prefix every cache file with this string
- *		'user' => 'user', //user from xcache.admin.user settings
- *		'password' => 'password', //plaintext password (xcache.admin.pass)
- *	));
- *
- * Memcache (http://www.danga.com/memcached/)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Memcache', //[required]
- *		'duration' => 3600, //[optional]
- *		'probability' => 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- * 		'servers' => array(
- * 			'127.0.0.1:11211' // localhost, default port 11211
- * 		), //[optional]
- * 		'persistent' => true, // [optional] set this to false for non-persistent connections
- * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
- *	));
- *
- *  Wincache (http://php.net/wincache)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Wincache', //[required]
- *		'duration' => 3600, //[optional]
- *		'probability' => 100, //[optional]
- *		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *	));
- */
 
-/**
- * Configure the cache handlers that CakePHP will use for internal
- * metadata like class maps, and model schema.
- *
- * By default File is used, but for improved performance you should use APC.
- *
- * Note: 'default' and other application caches should be configured in app/Config/bootstrap.php.
- *       Please check the comments in boostrap.php for more info on the cache engines available
- *       and their setttings.
- */
-$engine = 'File';
+//If CakeResque is defined, use redis for caching as well..
+if (!is_null(Configure::read('CakeResque'))) {
+	$engine = 'Redis';
+} else {
+	$engine = 'File';
+}
+Cache::config('default', array(
+	'engine' => $engine,
+	'duration' => 3600,
+	'prefix' => 'laser-gcode_cache_',
+//	'server' => Configure::read('CakeResque.Redis.host'),
+//	'port' => Configure::read('CakeResque.Redis.port'),
+));
 
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
@@ -351,7 +263,6 @@ if (Configure::read('debug') > 0) {
 
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $prefix = 'laser-gcode-gen_';
-
 /**
  * Configure the cache used for general framework caching. Path information,
  * object listings, and translation cache files are stored with this configuration.
@@ -361,7 +272,10 @@ Cache::config('_cake_core_', array(
 	'prefix' => $prefix . 'cake_core_',
 	'path' => CACHE . 'persistent' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'server' => Configure::read('CakeResque.Redis.host'),
+	'port' => Configure::read('CakeResque.Redis.port'),
+	
 ));
 
 /**
@@ -373,5 +287,8 @@ Cache::config('_cake_model_', array(
 	'prefix' => $prefix . 'cake_model_',
 	'path' => CACHE . 'models' . DS,
 	'serialize' => ($engine === 'File'),
-	'duration' => $duration
+	'duration' => $duration,
+	'server' => Configure::read('CakeResque.Redis.host'),
+	'port' => Configure::read('CakeResque.Redis.port'),
+	
 ));

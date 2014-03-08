@@ -1,1 +1,322 @@
-@import "../vendor/bootstrap-3.0.0/less/bootstrap.less";
+@import "../vendor/bootstrap-3.1.1/less/bootstrap.less";
+.container { 
+	> .main-pane {
+		> .sidebar {
+			.make-md-column(3);
+		}
+		> .content {
+			.make-md-column(9);
+		}
+	}
+	> .full-pane {
+		> .pad {
+			.make-md-column(1);
+		}
+		> .content {
+			.make-md-column(10);
+		}
+	}
+	> .narrow-pane {
+		> .pad {
+			.make-md-column(2);
+		}
+		> .content {
+			.make-md-column(8);
+		}
+	}
+}
+
+.sidebar {
+	.create-proj {
+		.btn-block;
+		.btn-success;
+		.btn-lg;
+		text-align: center;
+		margin-bottom: 10px;
+	}
+	
+	.projects-nav {
+	.nav();
+	.nav-pills();
+	.nav-stacked();
+}
+	
+}
+
+.aside {
+	color: @gray;
+	font-size: 0.9em;
+	padding: 8px;
+}
+.short-login {
+	.well;
+	
+}
+a.register {
+	padding-top: 8px;
+	display: block;
+}
+.projects.chips {
+	
+	.chip {
+		padding: 12px;
+		background: lighten(@gray-lighter, 2%);
+		.make-sm-column(3);
+		.make-xs-column(5);
+		.make-md-column(2);
+		
+		margin: 10px;
+		img {
+			margin: 0 0 10px 0 ;
+			padding: 2px 11px 2px 2px;
+			max-height: 100px;
+			max-width: 100px;
+			.center-block();
+		}
+	
+		.caption {
+			font-family: sans-serif;
+			min-height: 65px;
+			a {
+				display: block;
+				font-weight: bold;
+			}
+			.details {
+				font-size: 80%;
+			}
+		}
+		.claim {
+			.btn;
+			.btn-xs;
+			.btn-danger;
+			.btn-block;
+		}
+	}
+	.chip:hover {
+		background: lighten(@brand-primary, 30%);
+		cursor: pointer;
+	}
+	
+}
+
+.projects.admin {
+	table {
+		.table;
+		.table-striped;
+		.active-table;
+		
+		
+	}
+	img.thumb {
+			max-height: 50px;
+			max-width: 50px;
+		}
+}
+.projects {
+	.anon-notice {
+		.alert;
+		.alert-warning;
+	}
+}
+#table.projects {
+	img {
+		max-height: 75px;
+		max-width: 150px;
+	}
+}
+.users.admin {
+	table {
+		.table;
+		.table-striped;
+		.active-table;
+	}
+	.actions {
+		a.btn {
+			.btn-block;
+			margin-bottom: 5px;
+		}
+	}
+}
+.search {
+	.well;
+	a.btn {
+		.btn-xs;
+		margin-top: 6px;
+		
+	}
+	.submit {
+		margin-top: 9px;
+	}
+	h3 {
+		margin-top: 0;
+		font-size: 110%;
+	}
+}
+
+.users {
+	
+	.header {
+		.row();
+		h3 {
+			.make-md-column(9);	
+		}
+		.avatar {
+			.make-md-column(3);
+			img,p {
+			.center-block();
+				display: block;
+			} 
+			p {
+				text-align:center;
+				font-size: 80%;
+			}
+		}
+	}
+	h3 {
+		margin-top: 5px;
+	}
+	.confirm-email, .login, .reset-sent,> .error, .success, .form {
+		.well;
+		.bg-info;
+		.make-md-column(12);
+	}
+	.reset-sent {
+		.bg-warning;
+	}
+	.success {
+		.bg-success;
+	}
+	.error {
+		.bg-danger;
+	}
+	.form {
+		form {
+			.form-horizontal;
+		}
+		.submit {
+			.pull-right();
+		}
+		.form-group.error {
+			.bg-danger;
+		}
+		.form-group {
+			 padding-top: 10px;
+			 input[type="text"],
+			 input[type="password"],
+			 input[type="email"],
+			 select {
+			 	.make-md-column(6);
+			 }
+			 label {
+			 	.make-md-column(5);
+			 	height: 40px;
+			 }
+			 .help-block {
+			 	float:none;
+			 	.clearfix();
+			 	.make-md-column(6);
+			 }
+		}
+	}
+}
+
+.no-projects {
+	.alert;
+	.alert-info;
+}
+
+.error {
+	.has-error;
+}
+
+input[type="submit"] {
+	.btn;
+	.btn-primary;
+}
+table.cake-sql-log {
+	.table;
+	.table-striped;
+}
+
+.highlight {
+	.bg-primary;
+}
+
+.active-table {
+	tr:hover {
+		td {
+			.bg-info !important;
+		}
+	}
+}
+
+a.desc span {
+	.glyphicon;
+	.glyphicon-arrow-down;
+	
+}
+a.asc span {
+	.glyphicon;
+	.glyphicon-arrow-up;
+	
+}
+.presets.index {
+	.form-group {
+		.pull-left;
+		.make-md-column(6);
+	}
+	tr td:first-child { 
+		
+		div.form-group {
+			.make-md-column(12);
+		}
+	}
+}
+.presets.form {
+	.well;
+	form {
+		.form-horizontal;
+	}
+	.form-group {
+		.row;
+	}
+	label {
+		.make-md-column(2);
+	}
+	.input-group {
+		.make-md-column(4);
+	}
+	#PresetName {
+		.make-md-column(8);
+	}
+	
+}
+div.level-indicator {
+	background-color: #efefef;
+	div {
+		background-color: @brand-primary;
+	}
+	span {
+		font-size: 0.8em;
+		font-weight: bold;
+	}
+	width: 47%;
+	.pull-left;
+	margin-left: 5px;
+	border: 1px solid darken(#efefef, 10%);
+}
+.btn-move-up,
+.btn-move-down {
+	.btn-warning;
+	.btn-xs;
+	i {
+		.glyphicon;
+	}
+}
+.btn-move-up i{
+	.glyphicon-arrow-up;
+	
+}
+.btn-move-down i {
+	.glyphicon-arrow-down;
+}

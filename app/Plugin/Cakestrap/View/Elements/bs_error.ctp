@@ -16,7 +16,7 @@
 * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 */
 ?>
-<div class="alert alert-error">
+<div class="alert alert-danger">
   <button data-dismiss="alert" class="close">&times;</button>
   <strong><?php echo __('Oops!');?></strong> <?php echo $message ?>
   
