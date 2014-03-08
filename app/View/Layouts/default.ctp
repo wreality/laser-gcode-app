@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><?php echo $title_for_layout?></title>
+    <title><?php echo Configure::read('App.title')?>: <?php echo $title_for_layout?></title>
   
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
