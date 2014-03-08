@@ -152,7 +152,7 @@ class Operation extends AppModel {
 			$GCode->newLine();
 			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH.DS.$path['file_hash'].'.pdf');
 			$GCode->laserOff();
-			$GCode->moveTo(0,0,false, 6000);
+			$GCode->moveTo(0,0,false, $operation['Project']['traversal_rate']);
 			$GCode->insertComment('End of path: '.$path['file_name']);
 		}
 		
