@@ -22,23 +22,25 @@
 						<?php } ?>
 						<?php if ($operation['size_warning']) {?>
 							<div class="alert alert-warning">
-								<strong>Size Mismatch!</strong> Your path files are not all the same dimensions (or at least don't appear to be).  Don't
-								trust the operation preview image in this case and <strong>CHECK THE GCODE MANUALLY</strong>.  Seriously, this tool isn't
-								designed for this case, so just make sure you know what you're doing.
+								<strong>Size Mismatch!</strong> The path files are not all the same dimensions (or at least don't appear to be).  Don't
+								trust the operation preview image in this case and <strong>CHECK THE GCODE MANUALLY</strong>
 							</div>
 						<?php } ?>
 						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
 						<table class="table table-striped">
 							<tr>
 								<th colspan="2">&nbsp;</th>
+								<th><?php echo __('Filename');?></th>
 								<th>Settings</th>
 								<th>&nbsp;</th>
 							</tr>
 							<?php foreach($operation['Path'] as $pi => $path) {?>
 								<tr>
+								
 									<td style="background-color: <?php echo $colors[$pi]?>;">&nbsp;</td>
 									<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
-									<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
+									<td><?php echo $path['file_name']?>
+									<td><?php echo $this->element('Project/level_indicators', array('value' => $path))?>
 										<?php if (!empty($path['Preset']['name'])) {?> 
 											<?php echo $this->Html->label($path['Preset']['name']);?> 
 										<?php } ?>

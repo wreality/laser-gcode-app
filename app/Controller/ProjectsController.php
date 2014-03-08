@@ -156,7 +156,7 @@ class ProjectsController extends AppController {
 		$this->set('public_options', Project::$statuses);
 		
 		$this->loadModel('Preset');
-		$this->set('presets', $this->Preset->getList());
+		$this->set('presets', $this->Preset->getList($this->Auth->user('id')));
 		
 		$this->set('project', $project);
 	}

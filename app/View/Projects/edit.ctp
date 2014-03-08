@@ -82,7 +82,7 @@
 						<?php echo $this->Form->input('speed', array('div' => array('class' => 'col-lg-4 form-group'), 'placeholder' => 'Speed', 'class' => 'col-lg-8', 'append' => '%','label' => array('class' => 'col-lg-4', 'text' => 'Speed')));?>
 					</div>
 					<?php echo $this->Form->end();?>
-					<?php echo $this->Form->postButton(__('Delete Operation'), array('controller' => 'operations', 'action' => 'delete', $operation['id']), array('class' => 'btn pull-right', 'type' => 'btn-danger'), __('Are you sure you want to delete this operation?'))?>
+					<?php echo $this->Form->postButton(__('Delete Operation'), array('controller' => 'operations', 'action' => 'delete', $operation['id']), array('class' => 'btn btn-sm pull-right', 'type' => 'btn-danger'), __('Are you sure you want to delete this operation?'))?>
 					<div class="clearfix"></div>
 				</div>
 			<?php } ?>

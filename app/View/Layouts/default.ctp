@@ -58,9 +58,9 @@
 				<?php echo $this->Html->dropdownStart(__('System Wide'))?>
 					<?php echo $this->Html->dropdownItem(__('Manage Users'), array('controller' => 'users', 'action' => 'index', 'admin' => true))?>
 					<?php echo $this->Html->dropdownItem(__('Manage Projects'), array('controller' => 'projects', 'action' => 'index', 'admin' => true))?>
+					<?php echo $this->Html->dropdownItem(__('Manage Presets'), array('controller' => 'presets', 'action' => 'index', 'admin' => true));?>
 						<?php echo $this->Html->dropdownDivider()?>
 					<?php echo $this->Html->dropdownItem(__('Settings'), array('controller' => 'settings', 'action' => 'index', 'admin' => true));?>
-					<?php echo $this->Html->dropdownItem(__('Presets'), array('controller' => 'presets', 'action' => 'index', 'admin' => false));?>
 					<?php echo $this->Html->dropdownDivider()?>
 					<?php echo $this->Html->dropdownItem(__('Utility GCode'), array('controller' => 'g_codes', 'action' => 'index', 'admin' => false));?>
 				<?php echo $this->Html->dropdownEnd();?>
@@ -69,6 +69,7 @@
 			<li class="dropdown">
 			<?php echo $this->Html->dropdownStart(__('%s (%s)', $current_user['username'], $current_user['email']))?>
 				<?php echo $this->Html->dropdownItem(__('Account Details'), array('controller' => 'users', 'action' => 'account', 'admin' => false))?>
+				<?php echo $this->Html->dropdownItem(__('My Presets'), array('controller' => 'presets', 'action' => 'index', 'admin' => false));?>
 				<?php echo $this->Html->dropdownDivider()?>
 				<?php echo $this->Html->dropdownItem(__('Logout'), array('controller' => 'users', 'action' => 'logout', 'admin' => false))?>
 			<?php echo $this->Html->dropdownEnd()?>
