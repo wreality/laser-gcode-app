@@ -43,9 +43,7 @@
 								<td style="background-color: <?php echo $colors[$pi]?>;">&nbsp;</td>
 								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
 								<td><?php echo $path['file_name'];?></td>
-								<td><?php echo $path['order']?></td>
-								<td><?php echo __('%01.2f%% Power', $path['power']);?> <?php echo __("%01.2f%% Speed", $path['speed']);?><br/>
-									<?php if (!empty($path['Preset']['name'])) {?>
+								<td><?php echo $this->element('Project/level_indicators', array('value' => $path))?><?php if (!empty($path['Preset']['name'])) {?>
 										<?php echo $this->Html->label($path['Preset']['displayName']);?> 
 									<?php } else { ?>
 										<?php echo $this->Html->label(__('Custom'));?>
