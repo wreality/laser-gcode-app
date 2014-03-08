@@ -75,7 +75,7 @@
 				<td><?php echo $this->Time->format('M jS, Y g:ia', $project['Project']['modified'])?><br/>
 					<?php echo __('(Modified %s)', $this->Time->timeAgoInWords($project['Project']['modified']))?></td>
 				<td class="actions">
-					<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $project['Project']['id']))?>
+					<?php //echo $this->Html->link(__('Edit'), array('action' => 'edit', $project['Project']['id']))?>
 			</tr>
 		<?php endforeach;?>
 	
