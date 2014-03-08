@@ -34,7 +34,6 @@
 							<tr>
 								<th colspan="2">&nbsp;</th>
 								<th><?php echo __('File Name');?></th>
-								<th><?php echo __('Order');?></th>
 								<th>Settings</th>
 								<th>&nbsp;</th>
 							</tr>
