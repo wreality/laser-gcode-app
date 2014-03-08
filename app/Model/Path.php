@@ -49,17 +49,23 @@ class Path extends AppModel {
 				'rule' => array('notempty'),
 			),
 		),
-		'speed' => array(
-			'sane' => array(
-				'rule' => array('range', 5, 101),
-				'message' => 'Speed must be between 10 and 100%',
-			),
-		),
 		'power' => array(
-				'sane' => array(
-						'rule' => array('range', 5, 101),
-						'message' => 'Power must be between 5 and 100%',
+			'over0' => array(
+				'rule' => array('comparison', '>', 0),
+				'message' => 'Power must be between 0%% and 100%%',
 			),
+			'lessequal100' => array(
+				'rule' => array('comparison', '<=', 100),
+				'message' => 'Power must be between 0%% and 100%%',		),
+		),
+		'speed' => array(
+			'over0' => array(
+				'rule' => array('comparison', '>', 0),
+				'message' => 'Speed must be between 0%% and 100%%',
+			),
+			'lessequal100' => array(
+				'rule' => array('comparison', '<=', 100),
+				'message' => 'Speed must be between 0%% and 100%%')
 		),
 		
 	);
