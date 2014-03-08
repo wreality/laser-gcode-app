@@ -304,8 +304,11 @@ class ProjectsController extends AppController {
  * Display full list of system projects.
  */
 	public function admin_index() {
-		
+		$this->Project->Behaviors->attach('Containable');
 		$paginate['conditions'] = $this->_processSearch();
+		$paginate['contain'] = array(
+			'Operation', 'User'
+		);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 	}
