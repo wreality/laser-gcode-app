@@ -99,8 +99,16 @@ class AppController extends Controller {
 			foreach($this->request->data as $model => $fields) {
 				foreach ($fields as $field => $value) {
 					if (!empty($value)) {
-						$conditions[$model.'.'.$field.' LIKE'] = '%'.$value.'%';
-						$conditions[$model.'.'.$field.' !='] = null;
+						if (stristr($value, '*')) {
+							$conditions[$model.'.'.$field.' LIKE'] = str_replace('*', '%', $value);
+						} elseif (preg_match('/"([^"]+)"/', $value, $matches)) {
+							$conditions[$model.'.'.$field] = $matches[1];
+						} else if (preg_match("/([^']+)'/", $value, $matches)) {
+							$conditions[$model.'.'.$field] = $matches[1];
+						} else {
+							$conditions[$model.'.'.$field.' LIKE'] = '%'.$value.'%';
+							$conditions[$model.'.'.$field.' !='] = null;
+						}
 					}
 				}
 			}
