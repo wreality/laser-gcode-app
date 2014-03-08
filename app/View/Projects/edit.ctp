@@ -57,10 +57,10 @@
 								</td>
 								<td>	
 									<?php if ($pi > 0)  { ?>
-										<?php echo $this->Form->postButton('&#x21e7', array('controller' => 'paths', 'action' => 'move_up', $path['id']), array('escape' => false,'type' => ' btn-xs btn-default'));?>
+										<?php echo $this->Form->postButton('<i> </i> ', array('controller' => 'paths', 'action' => 'move_up', $path['id']), array('escape' => false,'type' => ' btn-xs btn-default btn-move-up'));?>
 									<?php } ?>
 									<?php if (($pi+1) < count($operation['Path']))  { ?>
-										<?php echo $this->Form->postButton('&#x21e9', array('controller' => 'paths', 'action' => 'move_down', $path['id']), array('escape' => false, 'type' => 'btn-xs btn-default'));?>
+										<?php echo $this->Form->postButton('<i> </i> ', array('controller' => 'paths', 'action' => 'move_down', $path['id']), array('escape' => false, 'type' => 'btn-xs btn-default btn-move-down'));?>
 									<?php } ?>
 									<div class="btn-group pull-right">
 										<?php echo $this->Html->button('Edit', array('controller' => 'paths', 'action' => 'edit', $path['id']), array('type' => 'btn-primary btn-xs'));?>
