@@ -1,6 +1,7 @@
+<?php 
+
 App::uses('AppShell', 'Console');
 
-<?php
 class UpdateShell extends AppShell {
 	public $uses = array('Project');
 	
