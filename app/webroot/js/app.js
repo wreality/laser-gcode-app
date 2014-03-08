@@ -15,7 +15,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('.admin table tr').click(function(e) {
+	$('.active-table tr').click(function(e) {
 		if ($(e.target).prop('tagName') != 'A') {
 			$click = $(this).find('.actions a.default-action').first();
 			
