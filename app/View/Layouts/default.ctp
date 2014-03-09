@@ -82,6 +82,13 @@
   </div><!-- /.navbar-collapse -->
 </nav>
   		<div class="container">
+  			<div class="alert alert-info">
+  				<?php echo $this->Html->button(__('Submit Issue'), 'https://github.com/wreality/laser-gcode-app/issues/new', array('type' => 'btn-default pull-right', 'style' => 'margin-top: -7px;'));?>
+  				<p>You are currently using the beta version of 
+  					<?php echo Configure::read('App.title')?>.  Please consider
+  					reporting any issues you find on the <?php echo $this->Html->link('Github page', 'https://github.com/wreality/laser-gcode-app/issues?page=1&state=open');?> for the
+  					project.</p>
+  			</div>
   			<div class="row">
   				<?php echo $this->Session->flash();?>
   				<?php echo $this->fetch('top_content')?>

@@ -35,7 +35,7 @@ class AppController extends Controller {
 				'action' => 'login',
 				'admin' => false,
 			),
-			'authorize' => 'controller',
+			'authorize' => 'Controller',
 			'authenticate' => array(
 				'Form' => array(
 					'passwordHasher' => 'Blowfish',
