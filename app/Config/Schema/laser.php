@@ -97,6 +97,7 @@ class LaserSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'last_login' => array('type' => 'datetime', 'null' => false, 'default' => null),
 		'project_count' => array('type' => 'integer', 'null' => true, 'default' => '0'),
+		'public_count' => array('type' => 'integer', 'null' => true, 'default' => null),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),

@@ -96,10 +96,28 @@ a.register {
 			.btn-danger;
 			.btn-block;
 		}
+		.user {
+			display: block;
+			background: darken(@gray-lighter, 3%);
+			margin: 6px 0px;
+			img {
+				.opacity(.6);
+			}
+		}
+		
 	}
 	.chip:hover {
 		background: lighten(@brand-primary, 30%);
 		cursor: pointer;
+		a {
+			color: darken(@link-color, 22%) !important;
+		}
+		.user {
+			background: lighten(@brand-primary, 25%);
+			img {
+				.opacity(1);
+			}
+		}
 	}
 	
 }

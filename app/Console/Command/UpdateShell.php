@@ -3,7 +3,7 @@
 App::uses('AppShell', 'Console');
 
 class UpdateShell extends AppShell {
-	public $uses = array('Project');
+	public $uses = array('Project', 'User');
 	
 	public function run() {
 		if ($this->params['dry-run']) {
@@ -39,6 +39,39 @@ class UpdateShell extends AppShell {
 			} else {
 				$this->out('.', 0);
 			}
+		}
+		$this->out('done.');
+	}
+	public function updateUserCounterCache() {
+		$list = $this->User->find('list');
+		$users = array_keys($list);
+		$this->out('<warning>Updating '.count($users). ' user project counts...', 0);
+		if (!count($users)){
+			$this->out('nothing to do.');
+			return;
+		}
+		if ($this->params['dry-run']) {
+			$this->out('dry-run.. skipping.');
+			return;
+		}
+		foreach ($users as $user_id) {
+			$this->User->id = $user_id;
+			$all_count = $this->Project->find('count', array('conditions' => array('Project.user_id' => $user_id)));
+			$public_count = $this->Project->find('count', array('conditions' => array('Project.user_id' => $user_id, 'Project.public' => Project::PROJ_PUBLIC)));
+			$user = array(
+				'User' => array(
+					'id' => $user_id,
+					'project_count' => $all_count,
+					'public_count' => $public_count,
+				)
+			);
+			if (!$this->User->save($user)) {
+				$this->out('<error>Error saving count.</error>');
+				die();
+			} else {
+				$this->out('.', 0);
+			}
+			unset($user);
 		}
 		$this->out('done.');
 	}

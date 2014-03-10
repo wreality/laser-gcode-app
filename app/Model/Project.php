@@ -45,7 +45,14 @@ class Project extends AppModel {
  * 
  * @var unknown
  */	
-	public $belongsTo = array('User');
+	public $belongsTo = array(
+		'User' => array(
+			'counterCache' => array(
+				'project_count' => array(),
+				'public_count' => array('Project.public' => Project::PROJ_PUBLIC)
+			)
+		)
+	);
 
 /**
  * __construct method

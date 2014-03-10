@@ -6,6 +6,7 @@
 <div class="projects chips">
 	<div class="row">
 		<?php foreach ($projects as $i => $project) { ?>
+		
 			<div class="chip">
 				<div class="thumb">
 					<?php if ((!empty($project['Operation'])) && (file_exists(PDF_PATH.DS.$project['Operation'][0]['id'].'.png'))) {?>
@@ -25,6 +26,13 @@
 						}
 					?>
 					<?php echo $this->Html->link($project_name, array('action' => $action, $project['Project']['id']), array('escape' => false))?>
+					<?php if ($show_user) {?>
+						<span class="user"><a href="<?php echo Router::url(array('controller' => 'users', 'action' => 'profile', $project['User']['username']));?>">
+							<?php echo $this->Html->gravatar($project['User']['email'], array('size' => '40'))?> <?php echo $project['User']['username']?>
+							</a>
+						</span>
+					<?php } ?>
+					
 					<span class="details"><?php echo __('Created %s', $this->Time->timeAgoInWords($project['Project']['created']));?>
 					</span>
 				</p>
