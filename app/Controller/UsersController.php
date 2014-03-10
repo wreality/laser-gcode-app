@@ -16,7 +16,7 @@ class UsersController extends AppController {
  * @see AppController::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('register', 'verify', 'lost_password', 'reset');
+		$this->Auth->allow('register', 'verify', 'lost_password', 'reset', 'profile');
 		parent::beforeFilter();
 	
 	}
