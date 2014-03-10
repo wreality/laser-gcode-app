@@ -25,7 +25,7 @@
 							$project_name = $project['Project']['project_name'];
 						}
 					?>
-					<?php echo $this->Html->link($project_name, array('action' => $action, $project['Project']['id']), array('escape' => false))?>
+					<?php echo $this->Html->link($project_name, array('controller' => 'projects', 'action' => $action, $project['Project']['id']), array('escape' => false))?>
 					<?php if ($show_user) {?>
 						<span class="user"><a href="<?php echo Router::url(array('controller' => 'users', 'action' => 'profile', $project['User']['username']));?>">
 							<?php echo $this->Html->gravatar($project['User']['email'], array('size' => '40'))?> <?php echo $project['User']['username']?>
