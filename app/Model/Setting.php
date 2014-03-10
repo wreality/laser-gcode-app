@@ -40,25 +40,25 @@ class Setting extends AppModel {
 			'help_text' =>  'Set to Production mode for public installations.  Debug levels disable model caching and display SQL log and stack trace.',
 			'enum_data' =>  'a:4:{i:0;s:15:"Production Mode";i:1;s:20:"Show Errors/Warnings";i:2;s:28:"Show Errors/Warnings/SQL Log";i:3;s:14:"Developer Mode";}',
 		), array(
-			'key' => 'App.default_gcode_preamble',
+			'key' => 'LaserApp.default_gcode_preamble',
 			'type' => 'longtext',
 			'title' => 'Default GCODE preamble'
 		), array(
-			'key' => 'App.default_gcode_postscript',
+			'key' => 'LaserApp.default_gcode_postscript',
 			'type' => 'longtext',
 			'title' => 'Default GCODE postscript',
 		), array(
-			'key' => 'App.z_total',
+			'key' => 'LaserApp.z_total',
 			'type' => 'text',
 			'title' => 'Total Z Height',
 			'units' => 'mm',
 		), array(
-			'key' => 'App.focal_length',
+			'key' => 'LaserApp.focal_length',
 			'type' => 'text',
 			'title' => 'Focal length',
 			'units' => 'mm',
 		), array(
-			'key' => 'App.z_feedrate',
+			'key' => 'LaserApp.z_feedrate',
 			'type' => 'text',
 			'title' => 'Z Move Feedrate',
 			'units' => 'mm/min'

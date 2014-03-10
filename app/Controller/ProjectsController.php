@@ -140,7 +140,10 @@ class ProjectsController extends AppController {
 		$project = $this->Project->read();
 		
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$fields = array('project_name', 'max_traversal');
+			$fields = array('project_name', 'max_feedrate', 'home_before',
+					'clear_after', 'gcode_postscript', 'gcode_preamble',
+					'traversal_rate'
+			);
 			if (!$project['Project']['isAnonymous']) {
 				$fields[] = 'public';
 			}

@@ -133,7 +133,7 @@
     <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
 		<?php echo $this->Form->input('max_feedrate', array('label' => __('100% Feedrate'), 'append' => 'mm/min'))?>
-		<?php echo $this->Form->input('traversal_rate', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
+		<?php //echo $this->Form->input('traversal_rate', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
 		<?php echo $this->Form->input('gcode_preamble', array('type' => 'textarea'));?>
 		<?php echo $this->Form->input('gcode_postscript', array('type' => 'textarea'))?>
 		<?php echo $this->Form->submit(__('Save'))?>
