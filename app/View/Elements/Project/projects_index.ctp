@@ -7,11 +7,13 @@
 	<div class="row">
 		<?php foreach ($projects as $i => $project) { ?>
 			<div class="chip">
+				<div class="thumb">
 					<?php if ((!empty($project['Operation'])) && (file_exists(PDF_PATH.DS.$project['Operation'][0]['id'].'.png'))) {?>
 						<?php echo $this->Html->image('/files/'.$project['Operation'][0]['id'].'.png')?>
 					<?php } else { ?>
 						<?php echo $this->Html->image('no-thumb.png')?>
 					<?php }?>
+				</div>
 				<p class="caption">
 					<?php 
 						if (!empty($this->request->data['Project']['project_name'])) {
