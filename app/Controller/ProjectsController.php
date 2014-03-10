@@ -68,7 +68,8 @@ class ProjectsController extends AppController {
 		$paginate = array(
 				'order' => array('Project.modified' => 'DESC'),
 				'conditions' => array(
-						'User.id' => null
+						'User.id' => null,
+						'Project.operation_count >' => 0
 				)
 		);
 		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
