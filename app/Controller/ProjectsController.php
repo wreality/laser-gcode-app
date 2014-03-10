@@ -68,7 +68,8 @@ class ProjectsController extends AppController {
 		$paginate = array(
 				'order' => array('Project.modified' => 'DESC'),
 				'conditions' => array(
-						'User.id' => null
+						'User.id' => null,
+						'Project.operation_count >' => 0
 				)
 		);
 		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
@@ -140,7 +141,10 @@ class ProjectsController extends AppController {
 		$project = $this->Project->read();
 		
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$fields = array('project_name', 'max_traversal');
+			$fields = array('project_name', 'max_feedrate', 'home_before',
+					'clear_after', 'gcode_postscript', 'gcode_preamble',
+					'traversal_rate'
+			);
 			if (!$project['Project']['isAnonymous']) {
 				$fields[] = 'public';
 			}

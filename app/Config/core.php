@@ -68,11 +68,8 @@
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 	
-	Configure::write('App.version', '2.0-RC1.1');
+	Configure::write('App.version', '2.0-RC1.2');
 	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
-	Configure::write('App.file_path', Configure::read('App.file_path'));
-	Configure::write('App.default_max_cut_feedrate', 1000);
-	Configure::write('App.default_traversal_feedrate', 6000);
 	Configure::write('App.max_email_retries', 5);
 	Configure::write('App.title', 'GCode Creator');
 	Configure::write('App.allowed_file_types', array('application/pdf'));

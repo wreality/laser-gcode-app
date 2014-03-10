@@ -252,7 +252,13 @@ class UsersController extends AppController {
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				$this->User->id = $this->Auth->user('id');
-				$this->Session->setFlash(__('Welcome back %s.  Your last login was %s', $this->User->field('username'), date('M jS, Y g:ia', strtotime($this->User->field('last_login')))), 'bs_success');
+				$last_login = $this->User->field('last_login');
+				if ($last_login == '0000-00-00 00:00:00') {
+					$last_login = 'never';
+				} else {
+					$last_login = date('M jS, Y g:ia', strtotime($this->User->field('last_login')));
+				}
+				$this->Session->setFlash(__('Welcome back %s.  Your last login was %s.', $this->User->field('username'), $last_login), 'bs_success');
 				$this->User->saveField('last_login', date('Y-m-d H:i:s'));
 				return $this->redirect(array('controller' => 'projects', 'action' => 'home'));
 			} else {

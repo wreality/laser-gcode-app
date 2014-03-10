@@ -18,7 +18,7 @@
 			<div class="clearfix">&nbsp;</div>
 	<?php 
 	
-		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Replace Path File')));
+		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Replace Path File'), 'required' => false));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

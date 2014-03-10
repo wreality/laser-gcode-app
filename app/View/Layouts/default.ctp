@@ -37,7 +37,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <?php echo $this->Html->link(__('GCode Generator'), '/', array('class' => 'navbar-brand'))?>
+    <?php echo $this->Html->link(Configure::read('App.title'), '/', array('class' => 'navbar-brand'))?>
     
   </div>
 <?php $current_user = AuthComponent::user(); $this->set('current_user', $current_user); ?>
