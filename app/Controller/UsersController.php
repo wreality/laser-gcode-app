@@ -415,6 +415,14 @@ class UsersController extends AppController {
 		} 
 	}
 
+/**
+ * profile method
+ *
+ * Show user profile and public projects.
+ * 
+ * @param string $username
+ * @throws NotFoundException
+ */
 	public function profile($username = null) {
 		App::uses('Project', 'Model');
 		$this->User->Behaviors->attach('Containable');
