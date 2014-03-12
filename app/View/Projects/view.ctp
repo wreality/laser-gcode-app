@@ -58,10 +58,15 @@
 </div>
 <?php $this->start('sidebar');?>
 	<h4><?php echo $project['Project']['project_name']?></h4>
-	<table class="table table-striped">
+	<table class="profile">
 		<tr>
 			<th><?php echo __('Created By:')?></th>
-			<td><?php echo $project['User']['username']?></td>
+			<td>
+				<a href="<?php echo Router::url(array('controller' => 'users', 'action' => 'profile', $project['User']['username']))?>">
+					<?php echo $this->Html->gravatar($project['User']['email'], array('size' => 25));?> 
+					<?php echo $project['User']['username']?>
+				</a>
+			</td>
 		</tr>
 		<tr>
 			<th><?php echo __('Created')?></th>
