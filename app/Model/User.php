@@ -76,6 +76,14 @@ class User extends AppModel {
 				'allowEmpty' => false,
 			),
 		),
+		'current_password' => array(
+			'validatePassword' => array(
+				'rule' => array('validateCurrentPassword'),
+				'message' => 'Current password does not match.',
+				'required' => false,
+				'allowEmpty' => false,
+			),
+		),
 		'admin' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
@@ -192,6 +200,14 @@ class User extends AppModel {
 		return $type.':'.sha1(mt_rand(10000,99999).time());
 	}
 	
+	public function validateCurrentPassword($check) {
+		$passwordHasher = new BlowfishPasswordHasher();
+		return $passwordHasher->check($this->data[$this->alias]['current_password'], $this->field('password'));
+	}
+	
+	public function requireCurrentPassword() {
+		$this->validate['current_password']['validatePassword']['required'] = true;
+	}
 /**
  * beforeSave method
  * 

@@ -161,11 +161,7 @@ class UsersController extends AppController {
 		$this->User->recursive = -1;
 		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if (empty($this->request->data['User']['password'])) {
-				unset($this->request->data['User']['confirm_password']);
-				unset($this->request->data['User']['password']);
-			}
-			if ($this->User->save($this->request->data)) {
+			if ($this->User->save($this->request->data, true, array('username'))) {
 				$user = $this->User->read();
 				$this->Session->setFlash(__('Account changes saved'), 'bs_success');
 			} else {
@@ -174,8 +170,6 @@ class UsersController extends AppController {
 		} else {
 			$this->request->data = $user;
 		}
-		$this->request->data['User']['password'] = '';
-		$this->request->data['User']['confirm_password'] = '';
 		$this->set(compact('user'));
 	}
 	
@@ -443,4 +437,18 @@ class UsersController extends AppController {
 		$this->set(compact('user'));
 	}
 	
+	public function password() {
+		if ($this->request->is('post')) {
+			$this->User->id = $this->Auth->user('id');
+			$this->User->requireCurrentPassword();
+			
+			if ($this->User->save($this->request->data, true, array('current_password', 'password', 'confirm_password'))) {
+				$this->Session->setFlash(__('Password successfully updated.'), 'bs_success');
+			} else {
+				$this->Session->setFlash(__('There was an error while updating your password.'), 'bs_error');
+			}
+			$this->request->data = array();
+		} 
+		
+	}
 }
