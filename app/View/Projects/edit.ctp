@@ -4,7 +4,7 @@
 	<?php if (!$project['User']['id']): ?>
 		<div class="anon-notice">
 				<h4>Anonymous Project</h4>
-			<p>Anonymous project's aren't listed on the main page.  The only way
+			<p>Anonymous projects aren't listed on the main page.  The only way
 			   to find this project later is to bookmark the page!
 			</p> 
 		</div>
