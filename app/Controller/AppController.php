@@ -95,7 +95,9 @@ class AppController extends Controller {
 	protected function _processSearch() {
 		$session_key = $this->name.'.'.$this->action.'.';
 		if ($this->request->is('post')) {
-			$paginate = array();
+			$paginate = array(
+				'conditions' => arrray()
+			);
 			foreach($this->request->data as $model => $fields) {
 				foreach ($fields as $field => $value) {
 					if (!empty($value)) {
@@ -119,7 +121,7 @@ class AppController extends Controller {
 			$paginate['conditions'] = $this->Session->read($session_key.'conditions');
 			$this->request->data = $this->Session->read($session_key.'data');
 		}
-		if (!empty($paginate['conditions'])) {
+		if (!empty($paginate)) {
 			return $paginate;
 		} else {
 			$this->request->data = array();
