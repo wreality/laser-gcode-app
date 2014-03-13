@@ -33,7 +33,7 @@
 						</span>
 					<?php } ?>
 					
-					<span class="details"><?php echo __('Created %s', $this->Time->timeAgoInWords($project['Project']['created']));?>
+					<span class="details"><?php echo __('%s', $this->Time->timeAgoInWords($project['Project']['created']));?>
 					</span>
 				</p>
 				<?php if ($claim) {?>
