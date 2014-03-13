@@ -96,7 +96,7 @@ class AppController extends Controller {
 		$session_key = $this->name.'.'.$this->action.'.';
 		if ($this->request->is('post')) {
 			$paginate = array(
-				'conditions' => arrray()
+				'conditions' => array()
 			);
 			foreach($this->request->data as $model => $fields) {
 				foreach ($fields as $field => $value) {
