@@ -130,7 +130,6 @@ class Operation extends AppModel {
 			$this->id = $id;
 		}
 		
-		$this->Behaviors->attach('Containable');
 		$this->contain(array(
 			'Project',
 			'Path',

@@ -229,7 +229,6 @@ class PresetsController extends AppController {
 				throw new ForbiddenException(__('Unable to modify path settings.'));
 			}
 		}
-		$this->Path->Behaviors->attach('Containable');
 		$this->Path->contain(array(
 			'Operation' => array(
 				'Project'

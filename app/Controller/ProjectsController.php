@@ -129,7 +129,6 @@ class ProjectsController extends AppController {
 			throw new ForbiddenException(__('Not allowed to modify this project.'));
 		}
 		
-		$this->Project->Behaviors->load('Containable');
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(
@@ -184,7 +183,6 @@ class ProjectsController extends AppController {
 			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
 		
-		$this->Project->Behaviors->load('Containable');
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(
@@ -257,7 +255,6 @@ class ProjectsController extends AppController {
 		if (!$this->Project->isOwnerOrPublic($this->Auth->user('id'))) {
 			throw new ForbiddenException(__('Not authorized to access this project.'));
 		}
-		$this->Project->Behaviors->load('Containable');
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(

@@ -419,7 +419,6 @@ class UsersController extends AppController {
  */
 	public function profile($username = null) {
 		App::uses('Project', 'Model');
-		$this->User->Behaviors->attach('Containable');
 		$this->User->contain();
 		$user = $this->User->findByUsername($username);
 		if (empty($user)) {
