@@ -28,6 +28,8 @@ class Project extends AppModel {
 
 	public $virtualFields = array(
 		'isAnonymous' => 'user_id IS NULL',
+		'isEmpty' => 'operation_count < 1',
+		'notEmpty' => 'operation_count > 0',
 	);
 	
 /**
