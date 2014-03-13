@@ -33,7 +33,7 @@ class ProjectsController extends AppController {
 				'public' => Project::PROJ_PUBLIC
 			)
 		);
-		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 		
@@ -53,7 +53,7 @@ class ProjectsController extends AppController {
 						'public' => array(Project::PROJ_PUBLIC, Project::PROJ_PRIVATE)
 				)
 		);
-		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 	
@@ -73,7 +73,7 @@ class ProjectsController extends AppController {
 						'Project.operation_count >' => 0
 				)
 		);
-		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		
 		
@@ -305,7 +305,7 @@ class ProjectsController extends AppController {
  * Display full list of system projects.
  */
 	public function admin_index() {
-		$paginate['conditions'] = $this->_processSearch();
+		$paginate = $this->_processSearch();
 		$paginate['contain'] = array(
 			'Operation', 'User'
 		);

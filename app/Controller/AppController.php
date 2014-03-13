@@ -95,31 +95,32 @@ class AppController extends Controller {
 	protected function _processSearch() {
 		$session_key = $this->name.'.'.$this->action.'.';
 		if ($this->request->is('post')) {
-			$conditions = array();
+			$paginate = array();
 			foreach($this->request->data as $model => $fields) {
 				foreach ($fields as $field => $value) {
 					if (!empty($value)) {
 						if (stristr($value, '*')) {
-							$conditions[$model.'.'.$field.' LIKE'] = str_replace('*', '%', $value);
+							$paginate['conditions'][$model.'.'.$field.' LIKE'] = str_replace('*', '%', $value);
 						} elseif (preg_match('/"([^"]+)"/', $value, $matches)) {
-							$conditions[$model.'.'.$field] = $matches[1];
+							$paginate['conditions'][$model.'.'.$field] = $matches[1];
 						} else if (preg_match("/([^']+)'/", $value, $matches)) {
-							$conditions[$model.'.'.$field] = $matches[1];
+							$paginate['conditions'][$model.'.'.$field] = $matches[1];
 						} else {
-							$conditions[$model.'.'.$field.' LIKE'] = '%'.$value.'%';
-							$conditions[$model.'.'.$field.' !='] = null;
+							$paginate['conditions'][$model.'.'.$field.' LIKE'] = '%'.$value.'%';
+							$paginate['conditions'][$model.'.'.$field.' !='] = null;
 						}
 					}
 				}
 			}
-			$this->Session->write($session_key.'conditions', $conditions);
+			$paginate['page'] = 1;
+			$this->Session->write($session_key.'conditions', $paginate['conditions']);
 			$this->Session->write($session_key.'data', $this->request->data);
 		} else {
-			$conditions = $this->Session->read($session_key.'conditions');
+			$paginate['conditions'] = $this->Session->read($session_key.'conditions');
 			$this->request->data = $this->Session->read($session_key.'data');
 		}
-		if (!empty($conditions)) {
-			return $conditions;
+		if (!empty($paginate['conditions'])) {
+			return $paginate;
 		} else {
 			$this->request->data = array();
 			return array();

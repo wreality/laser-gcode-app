@@ -273,7 +273,7 @@ class UsersController extends AppController {
 	public function admin_index() {
 		$this->User->recursive = 0;
 		
-		$paginate['conditons'] = $this->_processSearch();
+		$paginate = $this->_processSearch();
 		$this->paginate = $paginate;
 		$this->set('users', $this->paginate());
 	}
