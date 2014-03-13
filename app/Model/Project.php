@@ -27,6 +27,10 @@ class Project extends AppModel {
 		Project::PROJ_UNDEFINED => 'Undefined',
 	);
 
+	public $virtualFields = array(
+		'isAnonymous' => 'user_id IS NULL',
+	);
+	
 /**
  * hasMany associations
  *
@@ -64,8 +68,7 @@ class Project extends AppModel {
  * @param string $ds
  */
 	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-		$this->virtualFields['isAnonymous'] = 'Project.public = "'.Project::PROJ_UNDEFINED.'"';
+		parent::__construct($id, $table, $ds);		
 	}
 	
 /**
