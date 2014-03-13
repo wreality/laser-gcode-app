@@ -3,6 +3,7 @@
 /app/Config/database.php
 /app/Config/resque-config.php
 /app/webroot/files
+/app/webroot/ps*
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
