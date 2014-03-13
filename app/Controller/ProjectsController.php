@@ -16,7 +16,7 @@ class ProjectsController extends AppController {
  * @see Controller::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('index', 'add', 'view', 'edit', 'generate', 'delete');	
+		$this->Auth->allow('index', 'add', 'view', 'edit', 'generate', 'delete', 'reset_project_defaults');	
 		parent::beforeFilter();
 	}
 	
@@ -50,6 +50,7 @@ class ProjectsController extends AppController {
 				'order' => array('Project.modified' => 'DESC'),
 				'conditions' => array(
 						'user_id' => $this->Auth->user('id'),
+						'public' => array(Project::PROJ_PUBLIC, Project::PROJ_PRIVATE)
 				)
 		);
 		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
@@ -225,12 +226,11 @@ class ProjectsController extends AppController {
 	public function add() {
 		$this->request->onlyAllow('post', 'put');
 		$this->Project->create();
+		$this->request->data['Project']['public'] = Project::PROJ_PRIVATE;
 		if ($this->Auth->user('id')) {
 			$this->request->data['Project']['user_id'] = $this->Auth->user('id');
-			$this->request->data['Project']['public'] = Project::PROJ_PRIVATE;
 		} else {
 			$this->request->data['Project']['user_id'] = $this->request->clientIp();
-			$this->request->data['Project']['public'] = Project::PROJ_UNDEFINED;
 		}
 		$this->request->data['Project']['project_name'] = '';
 		if ($this->Project->save($this->request->data)) {
@@ -305,13 +305,74 @@ class ProjectsController extends AppController {
  * Display full list of system projects.
  */
 	public function admin_index() {
-		$this->Project->Behaviors->attach('Containable');
 		$paginate['conditions'] = $this->_processSearch();
 		$paginate['contain'] = array(
 			'Operation', 'User'
 		);
+		$paginate['conditions']['Project.public'] = array(Project::PROJ_PRIVATE, Project::PROJ_PUBLIC);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
 	}
 
+/**
+ * defaults method
+ * 
+ * Allow users to configure default settings for projects.
+ * 
+ *
+ */
+	public function defaults() {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->Project->saveDefaults($this->Auth->user('id'), $this->request->data)) {
+				$this->Session->setFlash(__('Project defaults saved.'), 'bs_success');
+			} else {
+				$this->Session->setFlash(__('Unable to save project defaults.'), 'bs_error');
+			}
+		} else {		
+			$this->request->data['Project'] = $this->Project->getDefaults($this->Auth->user('id'));
+		}
+	}
+
+/**
+ * reset_user_defaults method
+ *
+ * Reset user settings to system defaults.
+ *
+ */
+	public function reset_user_defaults() {
+		$this->request->onlyAllow('post', 'put');
+		if ($this->Project->resetUserDefaults($this->Auth->user('id'))) {
+			$this->Session->setFlash(__('User defaults reset.'), 'bs_success');
+		} else {
+			$this->Session->setFlash(__('Unable to reset user defaults.'), 'bs_error');
+		}
+		return $this->redirect($this->referer());
+	}
+	
+/**
+ * reset_project_defaults method
+ *
+ * Reset supplied project to system defaults.
+ * 
+ * @param Project $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
+	public function reset_project_defaults($id = null) {
+		$this->request->onlyAllow('post', 'put');
+		$this->Project->id = $id;
+		if (!$this->Project->exists()) {
+			throw new NotFoundException(__('Invalid project id.'));
+		}
+		if (!$this->Project->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException(__('Not authorized to modify this project.'));
+		}
+		
+		if ($this->Project->resetProjectDefaults($this->Auth->user('id'))) {
+			$this->Session->setFlash(__('Project reset to user/system defaults.'), 'bs_success');
+		} else {
+			$this->Session->setFlash(__('Error resetting project to defaults.'), 'bs_error');
+		}
+		return $this->redirect($this->referer());
+	}
 }

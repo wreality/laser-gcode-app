@@ -1,5 +1,6 @@
  <?php
 App::uses('AppModel', 'Model');
+App::uses('Project', 'Model');
 App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 
 /**
@@ -129,6 +130,17 @@ class User extends AppModel {
 			'className' => 'Project',
 			'foreignKey' => 'user_id',
 			'dependent' => false,
+		)
+	);
+	
+	public $hasOne = array(
+		'ProjectDefault' => array(
+			'className' => 'Project',
+			'foreignKey' => 'user_id',
+			'dependent' => true,
+			'conditions' => array(
+				'public'  => Project::PROJ_DEFAULTS
+			)
 		)
 	);
 	

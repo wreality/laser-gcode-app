@@ -21,6 +21,7 @@
 		?>
 		</fieldset>
 	<?php echo $this->Form->end(__('Save')); ?>
-	<?php echo $this->Html->link(__('Change password'), array('action' => 'password'))?>
+	<?php echo $this->Html->link(__('Change password'), array('action' => 'password'))?><br/>
+	<?php echo $this->Html->link(__('Set Project Defaults'), array('controller' => 'projects', 'action' => 'defaults'))?>
 	</div>
 </div>
