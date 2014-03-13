@@ -59,6 +59,10 @@ class Project extends AppModel {
 		)
 	);
 
+	public $order = array(
+			'modified' => 'DESC',
+	) 
+	
 /**
  * __construct method
  *
