@@ -193,7 +193,11 @@ Configure::write('Routing.prefixes', array('admin'));
 	define('LOG_ERROR', LOG_ERR);
 
 	Configure::write('Session', array(
-		'defaults' => 'php'
+		'defaults' => 'database',
+		'cookie' => 'LaserApp',
+		'handler' => array(
+			'model' => 'Session',
+		)
 	));
 
 /**
