@@ -16,7 +16,7 @@ class UsersController extends AppController {
  * @see AppController::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('register', 'verify', 'lost_password', 'reset');
+		$this->Auth->allow('register', 'verify', 'lost_password', 'reset', 'profile');
 		parent::beforeFilter();
 	
 	}
@@ -161,11 +161,7 @@ class UsersController extends AppController {
 		$this->User->recursive = -1;
 		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if (empty($this->request->data['User']['password'])) {
-				unset($this->request->data['User']['confirm_password']);
-				unset($this->request->data['User']['password']);
-			}
-			if ($this->User->save($this->request->data)) {
+			if ($this->User->save($this->request->data, true, array('username'))) {
 				$user = $this->User->read();
 				$this->Session->setFlash(__('Account changes saved'), 'bs_success');
 			} else {
@@ -174,8 +170,6 @@ class UsersController extends AppController {
 		} else {
 			$this->request->data = $user;
 		}
-		$this->request->data['User']['password'] = '';
-		$this->request->data['User']['confirm_password'] = '';
 		$this->set(compact('user'));
 	}
 	
@@ -278,10 +272,12 @@ class UsersController extends AppController {
  */
 	public function admin_index() {
 		$this->User->recursive = 0;
-		
-		$paginate['conditons'] = $this->_processSearch();
+		$this->User->contain(array('Session'));
+		$active_count = count($this->User->Session->find('all', array('conditions' => array('Session.isActive' => true))));
+		$paginate = $this->_processSearch();
 		$this->paginate = $paginate;
 		$this->set('users', $this->paginate());
+		$this->set('active_count', $active_count);
 	}
 
 /**
@@ -357,6 +353,7 @@ class UsersController extends AppController {
 		$user['User']['validate_key'] = $this->User->createValidationKey('r');
 		$user['User']['active'] = User::USER_INACTIVE;
 		if ($this->User->save($user, true, array('validate_key', 'active'))) {
+			$this->User->Session->invalidateUserSession($id);
 			$this->Session->setFlash(__('Password Invalidated'), 'bs_success');
 			$this->User->enqueueEmail('InvalidatePassword');
 		} else {
@@ -415,4 +412,45 @@ class UsersController extends AppController {
 		} 
 	}
 
+/**
+ * profile method
+ *
+ * Show user profile and public projects.
+ * 
+ * @param string $username
+ * @throws NotFoundException
+ */
+	public function profile($username = null) {
+		App::uses('Project', 'Model');
+		$this->User->contain();
+		$user = $this->User->findByUsername($username);
+		if (empty($user)) {
+			throw new NotFoundException(__('Invalid user.'));
+		}
+		
+		$paginate['Project'] = array(
+			'conditions' => array(
+				'Project.user_id' => $user['User']['id'],
+				'Project.public' => Project::PROJ_PUBLIC
+			)
+		);
+		$this->paginate = $paginate;
+		$this->set('projects', $this->paginate('Project'));
+		$this->set(compact('user'));
+	}
+	
+	public function password() {
+		if ($this->request->is('post')) {
+			$this->User->id = $this->Auth->user('id');
+			$this->User->requireCurrentPassword();
+			
+			if ($this->User->save($this->request->data, true, array('current_password', 'password', 'confirm_password'))) {
+				$this->Session->setFlash(__('Password successfully updated.'), 'bs_success');
+			} else {
+				$this->Session->setFlash(__('There was an error while updating your password.'), 'bs_error');
+			}
+			$this->request->data = array();
+		} 
+		
+	}
 }

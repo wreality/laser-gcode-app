@@ -19,7 +19,7 @@ class PresetsController extends AppController {
 				'Preset.user_id' => $this->Auth->user('id'),
 			)
 		);
-		$paginate['conditions'] = array_merge($this->_processSearch(), $paginate['conditions']);
+		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		$this->set('presets', $this->paginate());
 	}
@@ -32,7 +32,7 @@ class PresetsController extends AppController {
  */
 	public function admin_index() {
 		$this->Preset->recursive = 0;
-		$paginate['conditions'] = $this->_processSearch();
+		$paginate = $this->_processSearch();
 		$this->paginate = $paginate;
 		$this->set('presets', $this->paginate());
 	}
@@ -229,7 +229,6 @@ class PresetsController extends AppController {
 				throw new ForbiddenException(__('Unable to modify path settings.'));
 			}
 		}
-		$this->Path->Behaviors->attach('Containable');
 		$this->Path->contain(array(
 			'Operation' => array(
 				'Project'

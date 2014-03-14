@@ -4,7 +4,7 @@
 	<?php if (!$project['User']['id']): ?>
 		<div class="anon-notice">
 				<h4>Anonymous Project</h4>
-			<p>Anonymous project's aren't listed on the main page.  The only way
+			<p>Anonymous projects aren't listed on the main page.  The only way
 			   to find this project later is to bookmark the page!
 			</p> 
 		</div>
@@ -143,6 +143,7 @@
 </div>
 	<?php echo $this->Form->input('id');?>
 	<?php echo $this->Form->end();?>
+	<?php echo $this->Form->postLink(__('Reset Settings to Default'), array('action' => 'reset_project_defaults', $project['Project']['id']), array(), __('Are you sure you want to reset settings to default?'	))?>
 	<?php if (!empty($gcode)) {?>
 		<table class="table table-bordered">
 			<tr>
@@ -161,4 +162,4 @@
 	<?php } ?>
 	<?php echo $this->Form->postButton(__('Generate GCode'), array('action' => 'generate', $project['Project']['id']), array('size' => 'btn btn-primary'))?>
 	<?php echo $this->Form->postButton(__('Delete Project'), array('action' => 'delete', $project['Project']['id']), array('size' => 'btn btn-danger'), __('Are you sure, this really can\'t be undone..'))?>
-<?php $this->end();?>
+	<?php $this->end();?>

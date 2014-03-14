@@ -7,5 +7,5 @@
 		<p>No public projects found.</p>
 	</div>
 <?php else: ?>	
-	<?php echo $this->element('Project/projects_index')?>
+	<?php echo $this->element('Project/projects_index', array('show_user' => true))?>
 <?php endif; // empty(projects)?>

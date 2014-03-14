@@ -96,10 +96,37 @@ a.register {
 			.btn-danger;
 			.btn-block;
 		}
+		.user {
+			display: block;
+			background: darken(@gray-lighter, 3%);
+			border: 2px solid darken(@gray-lighter, 3%);
+			margin: 6px 0px;
+			img {
+				.opacity(.6);
+			}
+			
+		}
+		
 	}
 	.chip:hover {
 		background: lighten(@brand-primary, 30%);
 		cursor: pointer;
+		a {
+			color: darken(@link-color, 22%) !important;
+		}
+		.user {
+			background: lighten(@brand-primary, 25%);
+			border: 2px solid lighten(@brand-primary, 25%);
+			img {
+				.opacity(1);
+			}
+		}
+		.user:hover {
+			border: 2px solid lighten(@brand-primary, 12%);
+			a {
+				text-decoration: none;
+			}
+		}
 	}
 	
 }
@@ -141,6 +168,14 @@ a.register {
 			margin-bottom: 5px;
 		}
 	}
+}
+.profile {
+	.table;
+	.table-striped;
+	img {
+		vertical-align: bottom;
+	}
+	
 }
 .search {
 	.well;

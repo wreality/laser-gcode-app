@@ -17,7 +17,9 @@
 			<?php echo $this->Form->postButton(__('Clear Search'));?>
 		<?php } ?>
 	</div>
-
+	<div class="active_count">
+		<?php echo __('There %s currently %s active %s', __n('is', 'are', $active_count), $active_count, __n('user', 'users', $active_count))?>
+	</div>
 
 <?php $this->end();?>
 
@@ -44,6 +46,7 @@
 			<?php } ?>
 			<br/>
 			<?php if ($user['User']['admin']) echo $this->Html->label(__('Admin'), 'label-info')?>
+			<?php if (!empty($user['Session'][0]) && $user['Session'][0]['isActive']) echo $this->Html->label(__('Logged In'), 'label-info');?>
 			<?php if (!$user['User']['active']) echo $this->Html->label(__('Inactive'))?>
 			<?php 
 				if (!empty($user['User']['validate_key'])) {

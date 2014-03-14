@@ -10,6 +10,7 @@
 		<?php echo $this->Form->create('Project', array('novalidate' => 'novalidate'));?>
 			<?php echo $this->Form->input('User.username')?>
 			<?php echo $this->Form->input('project_name')?>
+			<?php echo $this->Form->input('notEmpty', array('label' => __('Exclude Empty'), 'type' => 'checkbox'))?>
 			<?php echo $this->Form->submit(__('Find Projects'));?>
 		<?php echo $this->Form->end();?>
 		<?php if (!empty($this->request->data)) {?>

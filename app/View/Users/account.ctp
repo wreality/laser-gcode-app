@@ -18,11 +18,10 @@
 		<?php
 			echo $this->Form->input('username');
 			echo $this->Form->input('email', array('disabled' => true, 'help_text' => $this->Html->link(__('Update Email Address'), array('action' => 'update_email'))));
-			echo $this->Form->input('password', array('required' => false, 'help_text' => __('Password is only required if changing passwords.')));
-			echo $this->Form->input('confirm_password', array('type' => 'password', 'required' => false));
-			
 		?>
 		</fieldset>
 	<?php echo $this->Form->end(__('Save')); ?>
+	<?php echo $this->Html->link(__('Change password'), array('action' => 'password'))?><br/>
+	<?php echo $this->Html->link(__('Set Project Defaults'), array('controller' => 'projects', 'action' => 'defaults'))?>
 	</div>
 </div>

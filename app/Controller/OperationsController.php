@@ -121,7 +121,6 @@ class OperationsController extends AppController {
 			throw new NotFoundException();
 		}
 		
-		$this->Operation->Behaviors->attach('Containable');
 		$this->Operation->contain(array('Project'));
 		$operation = $this->Operation->read();
 		if (!empty($operation['Project']['project_name'])) {
