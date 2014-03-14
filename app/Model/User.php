@@ -141,7 +141,14 @@ class User extends AppModel {
 			'conditions' => array(
 				'public'  => Project::PROJ_DEFAULTS
 			)
-		)
+		), 
+		'Session' => array(
+			'className' => 'Session',
+			'foreignKey' => 'user_id',
+			'order' => array(
+				'expires' => 'DESC',
+			)
+		),
 	);
 	
 /**

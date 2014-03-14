@@ -272,10 +272,11 @@ class UsersController extends AppController {
  */
 	public function admin_index() {
 		$this->User->recursive = 0;
-		
+		$active_count = count($this->User->Session->find('all', array('conditions' => array('Session.isActive' => true))));
 		$paginate = $this->_processSearch();
 		$this->paginate = $paginate;
 		$this->set('users', $this->paginate());
+		$this->set('active_count', $active_count);
 	}
 
 /**

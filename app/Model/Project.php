@@ -27,7 +27,6 @@ class Project extends AppModel {
 	);
 
 	public $virtualFields = array(
-		'isAnonymous' => 'user_id IS NULL',
 		'isEmpty' => 'operation_count < 1',
 		'notEmpty' => 'operation_count > 0',
 	);
@@ -74,6 +73,7 @@ class Project extends AppModel {
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);		
+		$this->virtualFields['isAnonymous'] = $this->alias.'.user_id IS NULL';
 	}
 	
 /**
