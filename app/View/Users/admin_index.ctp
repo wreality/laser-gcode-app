@@ -46,7 +46,7 @@
 			<?php } ?>
 			<br/>
 			<?php if ($user['User']['admin']) echo $this->Html->label(__('Admin'), 'label-info')?>
-			<?php if ($user['Session']['isActive']) echo $this->Html->label(__('Logged In'), 'label-info');?>
+			<?php if (!empty($user['Session'][0]) && $user['Session'][0]['isActive']) echo $this->Html->label(__('Logged In'), 'label-info');?>
 			<?php if (!$user['User']['active']) echo $this->Html->label(__('Inactive'))?>
 			<?php 
 				if (!empty($user['User']['validate_key'])) {
