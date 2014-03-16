@@ -59,7 +59,7 @@ class Project extends AppModel {
 	);
 
 	public $order = array(
-			'modified' => 'DESC',
+			'Project.modified' => 'DESC',
 	);
 	
 /**
