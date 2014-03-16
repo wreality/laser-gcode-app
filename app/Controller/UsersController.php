@@ -453,4 +453,15 @@ class UsersController extends AppController {
 		} 
 		
 	}
+	
+	public function admin_login_as($id) {
+		$this->User->id = $id;
+		if (!$this->User->exists()) {
+			throw new NotFoundException(__('Invalid user.'));
+		}
+		$this->User->contain(array());
+		$user = $this->User->read();
+		$this->Auth->login($user['User']);
+		return $this->redirect('/');
+	}
 }

@@ -10,6 +10,7 @@
 		<div class="actions">
 			<?php echo $this->Form->postButton(__('Invalidate Password'), array('action' => 'invalidate_password', $user['User']['id']), null, __('Are you sure you want to invalidate this users password?  They will receive an email to perform a password reset.'));?>
 			<?php echo $this->Form->postButton(__('Clear Pending Validations'), array('action' => 'clear_validates', $user['User']['id']), null, __('Are you sure you want to clear pending validation keys for this user?'))?>
+			<?php echo $this->Form->postButton(__('Login as this user'), array('action' => 'login_as', $user['User']['id']), null, __('Are you sure you want to login as this user?'));?>
 			<?php echo $this->Form->postButton(__('Delete User'), array('action' => 'delete', $user['User']['id']), array('type' => 'btn-danger'), __('Are you sure you want to delete this user?'));?>
 		</div>
 	
