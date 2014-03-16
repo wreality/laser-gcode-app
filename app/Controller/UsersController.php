@@ -272,6 +272,7 @@ class UsersController extends AppController {
  */
 	public function admin_index() {
 		$this->User->recursive = 0;
+		$this->User->contain(array('Session'));
 		$active_count = count($this->User->Session->find('all', array('conditions' => array('Session.isActive' => true))));
 		$paginate = $this->_processSearch();
 		$this->paginate = $paginate;
@@ -352,6 +353,7 @@ class UsersController extends AppController {
 		$user['User']['validate_key'] = $this->User->createValidationKey('r');
 		$user['User']['active'] = User::USER_INACTIVE;
 		if ($this->User->save($user, true, array('validate_key', 'active'))) {
+			$this->User->Session->invalidateUserSession($id);
 			$this->Session->setFlash(__('Password Invalidated'), 'bs_success');
 			$this->User->enqueueEmail('InvalidatePassword');
 		} else {

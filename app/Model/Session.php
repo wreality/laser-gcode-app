@@ -13,4 +13,7 @@ class Session extends AppModel {
 		return parent::save($data, $validate, $fieldList);
 	}
 	
+	public function invalidateUserSession($user_id) {
+		return $this->deleteAll(array('user_id' => $user_id));
+	}
 }

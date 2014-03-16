@@ -7,6 +7,7 @@ App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
  * User Model
  *
  * @property Project $Project
+ * @property Session $Session
  */
 class User extends AppModel {
 
@@ -130,7 +131,14 @@ class User extends AppModel {
 			'className' => 'Project',
 			'foreignKey' => 'user_id',
 			'dependent' => false,
-		)
+		),'Session' => array(
+			'className' => 'Session',
+			'foreignKey' => 'user_id',
+			'order' => array(
+				'expires' => 'DESC',
+			),
+			'limit' => 1,
+		),
 	);
 	
 	public $hasOne = array(
@@ -142,13 +150,7 @@ class User extends AppModel {
 				'public'  => Project::PROJ_DEFAULTS
 			)
 		), 
-		'Session' => array(
-			'className' => 'Session',
-			'foreignKey' => 'user_id',
-			'order' => array(
-				'expires' => 'DESC',
-			)
-		),
+		
 	);
 	
 /**
