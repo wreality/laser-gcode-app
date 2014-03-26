@@ -31,10 +31,10 @@ before_script:
       'database' => 'cakephp_test',
       'prefix' => 'test_',
     );    }" > app/Config/database.php
-  - echo -e "n\ny\n" > ./app/Console/cake schema create --name laser
+  - echo -e "n\ny\n" | ./app/Console/cake schema create --name laser
 
 script:
-  - ./app/Console/cake test app AllTests --stderr
-
+  - ./app/Console/cake test app AllTests 
+  
 notifications:
   email: false
