@@ -9,6 +9,7 @@ before_script:
   - mysql -e 'CREATE DATABASE cakephp_test;'
   - chmod -R 777 ./app/tmp
   - chmod +x ./app/Console/cake
+  - cp ./app/Config/config.php.default ./app/Config/config.php
   - pear channel-discover pear.cakephp.org
   - pear install --alldeps cakephp/CakePHP_CodeSniffer
   - phpenv rehash
