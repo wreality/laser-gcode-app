@@ -1,6 +1,8 @@
 laser-gcode-app
 ===============
 [![Build Status](https://travis-ci.org/wreality/laser-gcode-app.svg?branch=develop)](https://travis-ci.org/wreality/laser-gcode-app)
+[![Coverage Status](https://coveralls.io/repos/wreality/laser-gcode-app/badge.png?branch=develop)](https://coveralls.io/r/wreality/laser-gcode-app?branch=develop)
+
 
 Lansing Makers Network
 ----------------------
