@@ -34,7 +34,7 @@ before_script:
    - echo -e "n\ny\n" > ./app/Console/cake schema create --name laser
 
 script:
-  - .app/Console/cake test app AllTests --stderr
+  - ./app/Console/cake test app AllTests --stderr
 
 notifications:
   email: false
