@@ -5,13 +5,16 @@ php:
   - 5.3
   - 5.4
   
+install: 
+  - composer
+  
 before_script:
   - mysql -e 'CREATE DATABASE cakephp_test;'
   - chmod -R 777 ./app/tmp
   - chmod +x ./app/Console/cake
   - cp ./app/Config/config.php.default ./app/Config/config.php
-  - pear channel-discover pear.cakephp.org
-  - pear install --alldeps cakephp/CakePHP_CodeSniffer
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
   - phpenv rehash
   - set +H
   - echo "<?php
@@ -35,7 +38,10 @@ before_script:
   - echo -e "n\ny\n" | ./app/Console/cake schema create --name laser
 
 script:
-  - ./app/Console/cake test app AllTests 
+  - ./app/Console/cake test app AllTests --coverage-clover=./clover.xml
+  
+after_script:
+  - php vendor/bin/coveralls
   
 notifications:
   email: false
