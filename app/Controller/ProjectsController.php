@@ -9,17 +9,17 @@ class ProjectsController extends AppController {
 
 /**
  * beforeFilter method
- * 
+ *
  * Allow access to public actions.
- * 
+ *
  * (non-PHPdoc)
  * @see Controller::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('index', 'add', 'view', 'edit', 'generate', 'delete', 'reset_project_defaults');	
+		$this->Auth->allow('index', 'add', 'view', 'edit', 'generate', 'delete', 'reset_project_defaults');
 		parent::beforeFilter();
 	}
-	
+
 /**
  * index method
  *
@@ -36,12 +36,11 @@ class ProjectsController extends AppController {
 		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
-		
 	}
-	
+
 /**
  * home method
- * 
+ *
  * Display user's own projects
  */
 	public function home() {
@@ -56,12 +55,11 @@ class ProjectsController extends AppController {
 		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
 		$this->set('projects', $this->paginate());
-	
 	}
-	
+
 /**
  * claim method
- * 
+ *
  * Display list of unclaimed projects
  */
 	public function claim() {
@@ -75,14 +73,13 @@ class ProjectsController extends AppController {
 		);
 		$paginate = array_merge_recursive($this->_processSearch(), $paginate);
 		$this->paginate = $paginate;
-		
-		
+
 		$this->set('projects', $this->paginate());
 	}
-	
+
 /**
  * make_claim method
- * 
+ *
  * Process user's claim on a project
  *
  * @param project_id $id
@@ -91,19 +88,19 @@ class ProjectsController extends AppController {
 	public function make_claim($id) {
 		$this->request->onlyAllow('post', 'put');
 		$this->Project->id = $id;
-			
+
 		if (!$this->Project->exists()) {
 			throw new NotFoundException();
 		}
 		$project = $this->Project->read();
-			
+
 		if (!empty($project['User']['id'])) {
 			$this->Session->setFlash(__('This project is already claimed'), 'bs_error');
 		} else {
-	
+
 			$project['Project']['user_id'] = $this->Auth->user('id');
 			$project['Project']['public'] = Project::PROJ_PRIVATE;
-	
+
 			if ($this->Project->save($project, true, array('user_id', 'public'))) {
 				$this->Session->setFlash(__('You have successfully claimed this project.'), 'bs_success');
 				return $this->redirect(array('action' => 'edit', $id));
@@ -117,9 +114,9 @@ class ProjectsController extends AppController {
 /**
  * edit method
  *
- * @throws NotFoundException
  * @param string $id
- * @return void
+ * @throws NotFoundException
+ * @throws ForbiddenException
  */
 	public function edit($id = null) {
 		$this->Project->id = $id;
@@ -129,7 +126,7 @@ class ProjectsController extends AppController {
 		if (!$this->Project->isOwner($this->Auth->user('id'))) {
 			throw new ForbiddenException(__('Not allowed to modify this project.'));
 		}
-		
+
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(
@@ -139,7 +136,7 @@ class ProjectsController extends AppController {
 			), 'User'
 		));
 		$project = $this->Project->read();
-		
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$fields = array('project_name', 'max_feedrate', 'home_before',
 					'clear_after', 'gcode_postscript', 'gcode_preamble',
@@ -156,12 +153,12 @@ class ProjectsController extends AppController {
 		} else {
 			$this->request->data = $project;
 		}
-		
+
 		$this->set('public_options', Project::$statuses);
-		
+
 		$this->loadModel('Preset');
 		$this->set('presets', $this->Preset->getList($this->Auth->user('id')));
-		
+
 		$this->set('project', $project);
 	}
 
@@ -169,7 +166,7 @@ class ProjectsController extends AppController {
  * generate method
  *
  * Generate gcode for a project
- * 
+ *
  * @param unknown $id
  * @throws NotFoundException
  * @throws ForbiddenException
@@ -183,7 +180,7 @@ class ProjectsController extends AppController {
 		if (!$this->Project->isOwner($this->Auth->user('id'))) {
 			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
-		
+
 		$this->Project->contain(array(
 			'Operation' => array(
 				'Path' => array(
@@ -193,8 +190,8 @@ class ProjectsController extends AppController {
 			), 'User'
 		));
 		$project = $this->Project->read();
-		
-		foreach($project['Operation'] as $oi => $operation) {
+
+		foreach ($project['Operation'] as $oi => $operation) {
 			$home = false;
 			$disableSteppers = false;
 			$preamble = array();
@@ -204,10 +201,10 @@ class ProjectsController extends AppController {
 					$home = true;
 				}
 				if (!empty($project['Project']['gcode_preamble'])) {
-					$preamble =  $project['Project']['gcode_preamble'];
+					$preamble = $project['Project']['gcode_preamble'];
 				}
 			}
-			if ($oi == (count($project['Operation'])-1)) {
+			if ($oi == (count($project['Operation']) - 1)) {
 				if (!empty($project['Project']['gcode_postscript'])) {
 					$append = $project['Project']['gcode_postscript'];
 				}
@@ -215,9 +212,9 @@ class ProjectsController extends AppController {
 			}
 			$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
 		}
-		$this->redirect(array('action' => 'edit', $id));;
+		$this->redirect(array('action' => 'edit', $id));
 	}
-	
+
 /**
  * add method
  *
@@ -243,9 +240,9 @@ class ProjectsController extends AppController {
 /**
  * view method
  *
- * @throws NotFoundException
  * @param string $id
- * @return void
+ * @throws NotFoundException
+ * @throws ForbiddenException
  */
 	public function view($id = null) {
 		$this->Project->id = $id;
@@ -264,17 +261,15 @@ class ProjectsController extends AppController {
 			), 'User'
 		));
 		$project = $this->Project->read();
-		
+
 		$this->set(compact('project'));
-		
-		
 	}
 
 /**
  * delete method
  *
  * @throws NotFoundException
- * @throws MethodNotAllowedException
+ * @throws ForbiddenException
  * @param string $id
  * @return void
  */
@@ -290,7 +285,7 @@ class ProjectsController extends AppController {
 		if ($this->Project->delete()) {
 			$this->Session->setFlash(__('Project deleted'));
 			if (!$this->Auth->user('id')) {
-				return $this->redirect(array('action' => 'index'));	
+				return $this->redirect(array('action' => 'index'));
 			} else {
 				return $this->redirect(array('action' => 'home'));
 			}
@@ -316,9 +311,9 @@ class ProjectsController extends AppController {
 
 /**
  * defaults method
- * 
+ *
  * Allow users to configure default settings for projects.
- * 
+ *
  *
  */
 	public function defaults() {
@@ -328,7 +323,7 @@ class ProjectsController extends AppController {
 			} else {
 				$this->Session->setFlash(__('Unable to save project defaults.'), 'bs_error');
 			}
-		} else {		
+		} else {
 			$this->request->data['Project'] = $this->Project->getDefaults($this->Auth->user('id'));
 		}
 	}
@@ -348,12 +343,12 @@ class ProjectsController extends AppController {
 		}
 		return $this->redirect($this->referer());
 	}
-	
+
 /**
  * reset_project_defaults method
  *
  * Reset supplied project to system defaults.
- * 
+ *
  * @param Project $id
  * @throws NotFoundException
  * @throws ForbiddenException
@@ -367,7 +362,7 @@ class ProjectsController extends AppController {
 		if (!$this->Project->isOwner($this->Auth->user('id'))) {
 			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
-		
+
 		if ($this->Project->resetProjectDefaults($this->Auth->user('id'))) {
 			$this->Session->setFlash(__('Project reset to user/system defaults.'), 'bs_success');
 		} else {

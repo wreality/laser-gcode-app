@@ -27,7 +27,7 @@ App::uses('User', 'Model');
  * @package       app.Controller
  */
 class AppController extends Controller {
-	
+
 	public $components = array(
 		'Auth' => array(
 			'loginAction' => array(
@@ -44,10 +44,12 @@ class AppController extends Controller {
 				),
 			),
 		),
-		'Cakestrap.Cakestrap','Session');
+		'Cakestrap.Cakestrap', 'Session');
+
 	public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time', 'Projects');
+
 	public $uses = array('Setting');
-	
+
 /**
  * beforeFilter method
  * 
@@ -70,16 +72,16 @@ class AppController extends Controller {
  * @throws BadRequestException
  */
 	protected function _throttleAction() {
-		$cache_key = 'email_sending_'.$this->request->clientIp();
-	
-		$count = Cache::read($cache_key);
-	
+		$cacheKey = 'email_sending_' . $this->request->clientIp();
+
+		$count = Cache::read($cacheKey);
+
 		if ($count === false) {
 			$count = 1;
 		} else {
 			$count++;
 		}
-		Cache::write($cache_key, $count);
+		Cache::write($cacheKey, $count);
 		if ($count >= 25) {
 			throw new BadRequestException(__('To prevent abuse this request has been throttled.  Try again later.'));
 		}
@@ -93,33 +95,33 @@ class AppController extends Controller {
  * @return Ambigous <mixed, boolean, NULL, unknown, multitype:>|multitype:
  */
 	protected function _processSearch() {
-		$session_key = $this->name.'.'.$this->action.'.';
+		$sessionKey = $this->name . '.' . $this->action . '.';
 		if ($this->request->is('post')) {
 			$paginate = array(
 				'conditions' => array()
 			);
-			foreach($this->request->data as $model => $fields) {
+			foreach ($this->request->data as $model => $fields) {
 				foreach ($fields as $field => $value) {
 					if (!empty($value)) {
 						if (stristr($value, '*')) {
-							$paginate['conditions'][$model.'.'.$field.' LIKE'] = str_replace('*', '%', $value);
+							$paginate['conditions'][$model . '.' . $field . ' LIKE'] = str_replace('*', '%', $value);
 						} elseif (preg_match('/"([^"]+)"/', $value, $matches)) {
-							$paginate['conditions'][$model.'.'.$field] = $matches[1];
-						} else if (preg_match("/([^']+)'/", $value, $matches)) {
-							$paginate['conditions'][$model.'.'.$field] = $matches[1];
+							$paginate['conditions'][$model . '.' . $field] = $matches[1];
+						} elseif (preg_match("/([^']+)'/", $value, $matches)) {
+							$paginate['conditions'][$model . '.' . $field] = $matches[1];
 						} else {
-							$paginate['conditions'][$model.'.'.$field.' LIKE'] = '%'.$value.'%';
-							$paginate['conditions'][$model.'.'.$field.' !='] = null;
+							$paginate['conditions'][$model . '.' . $field . ' LIKE'] = '%' . $value . '%';
+							$paginate['conditions'][$model . '.' . $field . ' !='] = null;
 						}
 					}
 				}
 			}
 			$paginate['page'] = 1;
-			$this->Session->write($session_key.'conditions', $paginate['conditions']);
-			$this->Session->write($session_key.'data', $this->request->data);
+			$this->Session->write($sessionKey . 'conditions', $paginate['conditions']);
+			$this->Session->write($sessionKey . 'data', $this->request->data);
 		} else {
-			$paginate['conditions'] = $this->Session->read($session_key.'conditions');
-			$this->request->data = $this->Session->read($session_key.'data');
+			$paginate['conditions'] = $this->Session->read($sessionKey . 'conditions');
+			$this->request->data = $this->Session->read($sessionKey . 'data');
 		}
 		if (!empty($paginate)) {
 			return $paginate;

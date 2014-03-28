@@ -3,6 +3,7 @@
 App::uses('AppShell', 'Console/Command');
 
 class UpdateShell extends AppShell {
+
 	public $uses = array('Project', 'User');
 
 /**
@@ -13,11 +14,10 @@ class UpdateShell extends AppShell {
  *
  */
 	public function run() {
-		
 		$this->updateProjectCounterCache();
 		$this->updateUserCounterCache();
 	}
-	
+
 /**
  * updateProjectCounterCache method
  *
@@ -28,27 +28,26 @@ class UpdateShell extends AppShell {
 	public function updateProjectCounterCache() {
 		$list = $this->Project->find('list');
 		$projects = array_keys($list);
-		
-		
-		$this->out('<warning>Updating '.count($projects).' operation counts...</warning>', 0);
+
+		$this->out('<warning>Updating ' . count($projects) . ' operation counts...</warning>', 0);
 		if (!count($projects)) {
-			$this-out('nothing to do.');
+			$this->out('nothing to do.');
 			return;
 		}
 		if ($this->params['dry-run']) {
 			$this->out('dry-run.. skipping.');
 			return;
 		}
-		foreach($projects as $project_id) {
-			$count = $this->Project->Operation->find('count', array('conditions' => array('Operation.project_id' => $project_id)));
+		foreach ($projects as $projectId) {
+			$count = $this->Project->Operation->find('count', array('conditions' => array('Operation.project_id' => $projectId)));
 			$project = array(
 				'Project' => array(
-					'id' => $project_id,
+					'id' => $projectId,
 					'operation_count' => $count,
 					'modified' => false,
 				)
 			);
-			
+
 			if (!$this->Project->save($project)) {
 				$this->out('<error>Error saving count.</error>');
 				die();
@@ -59,7 +58,7 @@ class UpdateShell extends AppShell {
 		}
 		$this->out('done.');
 	}
-	
+
 /**
  * updateUserCounterCache method
  *
@@ -70,8 +69,8 @@ class UpdateShell extends AppShell {
 	public function updateUserCounterCache() {
 		$list = $this->User->find('list');
 		$users = array_keys($list);
-		$this->out('<warning>Updating '.count($users). ' user project counts...</warning>', 0);
-		if (!count($users)){
+		$this->out('<warning>Updating ' . count($users) . ' user project counts...</warning>', 0);
+		if (!count($users)) {
 			$this->out('nothing to do.');
 			return;
 		}
@@ -79,15 +78,15 @@ class UpdateShell extends AppShell {
 			$this->out('dry-run.. skipping.');
 			return;
 		}
-		foreach ($users as $user_id) {
-			$this->User->id = $user_id;
-			$all_count = $this->Project->find('count', array('conditions' => array('Project.user_id' => $user_id)));
-			$public_count = $this->Project->find('count', array('conditions' => array('Project.user_id' => $user_id, 'Project.public' => Project::PROJ_PUBLIC)));
+		foreach ($users as $userId) {
+			$this->User->id = $userId;
+			$allCount = $this->Project->find('count', array('conditions' => array('Project.user_id' => $userId)));
+			$publicCount = $this->Project->find('count', array('conditions' => array('Project.user_id' => $userId, 'Project.public' => Project::PROJ_PUBLIC)));
 			$user = array(
 				'User' => array(
-					'id' => $user_id,
-					'project_count' => $all_count,
-					'public_count' => $public_count,
+					'id' => $userId,
+					'project_count' => $allCount,
+					'public_count' => $publicCount,
 					'modified' => false,
 				)
 			);
@@ -108,12 +107,11 @@ class UpdateShell extends AppShell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-	
+
 		$parser
 			->description(__('Update database to latest version.'))
-			->addOption('dry-run', array('short' => 'd', 'help' => 'Don\'t actually make any changes.', 'boolean' => true))
-		;
-		
+			->addOption('dry-run', array('short' => 'd', 'help' => 'Don\'t actually make any changes.', 'boolean' => true));
+
 		return $parser;
 	}
 }

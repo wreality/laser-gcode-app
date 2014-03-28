@@ -7,7 +7,7 @@ App::uses('AppModel', 'Model');
  * @property Operation $Operation
  */
 class Project extends AppModel {
-	
+
 /**
  * Project access mode constants
  * @var unknown
@@ -15,13 +15,13 @@ class Project extends AppModel {
 	const PROJ_PUBLIC = 1;
 	const PROJ_PRIVATE = 0;
 	const PROJ_DEFAULTS = 2;
-	
+
 /**
  * Enum for access modes.
- * 
+ *
  * @var unknown
  */
-	static $statuses = array(
+	public static $statuses = array(
 		Project::PROJ_PUBLIC => 'Public',
 		Project::PROJ_PRIVATE => 'Private',
 	);
@@ -30,7 +30,7 @@ class Project extends AppModel {
 		'isEmpty' => 'operation_count < 1',
 		'notEmpty' => 'operation_count > 0',
 	);
-	
+
 /**
  * hasMany associations
  *
@@ -46,9 +46,9 @@ class Project extends AppModel {
 
 /**
  * belongsTo associations
- * 
+ *
  * @var unknown
- */	
+ */
 	public $belongsTo = array(
 		'User' => array(
 			'counterCache' => array(
@@ -61,26 +61,26 @@ class Project extends AppModel {
 	public $order = array(
 			'Project.modified' => 'DESC',
 	);
-	
+
 /**
  * __construct method
  *
  * Construct virtualFields array with isAnonymous
- * 
+ *
  * @param string $id
  * @param string $table
  * @param string $ds
  */
 	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);		
-		$this->virtualFields['isAnonymous'] = $this->alias.'.user_id IS NULL';
+		parent::__construct($id, $table, $ds);
+		$this->virtualFields['isAnonymous'] = $this->alias . '.user_id IS NULL';
 	}
-	
+
 /**
  * beforeSave method
- * 
+ *
  * Set default values for project settings
- * 
+ *
  * (non-PHPdoc)
  * @see Model::beforeSave()
  */
@@ -91,12 +91,12 @@ class Project extends AppModel {
 		}
 		return true;
 	}
-	
+
 /**
  * validateMaterialThickness method
  *
  * Custom validation method to check if material_thickness supplied is sane
- * 
+ *
  * @return boolean|mixed
  */
 	public function validateMaterialThickness() {
@@ -122,21 +122,21 @@ class Project extends AppModel {
  * isOwner method
  *
  * Return true if given user is allowed to edit / generate code for a project.
- * 
- * @param unknown $user_id
- * @param string $project_id
+ *
+ * @param unknown $userId
+ * @param string $projectId
  * @return boolean
  */
-	public function isOwner($user_id, $project_id = null) {
-		if (empty($project_id)) {
-			$project_id = $this->id;
+	public function isOwner($userId, $projectId = null) {
+		if (empty($projectId)) {
+			$projectId = $this->id;
 		}
-		
-		$owner_id = $this->field('user_id', array('Project.id' => $project_id));
-		
-		if ($owner_id == $user_id) {
+
+		$ownerId = $this->field('user_id', array('Project.id' => $projectId));
+
+		if ($ownerId == $userId) {
 			return true;
-		} else if (!$this->User->exists($owner_id)) {
+		} elseif (!$this->User->exists($ownerId)) {
 			return true;
 		} else {
 			return false;
@@ -147,7 +147,7 @@ class Project extends AppModel {
  * isPublic method
  *
  * Returns true if the selected project is public.
- * 
+ *
  * @param string $id
  * @return boolean
  */
@@ -155,25 +155,25 @@ class Project extends AppModel {
 		if (empty($id)) {
 			$id = $this->id;
 		}
-		
+
 		return ($this->field('public', array('id' => $id)) == Project::PROJ_PUBLIC);
 	}
-	
+
 /**
  * isOwnerOrPublic method
  *
  * Returns true if project is owned by supplied user or is public.
- * 
- * @param unknown $user_id
+ *
+ * @param unknown $userId
  * @param string $id
  * @return boolean
  */
-	public function isOwnerOrPublic($user_id, $id = null) {
+	public function isOwnerOrPublic($userId, $id = null) {
 		if (empty($id)) {
 			$id = $this->id;
 		}
-		
-		if ($this->isOwner($user_id)) {
+
+		if ($this->isOwner($userId)) {
 			return true;
 		} else {
 			return $this->isPublic($id);
@@ -184,15 +184,15 @@ class Project extends AppModel {
  * updateModified method
  *
  * Force update of project's modified datetime.
- * 
+ *
  * @param Project $id
  * @return Ambigous <mixed, boolean, multitype:>
  */
 	public function updateModified($id = null) {
-		if (empty	($id)) {
+		if (empty($id)) {
 			$id = $this->id;
 		}
-		
+
 		return $this->save(array('Project' => array('id' => $id)));
 	}
 
@@ -200,20 +200,20 @@ class Project extends AppModel {
  * saveDefaults method
  *
  * Save user project settings defaults
- * 
- * @param User $user_id
+ *
+ * @param User $userId
  * @param Project $data
- * @return array|boolean 
+ * @return array|boolean
  */
-	public function saveDefaults($user_id, $data) {
-		$defaults = $this->getDefaults($user_id, true);
+	public function saveDefaults($userId, $data) {
+		$defaults = $this->getDefaults($userId, true);
 		if (empty($defaults['id'])) {
 			$this->create();
 		} else {
 			$data['Project']['id'] = $defaults['id'];
 		}
 		$data['Project']['public'] = Project::PROJ_DEFAULTS;
-		$data['Project']['user_id'] = $user_id;
+		$data['Project']['user_id'] = $userId;
 		$fields = array_merge(array_keys($defaults), array('public', 'user_id'));
 		return $this->save($data, true, $fields);
 	}
@@ -222,31 +222,31 @@ class Project extends AppModel {
  * resetUserDefaults method
  *
  * Reset user defaults to system defaults, (by deleting any stored user defaults.
- * 
- * @param User $user_id
+ *
+ * @param User $userId
  * @return boolean
  */
-	public function resetUserDefaults($user_id) {
-		return $this->deleteAll(array('Project.user_id' => $user_id, 'Project.public' => Project::PROJ_DEFAULTS));
+	public function resetUserDefaults($userId) {
+		return $this->deleteAll(array('Project.user_id' => $userId, 'Project.public' => Project::PROJ_DEFAULTS));
 	}
-	
+
 /**
  * resetProjectDefaults method
  *
  * Reset supplied project to user/system defaults.
- * 
- * @param User $user_id
+ *
+ * @param User $userId
  * @param Project $id
  * @return Array|boolean
  */
-	public function resetProjectDefaults($user_id, $id = null) {
+	public function resetProjectDefaults($userId, $id = null) {
 		if (empty($id)) {
 			$id = $this->id;
 		}
-		$defaults = $this->getDefaults($user_id);
+		$defaults = $this->getDefaults($userId);
 		$fields = array_merge(array_keys($defaults), array('id'));
 		$project = $this->find('first', array(
-			'conditions' =>  array(
+			'conditions' => array(
 				'Project.id' => $id,
 			),
 			'contain' => array(),
@@ -261,13 +261,13 @@ class Project extends AppModel {
  * getDefaults method
  *
  * Return user defaults, or system defaults if user defaults don't exist.
- * 
- * @param User $user_id
- * @param boolean $include_id Optionally include the id of the defaults project.
+ *
+ * @param User $userId
+ * @param boolean $includeId Optionally include the id of the defaults project.
  * @return Array
  */
-	public function getDefaults($user_id = null, $include_id = false) {
-		$system_defaults = array(
+	public function getDefaults($userId = null, $includeId = false) {
+		$systemDefaults = array(
 			'max_feedrate' => Configure::read('LaserApp.default_max_cut_feedrate'),
 			'traversal_rate' => Configure::read('LaserApp.default_traversal_feedrate'),
 			'home_before' => true,
@@ -275,26 +275,26 @@ class Project extends AppModel {
 			'gcode_preamble' => Configure::read('LaserApp.default_gcode_preamble'),
 			'gcode_postscript' => Configure::read('LaserApp.default_gcode_postscript'),
 		);
-		if (!empty($user_id)) {
-			$fields = array_keys($system_defaults);
-			if ($include_id) {
+		if (!empty($userId)) {
+			$fields = array_keys($systemDefaults);
+			if ($includeId) {
 				$fields[] = 'id';
 			}
 			$project = $this->find('first', array(
 				'conditions' => array(
-					'Project.user_id' => $user_id,
+					'Project.user_id' => $userId,
 					'Project.public' => Project::PROJ_DEFAULTS,
 				),
 				'fields' => $fields,
 				'contain' => array(),
 			));
 			if ($project) {
-				return array_merge($system_defaults, $project['Project']);
+				return array_merge($systemDefaults, $project['Project']);
 			} else {
-				return $system_defaults;
+				return $systemDefaults;
 			}
 		} else {
-			return $system_defaults;
+			return $systemDefaults;
 		}
 	}
 }

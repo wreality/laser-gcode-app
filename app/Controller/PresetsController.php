@@ -23,7 +23,7 @@ class PresetsController extends AppController {
 		$this->paginate = $paginate;
 		$this->set('presets', $this->paginate());
 	}
-	
+
 /**
  * admin_index method
  *
@@ -36,7 +36,7 @@ class PresetsController extends AppController {
 		$this->paginate = $paginate;
 		$this->set('presets', $this->paginate());
 	}
-	
+
 /**
  * add method
  *
@@ -54,7 +54,7 @@ class PresetsController extends AppController {
 			}
 		}
 	}
-	
+
 /**
  * admin_add method
  *
@@ -76,10 +76,10 @@ class PresetsController extends AppController {
 
 /**
  * edit method
- *
- * @throws NotFoundException
+ * 
  * @param string $id
- * @return void
+ * @throws NotFoundException
+ * @throws ForbiddenException
  */
 	public function edit($id = null) {
 		$this->Preset->id = $id;
@@ -106,7 +106,7 @@ class PresetsController extends AppController {
  * admin_edit method
  *
  * Allow admins to edit any preset.
- * 
+ *
  * @param string $id
  * @throws NotFoundException
  */
@@ -127,12 +127,12 @@ class PresetsController extends AppController {
 			$this->request->data = $this->Preset->find('first', $options);
 		}
 	}
-	
+
 /**
  * admin_promote method
  *
  * Promote a user's preset to be a global preset.
- * 
+ *
  * @param string $id
  * @throws NotFoundException
  */
@@ -143,23 +143,22 @@ class PresetsController extends AppController {
 			throw new NotFoundException(__('Invalid preset.'));
 		}
 		$preset = $this->Preset->read();
-		
+
 		if ($preset['Preset']['isGlobal']) {
 			$this->Session->setFlash(__('Preset is already global'), 'bs_warning');
-		} else if ($this->Preset->makeGlobal()) {
+		} elseif ($this->Preset->makeGlobal()) {
 			$this->Session->setFlash(__('Preset promoted to global'), 'bs_success');
 		} else {
 			$this->Session->setFlash(__('Unable to promote preset.'), 'bs_error');
 		}
 		return $this->redirect($this->referer());
-		
 	}
 
 /**
  * delete method
  *
  * @throws NotFoundException
- * @throws MethodNotAllowedException
+ * @throws ForbiddenException
  * @param string $id
  * @return void
  */
@@ -184,11 +183,11 @@ class PresetsController extends AppController {
  * admin_delete method
  *
  * Allow admins to delete any preset.
- * 
+ *
  * @param string $id
  * @throws NotFoundException
  */
-	public function admin_delete ($id = null) {
+	public function admin_delete($id = null) {
 		$this->request->onlyAllow('post', 'delete');
 		$this->Preset->id = $id;
 		if (!$this->Preset->exists()) {
@@ -201,19 +200,18 @@ class PresetsController extends AppController {
 		$this->Session->setFlash(__('Preset was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
-	
+
 /**
  * import method
- *
- * Import settings used on a path and use them to create a preset.  
  * 
- * @param Path $path_id
- * @throws ForbiddedException
+ * @param string $pathId
  * @throws InternalErrorException
+ * @throws ForbiddedException
+ * @throws ForbiddenException
  */
-	public function import($path_id = null) {
+	public function import($pathId = null) {
 		$this->loadModel('Path');
-		$this->Path->id = $path_id;
+		$this->Path->id = $pathId;
 		if (!$this->Path->exists()) {
 			throw new InternalErrorException();
 		}
@@ -221,11 +219,11 @@ class PresetsController extends AppController {
 			if (!$this->Auth->user('admin')) {
 				throw new ForbiddedException(__('Only admins can create global presets.'));
 			} else {
-				$user_id = null;
+				$userId = null;
 			}
 		} else {
-			$user_id = $this->Auth->user('id');
-			if (!$this->Path->isOwner($user_id)) {
+			$userId = $this->Auth->user('id');
+			if (!$this->Path->isOwner($userId)) {
 				throw new ForbiddenException(__('Unable to modify path settings.'));
 			}
 		}
@@ -235,10 +233,10 @@ class PresetsController extends AppController {
 			)
 		));
 		$path = $this->Path->read();
-		
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$this->Preset->create();
-			$this->request->data['Preset']['user_id'] = $user_id;
+			$this->request->data['Preset']['user_id'] = $userId;
 			if ($this->Preset->save($this->request->data)) {
 				$this->Path->saveField('preset_id', $this->Preset->id);
 				$this->Session->setFlash(__('Saved new preset.'));

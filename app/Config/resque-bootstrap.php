@@ -1,1 +1,1 @@
-<?php Configure::load('resque-config'); ?>
+<?php Configure::load('resque-config');

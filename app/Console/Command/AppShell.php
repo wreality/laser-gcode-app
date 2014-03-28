@@ -29,12 +29,12 @@ App::uses('Shell', 'Console');
 class AppShell extends Shell {
 
 	public $uses = array('Setting');
-	
+
 	public function perform() {
 		$this->initialize();
 		$this->{array_shift($this->args)}();
 	}
-	
+
 	public function startup() {
 		//App::uses('Grace', 'Vendor');
 		if (($timezone = Configure::read('App.timezone'))) {
