@@ -41,8 +41,8 @@ before_script:
       'prefix' => 'test_',
     );
         }" > app/Config/database.php
-  - sh -c "if [ '$PHPCS' = '1' ]; then rm app/Config/database.php; cp app/Config/database.php.default app/Config/database.php; fi"
   - echo -e "n\ny\n" | ./app/Console/cake schema create --name laser
+  - sh -c "if [ '$PHPCS' = '1' ]; then rm app/Config/database.php; cp app/Config/database.php.default app/Config/database.php; fi"
 
 script:
   - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --ignore=\*.css,\*.js,\*Plugin\*,\*vendor\* --extensions=php --standard=CakePHP ./app/; else ./app/Console/cake test app AllTests --coverage-clover=./clover.xml; fi"
