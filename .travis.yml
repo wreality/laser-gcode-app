@@ -3,7 +3,12 @@ language: php
 php:
   - 5.3
   - 5.4
-  
+
+matrix:
+  include:
+    - php: 5.4
+      env:
+        - PHPCS=1
 before_script:
   - mysql -e 'CREATE DATABASE cakephp_test;'
   - chmod -R 777 ./app/tmp
@@ -11,6 +16,8 @@ before_script:
   - cp ./app/Config/config.php.default ./app/Config/config.php
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
   - phpenv rehash
   - set +H
   - echo "<?php
@@ -34,10 +41,10 @@ before_script:
   - echo -e "n\ny\n" | ./app/Console/cake schema create --name laser
 
 script:
-  - ./app/Console/cake test app AllTests --coverage-clover=./clover.xml
-  
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --ignore=\*.css,\*.js,\*Plugin\*,\*vendor\* --extensions=php --standard=CakePHP ./app/; else ./app/Console/cake test app AllTests --coverage-clover=./clover.xml; fi"
+
 after_script:
-  - php vendor/bin/coveralls
-  
+  - sh -c "if [ -z "$PHPCS" ]; then php vendor/bin/coveralls; fi"
+
 notifications:
   email: false
