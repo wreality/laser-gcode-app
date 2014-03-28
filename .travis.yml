@@ -22,6 +22,7 @@ before_script:
   - set +H
   - echo "<?php
     class DATABASE_CONFIG {
+
     public \$default = array(
       'persistent' => false,
       'datasource' => 'Database/Mysql',
@@ -30,6 +31,7 @@ before_script:
       'database' => 'cakephp_test',
       'prefix' => 'test',
     );
+
     public \$test = array(
       'persistent' => false,
       'datasource' => 'Database/Mysql',
@@ -37,7 +39,9 @@ before_script:
       'login' => 'travis',
       'database' => 'cakephp_test',
       'prefix' => 'test_',
-    );    }" > app/Config/database.php
+    );
+        }" > app/Config/database.php
+  - sh -c "if [ '$PHPCS' = '1' ]; then rm app/Config/database.php; cp app/Config/database.php.default app/Config/database.php; fi"
   - echo -e "n\ny\n" | ./app/Console/cake schema create --name laser
 
 script:
