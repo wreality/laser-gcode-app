@@ -24,6 +24,7 @@ class UserTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->User = ClassRegistry::init('User');
+		$this->User->recursive = -1;
 		Configure::write('LaserApp.user_secret_enabled', false);
 	}
 
@@ -143,8 +144,6 @@ class UserTest extends CakeTestCase {
  *
  */
 	public function testFindByValidateKey() {
-		$this->User->recursive = -1;
-
 		$data = array('User' => array(
 			'username' => 'test',
 			'email' => 'test@example.com',
