@@ -78,6 +78,28 @@ class UserTest extends CakeTestCase {
 		$this->assertArrayHasKey('id', $result['User'], 'Correct confirmation not saved (edit)');
 	}
 
+	public function testNoDuplicateEmailOnCreate() {
+		$data = array('User' => array(
+			'username' => 'emailtest',
+			'email' => 'test@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+
+		$result = $this->User->newUser($data);
+		$this->assertFalse($result);
+	}
+
+	public function testNoDuplicateEmailOnUpdate() {
+		$data = array('User' => array(
+			'id' => '102',
+			'email' => 'test@example.com',
+		));
+
+		$result = $this->User->updateEmail($data);
+		$this->assertFalse($result);
+	}
+
 /**
  * testPasswordHashed method
  *

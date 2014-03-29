@@ -431,8 +431,17 @@ class User extends AppModel {
 		$data['User']['active'] = $active;
 		$data['User']['project_count'] = 0;
 		$data['User']['public_count'] = 0;
+		$this->create();
 		return $this->save($data, true, array(
 			'username', 'email', 'password', 'active', 'validate_key',
 			'project_count', 'public_count', 'confirm_password'));
+	}
+
+	public function saveValidateData($data) {
+		return $this->save($data, true, array('validate_data', 'validate_key'));
+	}
+
+	public function updateEmail($data) {
+		return $this->save($data, true, array('email', 'validate_data', 'validate_key'));
 	}
 }

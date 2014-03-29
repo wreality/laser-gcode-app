@@ -194,7 +194,7 @@ class UsersController extends AppController {
 					$this->_throttleAction();
 					$this->request->data['User']['validate_key'] = $this->User->createValidationKey('u');
 					$this->request->data['User']['validate_data'] = $this->request->data['User']['email'];
-					if ($this->User->save($this->request->data, false, array('validate_key', 'validate_data'))) {
+					if ($this->User->saveValidateData($this->request->data)) {
 						$this->User->enqueueEmail('UpdateEmail', $id);
 						return $this->render('update_email_sent');
 					} else {
@@ -227,7 +227,7 @@ class UsersController extends AppController {
 		$user['User']['validate_data'] = null;
 		$user['User']['validate_key'] = null;
 
-		if ($this->User->save($user, true, array('email', 'validate_data', 'validate_key'))) {
+		if ($this->User->updateEmail($user)) {
 			return $this->render('verify_success');
 		} else {
 			throw new InternalErrorException(__('Unable to update email'));
