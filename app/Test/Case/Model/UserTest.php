@@ -47,26 +47,26 @@ class UserTest extends CakeTestCase {
  */
 	public function testUserValidatePassword() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'emailtest',
+			'email' => 'emailtest@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'foo',
 		));
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertFalse($result, 'Non-matching confirmation saved (create).');
 
 		$data['User']['confirm_password'] = '';
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertFalse($result, 'Empty confirmation saved (create).');
 
 		$data['User']['confirm_password'] = 'blah';
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertArrayHasKey('id', $result['User'], 'Correct confirmation not saved (create).');
 
 		$data['User']['id'] = $result['User']['id'];
 		$data['User']['confirm_password'] = 'foo';
 
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertFalse($result, 'Non-matching confirmation saved (edit).');
 
 		$data['User']['confirm_password'] = '';

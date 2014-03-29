@@ -50,7 +50,7 @@ class UsersController extends AppController {
 
 		if ($this->request->is('post')) {
 			$this->User->create();
-			if ($this->User->save($this->request->data)) {
+			if ($this->User->newUser($this->request->data)) {
 				$this->Session->setFlash(__('Account Created'), 'bs_success');
 				$this->User->enqueueEmail('Validation');
 				$this->render('register_confirm');

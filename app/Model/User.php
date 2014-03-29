@@ -427,4 +427,12 @@ class User extends AppModel {
 		->send();
 	}
 
+	public function newUser($data, $active = false) {
+		$data['User']['active'] = $active;
+		$data['User']['project_count'] = 0;
+		$data['User']['public_count'] = 0;
+		return $this->save($data, true, array(
+			'username', 'email', 'password', 'active', 'validate_key',
+			'project_count', 'public_count', 'confirm_password'));
+	}
 }
