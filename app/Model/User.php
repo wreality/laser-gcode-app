@@ -167,6 +167,7 @@ class User extends AppModel {
 			$this->validator()->add('user_secret', 'required', array(
 					'rule' => array('validateSecret'),
 					'message' => 'Secret entered was not correct.',
+					'required' => true,
 					'allowEmpty' => false,
 					'on' => 'create'));
 
