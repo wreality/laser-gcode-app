@@ -46,10 +46,10 @@ before_script:
   - sh -c "if [ '$PHPCS' = '1' ]; then rm app/Config/database.php; cp app/Config/database.php.default app/Config/database.php; fi"
 
 script:
-  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --ignore=\*.css,\*.js,\*Plugin\*,\*vendor\* --extensions=php --standard=CakePHP ./app/; else ./app/Console/cake test app AllTests --coverage-clover=./clover.xml; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --ignore=\*.css,\*.js,\*Plugin\*,\*vendor\* --extensions=php --standard=CakePHP ./app/; elif [ $(phpenv version-name) = "5.4" ]; then ./app/Console/cake test app AllTests --coverage-clover=./clover.xml; else ./app/Console/cake test app AllTests; fi"
 
 after_script:
-  - sh -c "if [ -z "$PHPCS" ]; then php vendor/bin/coveralls; fi"
+  - sh -c "if [ -z "$PHPCS" ] && [ $(phpenv version-name) = "5.4" ]; then php vendor/bin/coveralls; fi"
 
 notifications:
   email: false
