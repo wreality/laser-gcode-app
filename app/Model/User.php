@@ -434,7 +434,7 @@ class User extends AppModel {
 		$this->create();
 		return $this->save($data, true, array(
 			'username', 'email', 'password', 'active', 'validate_key',
-			'project_count', 'public_count', 'confirm_password'));
+			'project_count', 'public_count', 'confirm_password', 'user_secret'));
 	}
 
 	public function saveValidateData($data) {
@@ -443,5 +443,23 @@ class User extends AppModel {
 
 	public function updateEmail($data) {
 		return $this->save($data, true, array('email', 'validate_data', 'validate_key'));
+	}
+
+	public function updateUsername($data) {
+		return $this->save($data, true, array('username'));
+	}
+
+	public function updatePassword($data, $requireCurrent = true) {
+		$fields = array('password', 'confirm_password');
+		if ($requireCurrent) {
+			$this->requireCurrentPassword();
+			$fields[] = 'current_password';
+		} else {
+			$data['User']['validate_key'] = null;
+			$data['User']['validate_data'] = null;
+			$data['User']['active'] = User::USER_ACTIVE;
+			$fields = array_merge($fields, array('active', 'validate_key', 'validate_data'));
+		}
+		return $this->save($data, true, $fields);
 	}
 }

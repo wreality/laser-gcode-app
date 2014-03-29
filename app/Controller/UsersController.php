@@ -137,9 +137,7 @@ class UsersController extends AppController {
 
 		if ($this->request->is('post')) {
 			$this->request->data['User']['id'] = $user['User']['id'];
-			$this->request->data['User']['validate_key'] = null;
-			$this->request->data['User']['active'] = User::USER_ACTIVE;
-			if ($this->User->save($this->request->data, true, array('password', 'validate_key', 'confirm_password', 'active'))) {
+			if ($this->User->updatePassword($this->request->data, false)) {
 				return $this->render('reset_success');
 			} else {
 				$this->Session->setFlash(__('Ubable to save password.  Check below for errors.'), 'bs_error');
@@ -159,7 +157,7 @@ class UsersController extends AppController {
 		$this->User->recursive = -1;
 		$user = $this->User->read();
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->User->save($this->request->data, true, array('username'))) {
+			if ($this->User->updateUsername($this->request->data)) {
 				$user = $this->User->read();
 				$this->Session->setFlash(__('Account changes saved'), 'bs_success');
 			} else {
@@ -437,9 +435,8 @@ class UsersController extends AppController {
 	public function password() {
 		if ($this->request->is('post')) {
 			$this->User->id = $this->Auth->user('id');
-			$this->User->requireCurrentPassword();
 
-			if ($this->User->save($this->request->data, true, array('current_password', 'password', 'confirm_password'))) {
+			if ($this->User->updatePassword($this->request->data)) {
 				$this->Session->setFlash(__('Password successfully updated.'), 'bs_success');
 			} else {
 				$this->Session->setFlash(__('There was an error while updating your password.'), 'bs_error');

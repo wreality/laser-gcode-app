@@ -100,6 +100,27 @@ class UserTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+	public function testNoDuplicateUsernameOnCreate() {
+		$data = array('User' => array(
+			'username' => 'test1',
+			'email' => 'testuser@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+
+		$result = $this->User->newUser($data);
+		$this->assertFalse($result);
+	}
+
+	public function testNoDuplicateUsernameOnUpdate() {
+		$data = array('User' => array(
+			'id' => '102',
+			'username' => 'test1'
+		));
+
+		$result = $this->User->updateUsername($data);
+		$this->assertFalse($result);
+	}
 /**
  * testPasswordHashed method
  *
@@ -108,20 +129,20 @@ class UserTest extends CakeTestCase {
  */
 	public function testPasswordHashed() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'testhash',
+			'email' => 'testhash@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'blah',
 		));
 
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 
 		$this->assertNotEmpty($result['User']['password'], 'Password saved empty.');
 		$this->assertNotContains($data['User']['password'], $result['User']['password'], 'Password saved in plaintext');
 
 		$data['User']['id'] = $result['User']['id'];
 		$data['User']['password'] = $data['User']['confirm_password'] = 'foo';
-		$result2 = $this->User->save($data);
+		$result2 = $this->User->updatePassword($data, false);
 
 		$this->assertNotEmpty($result2['User']['password'], 'Password saved empty (edit');
 		$this->assertNotContains($data['User']['password'], $result2['User']['password'], 'Password saved in plaintext (edit).');
@@ -149,13 +170,12 @@ class UserTest extends CakeTestCase {
  */
 	public function testCreateUserValidationKey() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'testkey',
+			'email' => 'testkey@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'blah',
 		));
-		$this->User->create();
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 
 		$this->assertNotEmpty($result['User']['validate_key']);
 		$this->assertStringStartsWith('v:', $result['User']['validate_key']);
@@ -167,13 +187,13 @@ class UserTest extends CakeTestCase {
  */
 	public function testFindByValidateKey() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'testkey',
+			'email' => 'testkey@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'blah',
 		));
-		$this->User->create();
-		$result = $this->User->save($data);
+
+		$result = $this->User->newUser($data);
 
 		$result2 = $this->User->findByValidateKey('v', substr($result['User']['validate_key'], 2));
 
@@ -182,8 +202,8 @@ class UserTest extends CakeTestCase {
 
 	public function testSecretKeyRequired() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'testsecret',
+			'email' => 'testsecret@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'blah',
 		));
@@ -192,37 +212,36 @@ class UserTest extends CakeTestCase {
 		Configure::write('LaserApp.user_secret', 'SECRET');
 
 		$this->User->create();
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertFalse($result);
 
 		$data['User']['user_secret'] = 'FOO';
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertFalse($result);
 
 		$data['User']['user_secret'] = 'SECRET';
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 		$this->assertArrayHasKey('User', $result);
 	}
 
 	public function testRequireCurrentPassword() {
 		$data = array('User' => array(
-			'username' => 'test',
-			'email' => 'test@example.com',
+			'username' => 'testcurrent',
+			'email' => 'testcurrent@example.com',
 			'password' => 'blah',
 			'confirm_password' => 'blah',
 		));
 
-		$this->User->create();
-		$result = $this->User->save($data);
+		$result = $this->User->newUser($data);
 
 		$this->User->requireCurrentPassword();
 		unset($data['User']['password'], $data['User']['confirm_password']);
 		$data['User']['id'] = $result['User']['id'];
-		$result = $this->User->save($data);
+		$result = $this->User->updatePassword($data);
 		$this->assertFalse($result);
 
 		$data['User']['current_password'] = 'blah';
-		$result = $this->User->save($data);
+		$result = $this->User->updatePassword($data);
 		$this->assertArrayHasKey('User', $result);
 	}
 }
