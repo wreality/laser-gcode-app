@@ -24,6 +24,7 @@ class UserTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->User = ClassRegistry::init('User');
+		Configure::write('LaserApp.user_secret_enabled', false);
 	}
 
 /**
@@ -104,12 +105,103 @@ class UserTest extends CakeTestCase {
 		$this->assertNotEqual($result2['User']['password'], $result['User']['password'], 'Passwork hases collide.');
 	}
 
+/**
+ * testValidationKey method
+ *
+ * Test that validation keys are generated correctly.
+ *
+ */
 	public function testValidationKey() {
 		$result = $this->User->createValidationKey('v');
 
 		$this->assertStringStartsWith('v:', $result);
-
 		$this->assertEqual(strlen($result), 42);
 	}
 
+/**
+ * testCreateUserValidationKey method
+ *
+ * Test that validation key is created on user create.
+ *
+ */
+	public function testCreateUserValidationKey() {
+		$data = array('User' => array(
+			'username' => 'test',
+			'email' => 'test@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+		$this->User->create();
+		$result = $this->User->save($data);
+
+		$this->assertNotEmpty($result['User']['validate_key']);
+		$this->assertStringStartsWith('v:', $result['User']['validate_key']);
+	}
+
+/**
+ * testFindByValidateKey method
+ *
+ */
+	public function testFindByValidateKey() {
+		$this->User->recursive = -1;
+
+		$data = array('User' => array(
+			'username' => 'test',
+			'email' => 'test@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+		$this->User->create();
+		$result = $this->User->save($data);
+
+		$result2 = $this->User->findByValidateKey('v', substr($result['User']['validate_key'], 2));
+
+		$this->assertEqual($result2['User']['id'], $result['User']['id']);
+	}
+
+	public function testSecretKeyRequired() {
+		$data = array('User' => array(
+			'username' => 'test',
+			'email' => 'test@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+
+		Configure::write('LaserApp.user_secret_enabled', true);
+		Configure::write('LaserApp.user_secret', 'SECRET');
+
+		$this->User->create();
+		$result = $this->User->save($data);
+		$this->assertFalse($result);
+
+		$data['User']['user_secret'] = 'FOO';
+		$result = $this->User->save($data);
+		$this->assertFalse($result);
+
+		$data['User']['user_secret'] = 'SECRET';
+		$result = $this->User->save($data);
+		$this->assertArrayHasKey('User', $result);
+	}
+
+	public function testRequireCurrentPassword() {
+		$data = array('User' => array(
+			'username' => 'test',
+			'email' => 'test@example.com',
+			'password' => 'blah',
+			'confirm_password' => 'blah',
+		));
+
+		$this->User->create();
+		$result = $this->User->save($data);
+
+		$this->User->requireCurrentPassword();
+		unset($data['User']['password'], $data['User']['confirm_password']);
+		$data['User']['id'] = $result['User']['id'];
+		$result = $this->User->save($data);
+		$this->assertFalse($result);
+
+		$data['User']['current_password'] = 'blah';
+		$result = $this->User->save($data);
+		$this->assertArrayHasKey('User', $result);
+	}
 }
