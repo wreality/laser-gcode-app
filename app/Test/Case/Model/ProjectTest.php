@@ -82,4 +82,63 @@ class ProjectTest extends CakeTestCase {
 		$this->assertEqual($result['Project']['gcode_preamble'], 'Foo');
 		$this->assertEqual($result['Project']['gcode_postscript'], 'Bar');
 	}
+
+	public function testIsOwner() {
+		$this->Project->create();
+		$result = $this->Project->save(array('Project' => array('user_id' => '101')));
+		$this->Project->id = $result['Project']['id'];
+
+		$this->assertTrue($this->Project->isOwner('101'));
+		$this->assertFalse($this->Project->isOwner('102'));
+	}
+
+	public function testIsOwnerOrPublic() {
+		$this->Project->create();
+		$this->Project->save(array('Project' => array('user_id' => '101')));
+
+		$this->assertFalse($this->Project->isOwnerOrPublic('102'));
+		$this->assertTrue($this->Project->isOwnerOrPublic('101'));
+
+		$this->Project->save(array('Project' => array('public' => Project::PROJ_PUBLIC)));
+
+		$this->assertTrue($this->Project->isOwnerOrPublic('101'));
+		$this->assertTrue($this->Project->isOwnerOrPublic('102'));
+	}
+
+	public function testResetUserDefaults() {
+		$defaults = array('Project' => array(
+			'max_feedrate' => 4000,
+			'traversal_rate' => 299,
+			'home_before' => false,
+			'clear_after' => true,
+			'gcode_preamble' => 'Foo',
+			'gcode_postscript' => 'Bar',
+		));
+
+		$result = $this->Project->saveDefaults('101', $defaults);
+		$this->assertArrayHasKey('Project', $result);
+		$this->Project->resetUserDefaults('101');
+		$this->Project->create();
+		$result = $this->Project->save(array('Project' => array('user_id' => '101')));
+
+		$this->assertEqual($result['Project']['max_feedrate'], Configure::read('LaserApp.default_max_cut_feedrate'));
+		$this->assertEqual($result['Project']['traversal_rate'], Configure::read('LaserApp.default_traversal_feedrate'));
+		$this->assertEqual($result['Project']['home_before'], true);
+		$this->assertEqual($result['Project']['clear_after'], false);
+		$this->assertEqual($result['Project']['gcode_preamble'], Configure::read('LaserApp.default_gcode_preamble'));
+		$this->assertEqual($result['Project']['gcode_postscript'], Configure::read('LaserApp.default_gcode_postscript'));
+	}
+
+	public function testUpdateModified() {
+		$this->Project->create();
+		$this->Project->save(array('Project' => array('user_id' => '', 'modified' => '1971-01-01 00:00:00')));
+
+		$result = $this->Project->updateModified();
+		$now = new DateTime();
+		$modified = new DateTime($result['Project']['modified']);
+		$interval = $modified->diff($now);
+		$seconds = $interval->format('%S');
+		$this->assertLessThan(10, $seconds);
+		$this->assertGreaterThanOrEqual(0, $seconds);
+	}
 }
