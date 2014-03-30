@@ -15,8 +15,7 @@ before_script:
   - chmod -R 777 ./app/tmp
   - chmod +x ./app/Console/cake
   - cp ./app/Config/config.php.default ./app/Config/config.php
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+  - sh -c "if [ -z "$PHPCS" ] && [ $(phpenv version-name) = "5.4" ]; then composer install --dev --no-interaction; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
   - phpenv rehash
