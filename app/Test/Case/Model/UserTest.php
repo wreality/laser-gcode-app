@@ -244,4 +244,96 @@ class UserTest extends CakeTestCase {
 		$result = $this->User->updatePassword($data);
 		$this->assertArrayHasKey('User', $result);
 	}
+
+	public function testSendValidationEmailNoResque() {
+		if (class_exists('CakeResque')) {
+			$this->markTestSkipped(__('Resque not configured.'));
+		}
+
+		$User = $this->getUserMockForEmail('verify_email', 'test@example.com');
+		$User->enqueueEmail('Validation', '101');
+	}
+
+	public function testSendResetPasswordEmailNoResque() {
+		if (class_exists('CakeResque')) {
+			$this->markTestSkipped();
+		}
+
+		$User = $this->getUserMockForEmail('reset_password', 'test@example.com');
+		$User->enqueueEmail('ResetPassword', '101');
+	}
+
+	public function testSendUpdateEmailEmailNoResque() {
+		if (class_exists('CakeResque')) {
+			$this->markTestSkipped();
+		}
+
+		$User = $this->getUserMockForEmail('update_email', 'update@example.com');
+		$data = array('User' => array(
+			'id' => '101',
+			'validate_key' => $User->createValidationKey('u'),
+			'validate_data' => 'update@example.com'
+		));
+		$User->saveValidateData($data);
+		$User->enqueueEmail('UpdateEmail', '101');
+	}
+
+	public function testSendInvalidateEmailNoResque() {
+		if (class_exists('CakeResque')) {
+			$this->markTestSkipped();
+		}
+
+		$User = $this->getUserMockForEmail('invalidate_password', 'test@example.com');
+		$User->enqueueEmail('InvalidatePassword', '101');
+	}
+
+	public function getUserMockForEmail($template, $emailAddress) {
+		$User = $this->getMockForModel('User', array('_getMailer'));
+
+		$mailer = $this->getMock('CakeEmail', array('to',
+			'emailFormat',
+			'subject',
+			'replyTo',
+			'from',
+			'template',
+			'viewVars',
+			'send',
+			'config'));
+
+		$mailer->expects($this->once())
+		->method('emailFormat')
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('config')
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('subject')
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('viewVars')
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('to')
+		->with($emailAddress)
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('template')
+		->with($template)
+		->will($this->returnSelf());
+
+		$mailer->expects($this->once())
+		->method('send')
+		->will($this->returnValue(true));
+
+		$User->expects($this->once())
+		->method('_getMailer')
+		->will($this->returnValue($mailer));
+
+		return $User;
+	}
 }

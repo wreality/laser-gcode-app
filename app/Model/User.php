@@ -324,15 +324,13 @@ class User extends AppModel {
  * @throws NotFoundException
  */
 	public function emailValidation($userId) {
-		App::uses('CakeEmail', 'Network/Email');
-
 		$this->recursive = -1;
 		$user = $this->findForEmail($userId);
 		if (!$user) {
 			throw new NotFoundException(__('User not found.'));
 		}
 
-		$email = new CakeEmail();
+		$email = $this->_getMailer();
 
 		$email->config('default')
 			->template('verify_email')
@@ -352,15 +350,13 @@ class User extends AppModel {
  * @throws NotFoundException
  */
 	public function emailResetPassword($userId) {
-		App::uses('CakeEmail', 'Network/Email');
-
 		$this->recursive = -1;
 		$user = $this->findForEmail($userId);
 		if (!$user) {
 			throw new NotFoundException(__('User not found.'));
 		}
 
-		$email = new CakeEmail();
+		$email = $this->_getMailer();
 
 		$email->config('default')
 			->template('reset_password')
@@ -380,15 +376,13 @@ class User extends AppModel {
  * @throws NotFoundException
  */
 	public function emailUpdateEmail($userId) {
-		App::uses('CakeEmail', 'Network/Email');
-
 		$this->recursive = -1;
 		$user = $this->findForEmail($userId);
 		if (!$user) {
 			throw new NotFoundException(__('User not found'));
 		}
 
-		$email = new CakeEmail();
+		$email = $this->_getMailer();
 		$email->config('default')
 			->template('update_email')
 			->emailFormat('html')
@@ -408,15 +402,13 @@ class User extends AppModel {
  * @throws NotFoundException
  */
 	public function emailInvalidatePassword($userId) {
-		App::uses('CakeEmail', 'Network/Email');
-
 		$this->recursive = -1;
 		$user = $this->findForEmail($userId);
 		if (!$user) {
 			throw new NotFoundException(__('User not found.'));
 		}
 
-		$email = new CakeEmail();
+		$email = $this->_getMailer();
 
 		$email->config('default')
 		->template('invalidate_password')
@@ -461,5 +453,10 @@ class User extends AppModel {
 			$fields = array_merge($fields, array('active', 'validate_key', 'validate_data'));
 		}
 		return $this->save($data, true, $fields);
+	}
+
+	protected function _getMailer() {
+		App::uses('CakeEmail', 'Network/Email');
+		return new CakeEmail();
 	}
 }
