@@ -87,7 +87,7 @@ class Project extends AppModel {
 	public function beforeSave($options = array()) {
 		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
 			$defaults = $this->getDefaults($this->data[$this->alias]['user_id']);
-			$this->data[$this->alias] = array_merge($this->data[$this->alias], $defaults);
+			$this->data[$this->alias] = array_merge($defaults, $this->data[$this->alias]);
 		}
 		return true;
 	}
@@ -214,6 +214,7 @@ class Project extends AppModel {
 		}
 		$data['Project']['public'] = Project::PROJ_DEFAULTS;
 		$data['Project']['user_id'] = $userId;
+
 		$fields = array_merge(array_keys($defaults), array('public', 'user_id'));
 		return $this->save($data, true, $fields);
 	}
