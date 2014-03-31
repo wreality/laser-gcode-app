@@ -4,7 +4,7 @@
  **/
 
 $config['LaserApp'] = array(
-	'pstoedit_command' => 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}',
+	'pstoedit_command' => 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -traversal {{TRAVERSAL}} -noheader -nofooter" {{FILE}} 2> /dev/null',
 	'storage_path' => APP . 'webroot' . DS . 'files',
 	'default_max_cut_feedrate' => 1000,
 	'default_traversal_feedrate' => 6000,

@@ -37,8 +37,9 @@
 /**
  * Set Laser App default configuration values
  */
-	Configure::write('LaserApp.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
+	Configure::write('LaserApp.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -traversal {{TRAVERSAL}} -noheader -nofooter" {{FILE}}');
 	Configure::write('LaserApp.storage_path', APP . 'webroot' . DS . 'files');
+	Configure::write('LaserApp.storage_webroot', Configure::read('LaserApp.base_url') . '/files');
 	Configure::write('LaserApp.default_max_cut_feedrate', 1000);
 	Configure::write('LaserApp.default_traversal_feedrate', 6000);
 	Configure::write('LaserApp.user_secret', 'SECRET');
@@ -53,7 +54,6 @@
 /**
  * Application configuration values.  Shouldn't need to be modified by users.
  */
-	define('PDF_PATH', Configure::read('LaserApp.storage_path'));
 	$baseUrl = Configure::read('LaserApp.base_url');
 
 	if ((!empty($baseUrl)) && (!defined('FULL_BASE_URL'))) {

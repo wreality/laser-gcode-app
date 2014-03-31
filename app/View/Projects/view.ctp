@@ -17,7 +17,7 @@
 					<?php if (empty($operation['Path'])) {?>
 						<p>No paths exist yet.</p>
 					<?php } else { ?>
-						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.png')) {?>
+						<?php if (file_exists(Configure::read('LaserApp.storage_path').DS.$operation['id'].'.png')) {?>
 							<?php echo $this->Html->image('/files/'.$operation['id'].'.png', array('style' => 'max-width: 790px; border: 1px solid black; background: white;'))?>
 						<?php } ?>
 						<?php if ($operation['size_warning']) {?>
@@ -26,7 +26,7 @@
 								trust the operation preview image in this case and <strong>CHECK THE GCODE MANUALLY</strong>
 							</div>
 						<?php } ?>
-						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
+						<?php if (file_exists(Configure::read('LaserApp.storage_path').DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
 						<table class="table table-striped">
 							<tr>
 								<th colspan="2">&nbsp;</th>

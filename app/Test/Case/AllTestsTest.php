@@ -6,6 +6,7 @@ class AllTestsTest extends CakeTestSuite {
 		$suite = new CakeTestSuite('All Application Tests');
 		$suite->addTestFile(TESTS . 'Case/Model/UserTest.php');
 		$suite->addTestFile(TESTS . 'Case/Model/ProjectTest.php');
+		$suite->addTestFile(TESTS . 'Case/Model/OperationTest.php');
 		return $suite;
 	}
 }

@@ -88,7 +88,7 @@ class OperationsController extends AppController {
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException();
 		}
-		if (!file_exists(PDF_PATH . DS . $id . '.gcode')) {
+		if (!file_exists(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode')) {
 			throw new NotFoundException();
 		}
 
@@ -118,7 +118,7 @@ class OperationsController extends AppController {
 		if (!$this->Operation->isOwnerOrPublic($this->Auth->user('id'))) {
 			throw new ForbiddenException();
 		}
-		if (!file_exists(PDF_PATH . DS . $id . '.gcode')) {
+		if (!file_exists(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode')) {
 			throw new NotFoundException();
 		}
 
@@ -131,14 +131,14 @@ class OperationsController extends AppController {
 		}
 
 		$modified = new DateTime();
-		$modified->setTimestamp(filemtime(PDF_PATH . DS . $id . '.gcode'));
+		$modified->setTimestamp(filemtime(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode'));
 
 		$this->response->modified($modified); // Allow for caching only when gocde hasn't been updated
 		if ($this->response->checkNotModified($this->request)) {
 			return $this->response;
 		}
 
-		$this->response->file(PDF_PATH . DS . $id . '.gcode', array('download' => true, 'name' => $name));
+		$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
 		return $this->response;
 	}
 }

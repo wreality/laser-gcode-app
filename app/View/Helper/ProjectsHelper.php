@@ -21,7 +21,7 @@ class ProjectsHelper extends AppHelper {
 	public $helpers = array('Html');
 
 	public function getThumbnailImage($project, $options = array()) {
-		if (($project['Project']['operation_count']) && (file_exists(PDF_PATH . DS . $project['Operation'][0]['id'] . '.png'))) {
+		if (($project['Project']['operation_count']) && (file_exists(Configure::read('LaserApp.storage_path') . DS . $project['Operation'][0]['id'] . '.png'))) {
 			echo $this->Html->image('/files/' . $project['Operation'][0]['id'] . '.png', $options);
 		} else {
 			echo $this->Html->image('no-thumb.png', $options);

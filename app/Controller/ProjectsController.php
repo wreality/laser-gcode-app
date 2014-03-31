@@ -181,36 +181,11 @@ class ProjectsController extends AppController {
 			throw new ForbiddenException(__('Not authorized to modify this project.'));
 		}
 
-		$this->Project->contain(array(
-			'Operation' => array(
-				'Path' => array(
-					'Preset',
-					'order' => array('order' => 'ASC'),
-				)
-			), 'User'
-		));
+		$this->Project->contain(array('Operation'));
 		$project = $this->Project->read();
 
-		foreach ($project['Operation'] as $oi => $operation) {
-			$home = false;
-			$disableSteppers = false;
-			$preamble = array();
-			$postscript = array();
-			if ($oi == 0) {
-				if ($project['Project']['home_before']) {
-					$home = true;
-				}
-				if (!empty($project['Project']['gcode_preamble'])) {
-					$preamble = $project['Project']['gcode_preamble'];
-				}
-			}
-			if ($oi == (count($project['Operation']) - 1)) {
-				if (!empty($project['Project']['gcode_postscript'])) {
-					$append = $project['Project']['gcode_postscript'];
-				}
-				$disableSteppers = true;
-			}
-			$this->Project->Operation->generateGcode($operation['id'], $home, $disableSteppers, $preamble, $postscript);
+		foreach ($project['Operation'] as $operation) {
+			$this->Project->Operation->generateGcode($operation['id']);
 		}
 		$this->redirect(array('action' => 'edit', $id));
 	}

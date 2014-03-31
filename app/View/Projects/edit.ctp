@@ -6,7 +6,7 @@
 				<h4>Anonymous Project</h4>
 			<p>Anonymous projects aren't listed on the main page.  The only way
 			   to find this project later is to bookmark the page!
-			</p> 
+			</p>
 		</div>
 	<?php endif;?>
 		<?php if (empty($project['Operation'])) { ?>
@@ -14,12 +14,12 @@
 		<?php } else {?>
 			<?php foreach ($project['Operation'] as $oi => $operation) {?>
 				<div class="well">
-					
-					
+
+
 					<?php if (empty($operation['Path'])) {?>
 						<p>No paths exist yet.</p>
 					<?php } else { ?>
-						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.png')) {?>
+						<?php if (file_exists(Configure::read('LaserApp.storage_path').DS.$operation['id'].'.png')) {?>
 							<?php echo $this->Html->image('/files/'.$operation['id'].'.png', array('style' => 'max-width: 790px; border: 1px solid black; background: white;'))?>
 						<?php } ?>
 						<?php if ($operation['size_warning']) {?>
@@ -29,7 +29,7 @@
 								designed for this case, so just make sure you know what you're doing.
 							</div>
 						<?php } ?>
-						<?php if (file_exists(PDF_PATH.DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
+						<?php if (file_exists(Configure::read('LaserApp.storage_path').DS.$operation['id'].'.gcode')) $gcode[$oi] = $operation['id'];?>
 						<table class="table table-striped">
 							<tr>
 								<th colspan="2">&nbsp;</th>
@@ -38,13 +38,13 @@
 								<th>&nbsp;</th>
 							</tr>
 						<?php foreach($operation['Path'] as $pi => $path) {?>
-								
+
 							<tr>
 								<td style="background-color: <?php echo $colors[$pi]?>;">&nbsp;</td>
 								<td><?php echo $this->Html->image('/files/'.$path['file_hash'].'.png', array('width' => 50))?></td>
 								<td><?php echo $path['file_name'];?></td>
 								<td><?php echo $this->element('Project/level_indicators', array('value' => $path))?><?php if (!empty($path['Preset']['name'])) {?>
-										<?php echo $this->Html->label($path['Preset']['displayName']);?> 
+										<?php echo $this->Html->label($path['Preset']['displayName']);?>
 									<?php } else { ?>
 										<?php echo $this->Html->label(__('Custom'));?>
 										<?php if (AuthComponent::user('id')) {?>
@@ -55,7 +55,7 @@
 										<?php }?>
 									<?php } ?>
 								</td>
-								<td>	
+								<td>
 									<?php if ($pi > 0)  { ?>
 										<?php echo $this->Form->postButton('<i> </i> ', array('controller' => 'paths', 'action' => 'move_up', $path['id']), array('escape' => false,'type' => ' btn-xs btn-default btn-move-up'));?>
 									<?php } ?>
@@ -78,7 +78,7 @@
 					<div class="clearfix">&nbsp;</div>
 					<div class="custom-options" style="display:none;">
 						<?php echo $this->Form->input('power', array('div' => array('class' => 'col-lg-4 form-group'),'placeholder' => 'Power', 'class' => 'col-lg-8', 'append' => '%', 'label' => array('class' => 'col-lg-4', 'text' => 'Power')));?>
-						
+
 						<?php echo $this->Form->input('speed', array('div' => array('class' => 'col-lg-4 form-group'), 'placeholder' => 'Speed', 'class' => 'col-lg-8', 'append' => '%','label' => array('class' => 'col-lg-4', 'text' => 'Speed')));?>
 					</div>
 					<?php echo $this->Form->end();?>
@@ -86,10 +86,10 @@
 					<div class="clearfix"></div>
 				</div>
 			<?php } ?>
-		<?php } ?>	
+		<?php } ?>
 		<?php echo $this->Form->postButton('Add Operation', array('controller' => 'operations', 'action' => 'add', $project['Project']['id']), array('type' => 'btn-primary btn-large'))?>
-		
-		
+
+
 </div>
 <?php $this->start('sidebar');?>
 	<?php echo $this->Form->create('Project', array('novalidate' => true, 'class' => 'warn-change'))?>
@@ -104,7 +104,7 @@
 			<?php echo $this->Form->submit(__('Save'))?>
 		</div>
  	</div>
- 
+
 <div class="panel-group" id="accordion">
   <div class="panel panel-primary">
     <div class="panel-heading">
@@ -133,7 +133,7 @@
     <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
 		<?php echo $this->Form->input('max_feedrate', array('label' => __('100% Feedrate'), 'append' => 'mm/min'))?>
-		<?php //echo $this->Form->input('traversal_rate', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
+		<?php echo $this->Form->input('traversal_rate', array('label' => __('Traversal Feedrate'), 'append' => 'mm/min'))?>
 		<?php echo $this->Form->input('gcode_preamble', array('type' => 'textarea'));?>
 		<?php echo $this->Form->input('gcode_postscript', array('type' => 'textarea'))?>
 		<?php echo $this->Form->submit(__('Save'))?>

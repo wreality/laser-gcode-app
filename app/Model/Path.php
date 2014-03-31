@@ -198,13 +198,13 @@ class Path extends AppModel {
 
 		}
 		if ((!empty($this->data[$this->alias]['file'])) && ($this->data[$this->alias]['file']['error'] == 0)) {
-			if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], PDF_PATH . DS . $this->data[$this->alias]['file_hash'] . '.pdf')) {
+			if (!move_uploaded_file($this->data[$this->alias]['file']['tmp_name'], Configure::read('LaserApp.storage_path') . DS . $this->data[$this->alias]['file_hash'] . '.pdf')) {
 				return false;
 			}
 
 			if (extension_loaded('imagick')) {
 
-				$image = new Imagick(PDF_PATH . DS . $this->data[$this->alias]['file_hash'] . '.pdf');
+				$image = new Imagick(Configure::read('LaserApp.storage_path') . DS . $this->data[$this->alias]['file_hash'] . '.pdf');
 				$res = $image->getImageGeometry();
 				$this->data[$this->alias]['height'] = $res['height'];
 				$this->data[$this->alias]['width'] = $res['width'];
@@ -212,9 +212,9 @@ class Path extends AppModel {
 				$image->setImageFormat('png');
 				$image->setImageBackgroundColor('white');
 				$image = $image->flattenImages();
-				$image->writeImage(PDF_PATH . DS . $this->data[$this->alias]['file_hash'] . '.png');
+				$image->writeImage(Configure::read('LaserApp.storage_path') . DS . $this->data[$this->alias]['file_hash'] . '.png');
 			} else {
-				copy(PDF_PATH . DS . 'no-image.png', PDF_PATH . DS . $this->data[$this->alias]['file_hash'] . '.png');
+				copy(Configure::read('LaserApp.storage_path') . DS . 'no-image.png', Configure::read('LaserApp.storage_path') . DS . $this->data[$this->alias]['file_hash'] . '.png');
 			}
 			return true;
 		}

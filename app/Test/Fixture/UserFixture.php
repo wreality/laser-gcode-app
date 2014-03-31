@@ -25,7 +25,7 @@ class UserFixture extends CakeTestFixture {
 			'created' => '2014-01-01 00:00:00',
 			'modified' => '2014-01-01 00:00:00',
 			'last_login' => '0000-00-00 00:00:00',
-			'project_count' => '0',
+			'project_count' => '1',
 			'public_count' => '0',
 		),
 		array(

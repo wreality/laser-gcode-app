@@ -235,6 +235,18 @@ class GCode extends AppModel {
 		$this->_gcode = array_merge($this->_gcode, $gcode);
 	}
 
+/**
+ * pstoedit method
+ *
+ * Process pdf file using pstoedit add add the result to the gcode array
+ *
+ * @param unknown $speed
+ * @param unknown $power
+ * @param unknown $traversal
+ * @param unknown $filename
+ * @throws InternalErrorException if pstoedit returns with an error.
+ * @return multitype:
+ */
 	public function pstoedit($speed, $power, $traversal, $filename) {
 			$gcode = array();
 			$command = Configure::read('LaserApp.pstoedit_command');
@@ -242,7 +254,11 @@ class GCode extends AppModel {
 			$command = str_replace('{{SPEED}}', (int)($speed), $command);
 			$command = str_replace('{{TRAVERSAL}}', (int)($traversal), $command);
 			$command = str_replace('{{FILE}}', $filename, $command);
-			exec($command, $gcode);
+
+			exec($command, $gcode, $return);
+			if ($return) {
+				throw new InternalErrorException();
+			}
 			$this->_gcode = array_merge($this->_gcode, $gcode);
 			return $gcode;
 	}

@@ -78,15 +78,15 @@ class Operation extends AppModel {
 
 		//$files = Set::extract('/Path/file_hash', $operation);
 		if (!extension_loaded('imagick')) {
-			copy(PDF_PATH . DS . 'no-preview.png', PDF_PATH . DS . $id . '.png');
+			copy(Configure::read('LaserApp.storage_path') . DS . 'no-preview.png', Configure::read('LaserApp.storage_path') . DS . $id . '.png');
 			return false;
 		}
 		if (count($operation['Path']) == 0) {
 			$this->saveField('size_warning', false);
-			unlink(PDF_PATH . DS . $id . '.png');
+			unlink(Configure::read('LaserApp.storage_path') . DS . $id . '.png');
 			return true;
 		} else {
-			$image = new Imagick(PDF_PATH . DS . $operation['Path'][0]['file_hash'] . '.pdf');
+			$image = new Imagick(Configure::read('LaserApp.storage_path') . DS . $operation['Path'][0]['file_hash'] . '.pdf');
 			$warnSize = false;
 			$size['width'] = $operation['Path'][0]['width'];
 			$size['height'] = $operation['Path'][0]['height'];
@@ -97,7 +97,7 @@ class Operation extends AppModel {
 				$colors = Configure::read('App.colors');
 				array_shift($operation['Path']);
 				foreach ($operation['Path'] as $fi => $file) {
-					$layer = new Imagick(PDF_PATH . DS . $file['file_hash'] . '.pdf');
+					$layer = new Imagick(Configure::read('LaserApp.storage_path') . DS . $file['file_hash'] . '.pdf');
 					if (($file['width'] != $size['width']) || ($file['height'] != $size['height'])) {
 						$warnSize = true;
 					}
@@ -109,7 +109,7 @@ class Operation extends AppModel {
 				}
 			}
 			$this->saveField('size_warning', $warnSize);
-			$image->writeImage(PDF_PATH . DS . $id . '.png');
+			$image->writeImage(Configure::read('LaserApp.storage_path') . DS . $id . '.png');
 		}
 	}
 
@@ -125,7 +125,7 @@ class Operation extends AppModel {
  * @param unknown $postscript
  * @return number
  */
-	public function generateGcode($id = null, $home = false, $disableSteppers = true, $preamble = array(), $postscript = array()) {
+	public function generateGcode($id = null) {
 		if (!empty($id)) {
 			$this->id = $id;
 		}
@@ -140,25 +140,36 @@ class Operation extends AppModel {
 		App::import('Model', 'GCode');
 
 		$GCode = new GCode();
-		$GCode->insertGCode($preamble);
-		$GCode->startOpCode($home);
-
+		if ($operation['Operation']['order'] == 1) {
+			if (!empty($operation['Project']['gcode_preamble'])) {
+				$GCode->insertGCode(explode("\n", $operation['Project']['gcode_preamble']));
+			}
+		}
+		if ($operation['Project']['home_before']) {
+			$GCode->startOpCode($operation['Project']['home_before']);
+		}
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed'] / 100);
 			$power = ($path['power'] / 100) * Configure::read('LaserApp.power_scale');
 			$GCode->insertComment('Start of path: ' . $path['file_name']);
 			$GCode->insertComment(sprintf('; Speed: %d, Power: %d', $speed, $power));
 			$GCode->newLine();
-			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], PDF_PATH . DS . $path['file_hash'] . '.pdf');
+			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], Configure::read('LaserApp.storage_path') . DS . $path['file_hash'] . '.pdf');
 			$GCode->laserOff();
 			$GCode->moveTo(0, 0, false, $operation['Project']['traversal_rate']);
 			$GCode->insertComment('End of path: ' . $path['file_name']);
 		}
 
-		$GCode->endOpCode($disableSteppers);
-		$GCode->insertGCode($postscript);
+		if ($operation['Operation']['order'] == ($operation['Project']['operation_count'])) {
+			$GCode->endOpCode(true);
+			if (!empty($operation['Project']['gcode_postscript'])) {
+				$GCode->insertGCode(explode("\n", $operation['Project']['gcode_postscript']));
+			}
+		} else {
+			$GCode->endOpCode(false);
+		}
 
-		return $GCode->writeFile(PDF_PATH . DS . $this->id . '.gcode');
+		return $GCode->writeFile(Configure::read('LaserApp.storage_path') . DS . $this->id . '.gcode') !== false;
 	}
 
 /**
