@@ -269,6 +269,29 @@ class ProjectsController extends AppController {
 		$this->redirect($this->referer());
 	}
 
+	public function copy($id = null) {
+		$this->Project->id = $id;
+		if (!$this->Project->exists()) {
+			throw new NotFoundException();
+		}
+		if (!$this->Project->isOwner($this->Auth->user('id'), true)) {
+			throw new ForbiddenException();
+		}
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->Project->copyProject($this->request->data['Project']['project_name'])) {
+				$this->Session->setFlash(__('Project successfully copied'), 'bs_success');
+				$this->Project->updateOverviews();
+				$this->redirect(array('action' => 'edit', $this->Project->id));
+			} else {
+				$this->Session->setFlash(__('Enable to copy projecgt.'), 'bs_error');
+			}
+		} else {
+			$this->Project->contain(array());
+			$this->request->data = $this->Project->read();
+		}
+	}
+
 /**
  * admin_index method
  *

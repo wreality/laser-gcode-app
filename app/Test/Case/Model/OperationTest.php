@@ -128,6 +128,15 @@ class OperationTest extends CakeTestCase {
 		$this->assertEquals(count($gCode) - 1, $lineNumber);
 	}
 
+	public function testCopyOperation() {
+		$result = $this->Operation->copyOperation('101');
+		$this->Operation->contain(array('Path'));
+		$result = $this->Operation->read();
+
+		$this->assertNotEmpty($result['Operation']['id']);
+		$this->assertCount(1, $result['Path']);
+	}
+
 	public function getGCode($operationId) {
 		return file($this->storagePath . DS . $operationId . '.gcode', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	}

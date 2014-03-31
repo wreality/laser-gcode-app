@@ -16,7 +16,7 @@ class OperationsController extends AppController {
  * @see Controller::beforeFilter()
  */
 	public function beforeFilter() {
-		$this->Auth->allow('add', 'preview', 'download', 'view', 'delete');
+		$this->Auth->allow('add', 'preview', 'download', 'view', 'delete', 'copy');
 		parent::beforeFilter();
 	}
 
@@ -67,11 +67,11 @@ class OperationsController extends AppController {
 		$op = $this->Operation->read();
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Operation->delete()) {
-			$this->Session->setFlash(__('Operation deleted'));
-			$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
+			$this->Session->setFlash(__('Operation deleted'), 'bs_success');
+			return $this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 		}
-		$this->Session->setFlash(__('Operation was not deleted'));
-		$this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
+		$this->Session->setFlash(__('Operation was not deleted'), 'bs_error');
+		return $this->redirect(array('controller' => 'projects', 'action' => 'view', $op['Operation']['project_id']));
 	}
 
 /**
@@ -140,5 +140,23 @@ class OperationsController extends AppController {
 
 		$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
 		return $this->response;
+	}
+
+	public function copy($id = null) {
+		$this->Operation->id = $id;
+		if (!$this->Operation->exists()) {
+			throw new NotFoundException();
+		}
+		if (!$this->Operation->isOwner($this->Auth->user('id'))) {
+			throw new ForbiddenException();
+		}
+		$this->request->onlyAllow('post', 'put');
+		if ($this->Operation->copyOperation()) {
+			$this->Operation->updateOverview();
+			$this->Session->setFlash(__('Sucessfully copied operation.'), 'bs_success');
+		} else {
+			$this->Session->setFlash(__('Unable to copy operation.'), 'bs_error');
+		}
+		$this->redirect($this->request->referer());
 	}
 }

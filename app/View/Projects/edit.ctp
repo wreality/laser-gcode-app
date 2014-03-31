@@ -83,6 +83,7 @@
 					</div>
 					<?php echo $this->Form->end();?>
 					<?php echo $this->Form->postButton(__('Delete Operation'), array('controller' => 'operations', 'action' => 'delete', $operation['id']), array('class' => 'btn btn-sm pull-right', 'type' => 'btn-danger'), __('Are you sure you want to delete this operation?'))?>
+					<?php echo $this->Form->postLink(__('Duplicate Operation'), array('controller' => 'operations', 'action' => 'copy', $operation['id']), null, __('Are you sure you want to duplicate this operation?'));?>
 					<div class="clearfix"></div>
 				</div>
 			<?php } ?>
@@ -144,6 +145,9 @@
 	<?php echo $this->Form->input('id');?>
 	<?php echo $this->Form->end();?>
 	<?php echo $this->Form->postLink(__('Reset Settings to Default'), array('action' => 'reset_project_defaults', $project['Project']['id']), array(), __('Are you sure you want to reset settings to default?'	))?>
+	<?php if (!empty($project['User']['id'])) {?>
+		<br/><?php echo $this->Html->link(__('Copy to new project'), array('action' => 'copy', $project['Project']['id']));?>
+	<?php } ?>
 	<?php if (!empty($gcode)) {?>
 		<table class="table table-bordered">
 			<tr>

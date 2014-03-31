@@ -249,7 +249,7 @@ class Operation extends AppModel {
 			$id = $this->id;
 		}
 
-		return $this->Project->isOwner($userId, $this->_getProjectId($id));
+		return $this->Project->isOwner($userId, false, $this->_getProjectId($id));
 	}
 
 /**
@@ -313,5 +313,24 @@ class Operation extends AppModel {
 		}
 
 		return $this->Project->updateModified($this->field('project_id', array('id' => $id)));
+	}
+
+	public function copyOperation($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+
+		$this->contain(array('Path'));
+
+		$operation = $this->read(null, $id);
+
+		$operation['Operation']['id'] = null;
+		$operation['Operation']['order'] = null;
+		foreach ($operation['Path'] as &$path) {
+			$path['id'] = null;
+			$path['operation_id'] = null;
+		}
+
+		return $this->saveAssociated($operation, array('validate' => false));
 	}
 }

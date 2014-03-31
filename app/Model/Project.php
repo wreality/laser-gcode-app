@@ -127,7 +127,7 @@ class Project extends AppModel {
  * @param string $projectId
  * @return boolean
  */
-	public function isOwner($userId, $projectId = null) {
+	public function isOwner($userId, $strict = false, $projectId = null) {
 		if (empty($projectId)) {
 			$projectId = $this->id;
 		}
@@ -136,7 +136,7 @@ class Project extends AppModel {
 
 		if ($ownerId == $userId) {
 			return true;
-		} elseif (!$this->User->exists($ownerId)) {
+		} elseif (($strict === false) && (!$this->User->exists($ownerId))) {
 			return true;
 		} else {
 			return false;
@@ -296,6 +296,46 @@ class Project extends AppModel {
 			}
 		} else {
 			return $systemDefaults;
+		}
+	}
+
+	public function copyProject($title = null, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+
+		$this->contain(array(
+			'Operation' => array(
+				'Path'
+			)
+		));
+
+		$project = $this->read(null, $id);
+
+		if (!empty($title)) {
+			$project['Project']['project_name'] = $title;
+		}
+		$this->create();
+		$project['Project']['id'] = null;
+		foreach ($project['Operation'] as &$operation) {
+			$operation['id'] = null;
+			$operation['project_id'] = null;
+			foreach ($operation['Path'] as &$path) {
+				$path['id'] = null;
+				$path['operatoin_id'] = null;
+			}
+		}
+		return $this->saveAssociated($project, array('validate' => false, 'deep' => true));
+	}
+
+	public function updateOverviews($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		$this->contain(array('Operation'));
+		$project = $this->read(null, $id);
+		foreach ($project['Operation'] as $operation) {
+			$this->Operation->updateOverview($operation['id']);
 		}
 	}
 }

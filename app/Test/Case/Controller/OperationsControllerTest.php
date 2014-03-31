@@ -15,47 +15,123 @@ class OperationsControllerTest extends ControllerTestCase {
 	public $fixtures = array(
 		'app.operation',
 		'app.project',
-		'app.path'
+		'app.path',
+		'app.user',
+		'app.preset',
 	);
 
 /**
- * testIndex method
+ * testDeleteByOwner method
  *
  * @return void
  */
-	public function testIndex() {
+	public function testDeleteByOwner() {
+		$Operation = $this->generate('Operations', array(
+			'models' => array(
+				'Operation' => array('delete')
+			),
+			'components' => array(
+				'Auth' => array('user'),
+				'Session' => array('setFlash')
+			)
+		));
+		$Operation->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('101'));
+		$Operation->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with($this->anything(), 'bs_success');
+		$Operation->Operation
+			->expects($this->once())
+			->method('delete')
+			->will($this->returnValue(true));
+
+		$this->testAction('/operation/delete/101');
+		$this->assertNoTEmpty($this->headers['Location']);
 	}
 
 /**
- * testView method
+ * testDeleteByOther method
  *
+ * @expectedException ForbiddenException
  * @return void
  */
-	public function testView() {
+	public function testDeleteByOther() {
+		$Operation = $this->generate('Operations', array(
+			'models' => array(
+				'Operation' => array('delete')
+			),
+			'components' => array(
+				'Auth' => array('user'),
+				'Session' => array('setFlash')
+			)
+		));
+		$Operation->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('102'));
+
+		$this->testAction('/operation/delete/101');\
 	}
 
 /**
- * testAdd method
+ * testCopyByOther method
  *
- * @return void
+ *
+ * @expectedException ForbiddenException
  */
-	public function testAdd() {
+	public function testCopyByOther() {
+		$Operation = $this->generate('Operations', array(
+			'models' => array(
+				'Operation' => array('copyOperation')
+			),
+			'components' => array(
+				'Auth' => array('user'),
+				'Session' => array('setFlash')
+			)
+		));
+		$Operation->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('102'));
+
+		$this->testAction('/operation/copy/101');
 	}
 
-/**
- * testEdit method
- *
- * @return void
- */
-	public function testEdit() {
-	}
+	public function testCopy() {
+		$Operation = $this->generate('Operations', array(
+			'models' => array(
+				'Operation' => array('copyOperation', 'updateOverview')
+			),
+			'components' => array(
+				'Auth' => array('user'),
+				'Session' => array('setFlash')
+			)
+		));
 
-/**
- * testDelete method
- *
- * @return void
- */
-	public function testDelete() {
-	}
+		$Operation->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('101'));
+		$Operation->Operation
+			->expects($this->once())
+			->method('copyOperation')
+			->will($this->returnValue(true));
+		$Operation->Operation
+			->expects($this->once())
+			->method('updateOverview');
+		$Operation->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with($this->anything(), 'bs_success');
 
+		$this->testAction('/operation/copy/101');
+		$this->assertNotEmpty($this->headers['Location']);
+	}
 }

@@ -141,4 +141,19 @@ class ProjectTest extends CakeTestCase {
 		$this->assertLessThan(10, $seconds);
 		$this->assertGreaterThanOrEqual(0, $seconds);
 	}
+
+	public function testCopyProject() {
+		$result = $this->Project->copyProject('Project Copy', '101');
+		$this->Project->contain(array(
+			'Operation' => array(
+				'Path'
+			)
+		));
+		$result = $this->Project->read();
+
+		$this->assertNotEmpty($result['Project']['id']);
+		$this->assertEquals('Project Copy', $result['Project']['project_name']);
+		$this->assertCount(1, $result['Operation']);
+		$this->assertCount(1, $result['Operation'][0]['Path']);
+	}
 }
