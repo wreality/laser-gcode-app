@@ -18,6 +18,7 @@ class OperationsControllerTest extends ControllerTestCase {
 		'app.path',
 		'app.user',
 		'app.preset',
+		'app.setting',
 	);
 
 /**
