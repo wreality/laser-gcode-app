@@ -75,7 +75,7 @@ class OperationsControllerTest extends ControllerTestCase {
 			->with('id')
 			->will($this->returnValue('102'));
 
-		$this->testAction('/operation/delete/101');\
+		$this->testAction('/operation/delete/101');
 	}
 
 /**
