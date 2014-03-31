@@ -222,14 +222,29 @@ class User extends AppModel {
 		return $type . ':' . sha1(mt_rand(10000, 99999) . time());
 	}
 
+/**
+ * validateCurrentPassword method
+ *
+ * If current password is supplied.  Confirm that it is correct for the given
+ * user.
+ *
+ * @param unknown $check
+ * @return boolean
+ */
 	public function validateCurrentPassword($check) {
 		$passwordHasher = new BlowfishPasswordHasher();
 		return $passwordHasher->check($this->data[$this->alias]['current_password'], $this->field('password'));
 	}
 
+/**
+ * requireCurrentPassword
+ *
+ * Update validation array to require current password for the current operation.
+ */
 	public function requireCurrentPassword() {
 		$this->validate['current_password']['validatePassword']['required'] = true;
 	}
+
 /**
  * beforeSave method
  *
@@ -419,6 +434,15 @@ class User extends AppModel {
 		->send();
 	}
 
+/**
+ * newUser method
+ *
+ * Create a new user, optionally activating the new user account immediately.
+ *
+ * @param unknown $data
+ * @param string $active
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function newUser($data, $active = false) {
 		$data['User']['active'] = $active;
 		$data['User']['project_count'] = 0;
@@ -429,18 +453,54 @@ class User extends AppModel {
 			'project_count', 'public_count', 'confirm_password', 'user_secret'));
 	}
 
+/**
+ * saveValidateData method
+ *
+ * Wrapper method for save which limits fields to only validation data.
+ *
+ * @param unknown $data
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function saveValidateData($data) {
 		return $this->save($data, true, array('validate_data', 'validate_key'));
 	}
 
+/**
+ * updateEmail method
+ *
+ * Wrapper method to save which limits fields to only those needed to update
+ * email following validation.
+ *
+ * @param unknown $data
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function updateEmail($data) {
 		return $this->save($data, true, array('email', 'validate_data', 'validate_key'));
 	}
 
+/**
+ * updateUsername method
+ *
+ * Wrapper method to save which limits fields to only those needed to update
+ * username.
+ *
+ * @param unknown $data
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function updateUsername($data) {
 		return $this->save($data, true, array('username'));
 	}
 
+/**
+ * updatePassword method
+ *
+ * Wrapper function for save which limits fields to only those needed to update
+ * password.
+ *
+ * @param unknown $data
+ * @param bool $requireCurrent If true, the current, correct password must be supplied in $data
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function updatePassword($data, $requireCurrent = true) {
 		$fields = array('password', 'confirm_password');
 		if ($requireCurrent) {
@@ -455,6 +515,13 @@ class User extends AppModel {
 		return $this->save($data, true, $fields);
 	}
 
+/**
+ * _getMailer method
+ *
+ * Implemenation for unit test mocking.  Returns CakeEmail object.
+ *
+ * @return CakeEmail
+ */
 	protected function _getMailer() {
 		App::uses('CakeEmail', 'Network/Email');
 		return new CakeEmail();

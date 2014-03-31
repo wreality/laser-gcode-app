@@ -269,6 +269,13 @@ class ProjectsController extends AppController {
 		$this->redirect($this->referer());
 	}
 
+/**
+ * copy method
+ * 
+ * @param string $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
 	public function copy($id = null) {
 		$this->Project->id = $id;
 		if (!$this->Project->exists()) {

@@ -315,6 +315,14 @@ class Operation extends AppModel {
 		return $this->Project->updateModified($this->field('project_id', array('id' => $id)));
 	}
 
+/**
+ * copyOperation
+ * 
+ * Copy given operation inside its current project.
+ * 
+ * @param string $id
+ * @return Ambigous <mixed, boolean, multitype:boolean , multitype:boolean unknown , multitype:>
+ */
 	public function copyOperation($id = null) {
 		if (empty($id)) {
 			$id = $this->id;

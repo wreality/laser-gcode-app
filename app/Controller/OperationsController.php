@@ -142,6 +142,13 @@ class OperationsController extends AppController {
 		return $this->response;
 	}
 
+/**
+ * copy method
+ * 
+ * @param string $id
+ * @throws NotFoundException
+ * @throws ForbiddenException
+ */
 	public function copy($id = null) {
 		$this->Operation->id = $id;
 		if (!$this->Operation->exists()) {

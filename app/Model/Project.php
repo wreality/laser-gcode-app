@@ -299,6 +299,15 @@ class Project extends AppModel {
 		}
 	}
 
+/**
+ * copyProject method
+ * 
+ * Copy a project, optionally supplying a new name.
+ * 
+ * @param string $title
+ * @param string $id
+ * @return boolean
+ */
 	public function copyProject($title = null, $id = null) {
 		if (empty($id)) {
 			$id = $this->id;
@@ -328,6 +337,13 @@ class Project extends AppModel {
 		return $this->saveAssociated($project, array('validate' => false, 'deep' => true));
 	}
 
+/**
+ * updateOverviews method
+ * 
+ * Update all operation overviews for a given project.
+ * 
+ * @param string $id
+ */
 	public function updateOverviews($id = null) {
 		if (empty($id)) {
 			$id = $this->id;
