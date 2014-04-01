@@ -114,15 +114,56 @@ class Operation extends AppModel {
 	}
 
 /**
+ * getGCodeFilename method
+ *
+ * Returns full path to operations gcode.
+ *
+ * @param string $id
+ * @return string
+ */
+	public function getGCodeFilename($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		return Configure::read('LaserApp.storage_path') . DS . $id . '.gcode';
+	}
+
+/**
+ * gCodeExists method
+ *
+ * Returns true if gcode actually exists on disk.
+ *
+ * @param string $id
+ * @return boolean
+ */
+	public function gCodeExists($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		return file_exists($this->getGCodeFilename($id));
+	}
+
+/**
+ * deleteGCode method
+ *
+ * Helper function to delete gcode stored on disk.  Primarly user in test cases.
+ *
+ * @param string $id
+ * @return boolean
+ */
+	public function deleteGCode($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		return unlink($this->getGCodeFilename($id));
+	}
+
+/**
  * generateGcode method
  *
  * Save Gcode for operation.
  *
  * @param string $id
- * @param string $home
- * @param string $disableSteppers
- * @param unknown $preamble
- * @param unknown $postscript
  * @return number
  */
 	public function generateGcode($id = null) {
@@ -169,7 +210,7 @@ class Operation extends AppModel {
 			$GCode->endOpCode(false);
 		}
 
-		return $GCode->writeFile(Configure::read('LaserApp.storage_path') . DS . $this->id . '.gcode') !== false;
+		return $GCode->writeFile($this->getGCodeFilename($id)) !== false;
 	}
 
 /**
@@ -317,9 +358,9 @@ class Operation extends AppModel {
 
 /**
  * copyOperation
- * 
+ *
  * Copy given operation inside its current project.
- * 
+ *
  * @param string $id
  * @return Ambigous <mixed, boolean, multitype:boolean , multitype:boolean unknown , multitype:>
  */

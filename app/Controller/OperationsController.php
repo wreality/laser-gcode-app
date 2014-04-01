@@ -40,10 +40,10 @@ class OperationsController extends AppController {
 		$this->Operation->create();
 		$this->request->data = array('Operation' => array('project_id' => $projectId));
 		if ($this->Operation->save($this->request->data)) {
-			$this->Session->setFlash(__('The operation has been saved'));
+			$this->Session->setFlash(__('The operation has been saved'), 'bs_success');
 			$this->redirect(array('controller' => 'projects', 'action' => 'edit', $projectId));
 		} else {
-			$this->Session->setFlash(__('The operation could not be saved. Please, try again.'));
+			$this->Session->setFlash(__('The operation could not be saved. Please, try again.'), 'bs_error');
 		}
 	}
 
@@ -88,12 +88,11 @@ class OperationsController extends AppController {
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException();
 		}
-		if (!file_exists(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode')) {
-			throw new NotFoundException();
-		}
-
 		if (!$this->Operation->isOwnerOrPublic($this->Auth->user('id'))) {
 			throw new ForbiddenException(__('Not authorized to access this project'));
+		}
+		if (!file_exists(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode')) {
+			throw new NotFoundException();
 		}
 
 		$this->layout = 'gcode_pre';
@@ -112,13 +111,14 @@ class OperationsController extends AppController {
  */
 	public function download($id = null) {
 		$this->Operation->id = $id;
+
 		if (!$this->Operation->exists()) {
 			throw new NotFoundException();
 		}
 		if (!$this->Operation->isOwnerOrPublic($this->Auth->user('id'))) {
 			throw new ForbiddenException();
 		}
-		if (!file_exists(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode')) {
+		if (!$this->Operation->gCodeExists()) {
 			throw new NotFoundException();
 		}
 
@@ -138,13 +138,13 @@ class OperationsController extends AppController {
 			return $this->response;
 		}
 
-		$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
+		//$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
 		return $this->response;
 	}
 
 /**
  * copy method
- * 
+ *
  * @param string $id
  * @throws NotFoundException
  * @throws ForbiddenException

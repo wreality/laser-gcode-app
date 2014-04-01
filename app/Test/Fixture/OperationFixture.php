@@ -24,6 +24,12 @@ class OperationFixture extends CakeTestFixture {
 			'size_warning' => false,
 			'order' => 1,
 		),
+		array(
+			'id' => '101-Public',
+			'project_id' => '101-Public',
+			'size_warning' => false,
+			'order' => 1,
+		),
 	);
 
 }

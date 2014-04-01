@@ -173,7 +173,7 @@ class Project extends AppModel {
 			$id = $this->id;
 		}
 
-		if ($this->isOwner($userId)) {
+		if ($this->isOwner($userId, false, $id)) {
 			return true;
 		} else {
 			return $this->isPublic($id);
@@ -301,9 +301,9 @@ class Project extends AppModel {
 
 /**
  * copyProject method
- * 
+ *
  * Copy a project, optionally supplying a new name.
- * 
+ *
  * @param string $title
  * @param string $id
  * @return boolean
@@ -339,9 +339,9 @@ class Project extends AppModel {
 
 /**
  * updateOverviews method
- * 
+ *
  * Update all operation overviews for a given project.
- * 
+ *
  * @param string $id
  */
 	public function updateOverviews($id = null) {

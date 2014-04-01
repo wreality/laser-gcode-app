@@ -8,9 +8,13 @@
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta charset="utf-8">
     <title>GCode Viewer</title>
-    <?php function adjustPath($dest) {
-    	return '/vendor/gcode-viewer-master/web/'.$dest;
-    }?>
+    <?php
+    	if (!function_exists('adjustPath')) {
+	    	function adjustPath($dest) {
+	        	return '/vendor/gcode-viewer-master/web/'.$dest;
+	    	}
+    	}
+    ?>
     <?php echo $this->Html->css(adjustPath('lib/bootstrap.min.css'))?>
     <style>
       #renderArea {
@@ -31,10 +35,10 @@
     		notFirstVisitKey: 'not-first-visit',
     		defaultFilePath: '<?php echo Router::url('/files/'.$operation_id.'.gcode')?>'
     };
-    		    
+
 
     </script>
-    
+
     <!-- 3rd party libs -->
     <?php echo $this->Html->script(adjustPath("lib/modernizr.custom.93389.js"))?>
     <?php echo $this->Html->script(adjustPath("lib/jquery-1.7.1.min.js"))?>
@@ -42,15 +46,15 @@
     <?php echo $this->Html->script(adjustPath("lib/sugar-1.2.4.min.js"))?>
     <?php echo $this->Html->script(adjustPath("lib/three.js"))?>
     <?php echo $this->Html->script(adjustPath("lib/TrackballControls.js"))?>
-    
+
     <?php echo $this->Html->script(adjustPath("js/ShaderExtras.js"))?>
     <?php echo $this->Html->script(adjustPath("js/postprocessing/EffectComposer.js"))?>
     <?php echo $this->Html->script(adjustPath("js/postprocessing/MaskPass.js"))?>
     <?php echo $this->Html->script(adjustPath("js/postprocessing/RenderPass.js"))?>
     <?php echo $this->Html->script(adjustPath("js/postprocessing/ShaderPass.js"))?>
     <?php echo $this->Html->script(adjustPath("js/postprocessing/BloomPass.js"))?>
-    
-    
+
+
     <?php echo $this->Html->script(adjustPath("js/Stats.js"))?>
     <?php echo $this->Html->script(adjustPath("js/dat.gui.min.js"))?>
     <?php echo $this->Html->script(adjustPath("gcode_model.js"))?>
@@ -60,8 +64,8 @@
     <?php echo $this->Html->script(adjustPath("gcode_renderer.js"))?>
     <?php echo $this->Html->script(adjustPath("renderer.js"))?>
     <?php echo $this->Html->script(adjustPath("ui.js"))?>
-    
-   
+
+
 
   </head>
   <body>

@@ -30,5 +30,17 @@ class PathFixture extends CakeTestFixture {
 			'height' => 10,
 			'width' => 10,
 		),
+		array(
+			'id' => '101-Public',
+			'operation_id' => '101-Public',
+			'file_hash' => 'testfile',
+			'order' => '1',
+			'file_name' => 'testfile',
+			'power' => 100,
+			'speed' => 100,
+			'preset_id' => null,
+			'height' => 10,
+			'width' => 10,
+		),
 	);
 }
