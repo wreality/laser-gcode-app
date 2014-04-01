@@ -186,9 +186,9 @@ class Operation extends AppModel {
 				$GCode->insertGCode(explode("\n", $operation['Project']['gcode_preamble']));
 			}
 		}
-		if ($operation['Project']['home_before']) {
-			$GCode->startOpCode($operation['Project']['home_before']);
-		}
+
+		$GCode->startOpCode($operation['Project']['home_before']);
+
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed'] / 100);
 			$power = ($path['power'] / 100) * Configure::read('LaserApp.power_scale');

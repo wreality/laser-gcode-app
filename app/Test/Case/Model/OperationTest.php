@@ -128,6 +128,21 @@ class OperationTest extends CakeTestCase {
 		$this->assertEquals(count($gCode) - 1, $lineNumber);
 	}
 
+	public function testM80Exists() {
+		try {
+			$result = $this->Operation->generateGCode('101');
+		} catch (InternalErrorException $e) {
+			$this->markTestSkipped();
+			return;
+		}
+
+		$this->assertTrue($result);
+		$gCode = $this->getGCode('101');
+
+		$this->assertTrue($this->findInArray($gCode, '/^M80/'));
+		$this->Operation->deleteGCode('101');
+	}
+
 	public function testCopyOperation() {
 		$result = $this->Operation->copyOperation('101');
 		$this->Operation->contain(array('Path'));
