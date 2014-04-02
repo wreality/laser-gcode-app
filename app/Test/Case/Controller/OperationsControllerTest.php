@@ -263,11 +263,11 @@ class OperationsControllerTest extends ControllerTestCase {
 			->with('id')
 			->will($this->returnValue('101'));
 
-		$Operation->Operation->generateGCode('101');
 
+		touch($Operation->Operation->getGCodeFilename('101'));
 		$result = $this->testAction('/operations/preview/101', array('return' => 'vars'));
 		$this->assertEqual($result['operation_id'], '101');
-		unlink($this->storagePath . DS . '101.gcode');
+		$Operation->Operation->deleteGCode('101');
 	}
 
 /**
@@ -305,7 +305,7 @@ class OperationsControllerTest extends ControllerTestCase {
 			->method('user')
 			->will($this->returnValue(false));
 
-		$Operation->Operation->generateGCode('101-Public');
+		touch($Operation->Operation->getGCodeFilename('101-Public'));
 		$result = $this->testAction('/operations/preview/101-Public', array('return' => 'vars'));
 		$Operation->Operation->deleteGCode('101-Public');
 
