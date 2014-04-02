@@ -16,8 +16,8 @@ before_script:
   - chmod +x ./app/Console/cake
   - cp ./app/Config/config.php.default ./app/Config/config.php
   - git clone https://github.com/wreality/pstoedit-lmn-laser.git ../pstoedit
-  - cd .. && ./configure && make && sudo make install && sudo ldconfig
-  - cd laser-gcode-gen
+  - cd ../pstoedit && ./configure && make && sudo make install && sudo ldconfig
+  - cd ../laser-gcode-gen
   - sh -c "if [ -z "$PHPCS" ] && [ $(phpenv version-name) = "5.4" ]; then composer install --dev --no-interaction; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
