@@ -4,6 +4,7 @@ App::uses('Operation', 'Model');
 /**
  * Operation Test Case
  *
+ * @property Operation $Operation
  */
 class OperationTest extends CakeTestCase {
 
@@ -29,6 +30,7 @@ class OperationTest extends CakeTestCase {
 		$this->Operation = ClassRegistry::init('Operation');
 		$this->storagePath = TMP . DS . 'tests' . DS . 'files';
 		Configure::write('LaserApp.storage_path', $this->storagePath);
+		array_map('unlink', glob($this->storagePath . DS . '*.gcode'));
 	}
 
 /**
@@ -38,11 +40,12 @@ class OperationTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Operation);
-
+		array_map('unlink', glob($this->storagePath . DS . '*.gcode'));
 		parent::tearDown();
 	}
 
 	public function testGCodeRates() {
+		var_dump(Configure::read('LaserApp.pstoedit_command'));
 		try {
 			$result = $this->Operation->generateGCode('101');
 		} catch (InternalErrorException $e) {
@@ -59,7 +62,7 @@ class OperationTest extends CakeTestCase {
 		$this->assertTrue($this->findInArray($gCode, '/^G1(.*)F1000$/'));
 		$this->assertTrue($this->findInArray($gCode, '/^M3 S100$/'));
 
-		unlink($this->storagePath . DS . '101.gcode');
+		$this->Operation->deleteGCode('101');
 	}
 
 	public function testHomeGCode() {
@@ -81,7 +84,7 @@ class OperationTest extends CakeTestCase {
 		$gCode = $this->getGCode('101');
 		$this->assertTrue($this->findInArray($gCode, '/^G28 X0 Y0 F[\d]+$/'));
 
-		unlink($this->storagePath . DS . '101.gcode');
+		$this->Operation->deleteGCode('101');
 	}
 
 	public function testPreamble() {
@@ -103,6 +106,7 @@ class OperationTest extends CakeTestCase {
 		$gCode = $this->getGCode('101');
 		$this->assertTrue($this->findInArray($gCode, '/^; Foo$/', $lineNumber));
 		$this->assertEquals(0, $lineNumber);
+		$this->Operation->deleteGCode('101');
 	}
 
 	public function testPostscript() {
@@ -126,6 +130,7 @@ class OperationTest extends CakeTestCase {
 
 		$this->assertTrue($this->findInArray($gCode, '/^; Bar$/', $lineNumber));
 		$this->assertEquals(count($gCode) - 1, $lineNumber);
+		$this->Operation->deleteGCode('101');
 	}
 
 	public function testM80Exists() {
@@ -150,6 +155,47 @@ class OperationTest extends CakeTestCase {
 
 		$this->assertNotEmpty($result['Operation']['id']);
 		$this->assertCount(1, $result['Path']);
+	}
+
+	public function testGetGCodeFilename() {
+		$result = $this->Operation->getGCodeFilename('101');
+
+		$this->assertStringStartsWith(Configure::read('LaserApp.storage_path'), $result);
+		$this->assertStringEndsWith('101.gcode', $result);
+
+		$this->Operation->id = '101';
+		$result = $this->Operation->getGCodeFilename('101');
+
+		$this->assertStringStartsWith(Configure::read('LaserApp.storage_path'), $result);
+		$this->assertStringEndsWith('101.gcode', $result);
+	}
+
+	public function testGCodeExists() {
+		$this->Operation->id = '102';
+		$this->assertFalse($this->Operation->gCodeExists('101'));
+		$this->assertFalse($this->Operation->gCodeExists());
+
+		touch($this->Operation->getGCodeFilename('101'));
+		$this->assertTrue($this->Operation->gCodeExists('101'));
+
+		touch($this->Operation->getGCodeFilename());
+		$this->assertTrue($this->Operation->gCodeExists());
+
+		$this->Operation->deleteGCode('101');
+		$this->Operation->deleteGCode();
+	}
+
+	public function testGCodeDelete() {
+		$this->Operation->id = '102';
+
+		touch($this->Operation->getGCodeFilename());
+		touch($this->Operation->getGCodeFilename('101'));
+
+		$this->Operation->deleteGCode('101');
+		$this->assertFalse(file_exists($this->Operation->getGCodeFilename('101')));
+
+		$this->Operation->deleteGCode();
+		$this->assertFalse(file_exists($this->Operation->getGCodeFilename()));
 	}
 
 	public function getGCode($operationId) {
