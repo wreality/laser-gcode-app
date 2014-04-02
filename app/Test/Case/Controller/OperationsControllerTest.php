@@ -263,7 +263,6 @@ class OperationsControllerTest extends ControllerTestCase {
 			->with('id')
 			->will($this->returnValue('101'));
 
-
 		touch($Operation->Operation->getGCodeFilename('101'));
 		$result = $this->testAction('/operations/preview/101', array('return' => 'vars'));
 		$this->assertEqual($result['operation_id'], '101');
