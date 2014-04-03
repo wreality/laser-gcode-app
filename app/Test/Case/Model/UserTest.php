@@ -222,7 +222,7 @@ class UserTest extends CakeTestCase {
  *
  * Returns validation key prefixed by key type.
  *
- * @covers ::findByValidationKey
+ * @covers ::findByValidateKey
  */
 	public function testFindByValidateKey() {
 		$data = array('User' => array(
