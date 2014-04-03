@@ -162,7 +162,7 @@ class ProjectTest extends CakeTestCase {
  * @covers ::isAnonymous
  */
 	public function testIsAnonymous() {
-		$this->asserFalse($this->Project->isAnonymous('101'));
+		$this->assertFalse($this->Project->isAnonymous('101'));
 		$this->assertTrue($this->Project->isAnonymous('999'));
 	}
 
