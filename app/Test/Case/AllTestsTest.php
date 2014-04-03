@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * AllTestsTest class
+ *
+ * @author wreality
+ * @codeCoverageIgnore
+ */
 class AllTestsTest extends CakeTestSuite {
 
 	public static function suite() {

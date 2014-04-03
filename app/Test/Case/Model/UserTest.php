@@ -4,6 +4,7 @@ App::uses('User', 'Model');
 /**
  * User Test Case
  *
+ * @coversDefaultClass User
  */
 class UserTest extends CakeTestCase {
 
@@ -42,8 +43,10 @@ class UserTest extends CakeTestCase {
 /**
  * testUserValidatePassword method
  *
- * Test that password confirmations are correctly saved when creating or editing a user.
- *
+ * Test that password confirmations are correctly saved when creating or editing
+ * a user.
+ * 
+ * @covers ::newUser
  */
 	public function testUserValidatePassword() {
 		$data = array('User' => array(
@@ -78,6 +81,14 @@ class UserTest extends CakeTestCase {
 		$this->assertArrayHasKey('id', $result['User'], 'Correct confirmation not saved (edit)');
 	}
 
+/**
+ * testNoDuplicateEmailOnCreate method
+ *
+ * Test that new users are not allowed to be created with an existing email
+ * address.
+ * 
+ * @covers ::newUser
+ */
 	public function testNoDuplicateEmailOnCreate() {
 		$data = array('User' => array(
 			'username' => 'emailtest',
@@ -90,6 +101,13 @@ class UserTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * testNoDuplicateEmailOnUpdate method
+ *
+ * Test that users can't be updated with an existing email address.
+ *
+ * @covers ::updateEmail
+ */
 	public function testNoDuplicateEmailOnUpdate() {
 		$data = array('User' => array(
 			'id' => '102',
@@ -100,6 +118,13 @@ class UserTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * testNoDuplicateUsernameOnCreate method
+ *
+ * Test that new users are not alloweed to be created with an existing username.
+ * 
+ * @covers ::newUser
+ */
 	public function testNoDuplicateUsernameOnCreate() {
 		$data = array('User' => array(
 			'username' => 'test1',
@@ -112,6 +137,13 @@ class UserTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * testNoDuplicateUsernameOnUpdate method
+ *
+ * Test that modified users cannot reuse an existing username.
+ *
+ * @covers ::updateUsername
+ */
 	public function testNoDuplicateUsernameOnUpdate() {
 		$data = array('User' => array(
 			'id' => '102',
@@ -121,11 +153,13 @@ class UserTest extends CakeTestCase {
 		$result = $this->User->updateUsername($data);
 		$this->assertFalse($result);
 	}
+
 /**
  * testPasswordHashed method
  *
  * Test that passwords are being hashed when saved.
  *
+ * @covers ::beforeSave
  */
 	public function testPasswordHashed() {
 		$data = array('User' => array(
@@ -154,6 +188,7 @@ class UserTest extends CakeTestCase {
  *
  * Test that validation keys are generated correctly.
  *
+ * @covers ::createValidationKey
  */
 	public function testValidationKey() {
 		$result = $this->User->createValidationKey('v');
@@ -165,8 +200,9 @@ class UserTest extends CakeTestCase {
 /**
  * testCreateUserValidationKey method
  *
- * Test that validation key is created on user create.
+ * Validation key is created on user create.
  *
+ * @covers ::newUser
  */
 	public function testCreateUserValidationKey() {
 		$data = array('User' => array(
@@ -182,8 +218,11 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * testFindByValidateKey method
- *
+ * testFindByValidateKey method 
+ * 
+ * Returns validation key prefixed by key type.
+ * 
+ * @covers ::findByValidationKey
  */
 	public function testFindByValidateKey() {
 		$data = array('User' => array(
@@ -200,6 +239,13 @@ class UserTest extends CakeTestCase {
 		$this->assertEqual($result2['User']['id'], $result['User']['id']);
 	}
 
+/**
+ * testSecretKeyRequired method
+ *
+ * Secret key must be provided and be correct if feature is enabled.
+ * 
+ * @covers ::newUser
+ */	
 	public function testSecretKeyRequired() {
 		$data = array('User' => array(
 			'username' => 'testsecret',
@@ -224,6 +270,14 @@ class UserTest extends CakeTestCase {
 		$this->assertArrayHasKey('User', $result);
 	}
 
+/**
+ * testRequireCurrentPassword method
+ *
+ * Require current password add validation rule requiring current password on
+ * save.
+ * 
+ * @covers ::requireCurrentPassword
+ */
 	public function testRequireCurrentPassword() {
 		$data = array('User' => array(
 			'username' => 'testcurrent',
@@ -245,15 +299,31 @@ class UserTest extends CakeTestCase {
 		$this->assertArrayHasKey('User', $result);
 	}
 
+/**
+ * testSendValidationEmailNoResque method
+ *
+ * Send validation email when resque is not configured.
+ * 
+ * @covers ::enqueueEmail
+ * @covers ::emailValidation
+ */
 	public function testSendValidationEmailNoResque() {
 		if (class_exists('CakeResque')) {
-			$this->markTestSkipped(__('Resque not configured.'));
+			$this->markTestSkipped(__('Resque is configured.'));
 		}
 
 		$User = $this->getUserMockForEmail('verify_email', 'test@example.com');
 		$User->enqueueEmail('Validation', '101');
 	}
 
+/**
+ * testSendResetPasswordEmailNoResque method
+ *
+ * Send password reset email when resque is not configured.
+ * 
+ * @covers ::enqueueEmail
+ * @covers ::emailResetPassword
+ */
 	public function testSendResetPasswordEmailNoResque() {
 		if (class_exists('CakeResque')) {
 			$this->markTestSkipped();
@@ -263,6 +333,14 @@ class UserTest extends CakeTestCase {
 		$User->enqueueEmail('ResetPassword', '101');
 	}
 
+/**
+ * testSendUpdateEmailEmailNoResque method
+ *
+ * Send update email verification when resque is not configured.
+ *
+ * @covers ::enqueueEmail
+ * @covers ::emailUpdateEmail
+ */
 	public function testSendUpdateEmailEmailNoResque() {
 		if (class_exists('CakeResque')) {
 			$this->markTestSkipped();
@@ -278,6 +356,14 @@ class UserTest extends CakeTestCase {
 		$User->enqueueEmail('UpdateEmail', '101');
 	}
 
+/**
+ * testSendInvalidateEmailNoResque method
+ *
+ * Send invalidate email when resque is not configured.
+ *
+ * @covers ::enqueueEmail
+ * @covers ::emailInvalidatePassword
+ */
 	public function testSendInvalidateEmailNoResque() {
 		if (class_exists('CakeResque')) {
 			$this->markTestSkipped();
@@ -287,6 +373,15 @@ class UserTest extends CakeTestCase {
 		$User->enqueueEmail('InvalidatePassword', '101');
 	}
 
+/**
+ * getUserMockForEmail method
+ *
+ * Return a mock user object prepared to mock email functions.
+ * 
+ * @param string $template
+ * @param string $emailAddress
+ * @return Ambigous <Model, PHPUnit_Framework_MockObject_MockObject, object, mixed>
+ */
 	public function getUserMockForEmail($template, $emailAddress) {
 		$User = $this->getMockForModel('User', array('_getMailer'));
 
