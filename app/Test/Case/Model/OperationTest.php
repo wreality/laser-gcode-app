@@ -45,7 +45,6 @@ class OperationTest extends CakeTestCase {
 	}
 
 	public function testGCodeRates() {
-		var_dump(Configure::read('LaserApp.pstoedit_command'));
 		try {
 			$result = $this->Operation->generateGCode('101');
 		} catch (InternalErrorException $e) {
