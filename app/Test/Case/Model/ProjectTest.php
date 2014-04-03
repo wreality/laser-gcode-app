@@ -4,6 +4,7 @@ App::uses('Project', 'Model');
 /**
  * Project Test Case
  *
+ * @coversDefaultClass Project
  */
 class ProjectTest extends CakeTestCase {
 
