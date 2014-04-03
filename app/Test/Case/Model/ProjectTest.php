@@ -142,6 +142,31 @@ class ProjectTest extends CakeTestCase {
 	}
 
 /**
+ * testIsPublic method
+ *
+ * Return true if a project is public.
+ *
+ * @covers ::isPublic
+ */
+	public function testIsPublic() {
+		$this->assertFalse($this->Project->isPublic('101'));
+		$this->assertTrue($this->Project->isPublic('101-Public'));
+
+	}
+
+/**
+ * testIsAnonymous method
+ *
+ * Return true if a project is not owned by a user.
+ *
+ * @covers ::isAnonymous
+ */
+	public function testIsAnonymous() {
+		$this->asserFalse($this->Project->isAnonymous('101'));
+		$this->assertTrue($this->Project->isAnonymous('999'));
+	}
+
+/**
  * testResetUserDefaults method
  *
  * User defaults should be deleted, allowing system defaults to take effect.

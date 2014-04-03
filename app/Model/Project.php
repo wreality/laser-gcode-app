@@ -63,20 +63,6 @@ class Project extends AppModel {
 	);
 
 /**
- * __construct method
- *
- * Construct virtualFields array with isAnonymous
- *
- * @param string $id
- * @param string $table
- * @param string $ds
- */
-	public function __construct($id = false, $table = null, $ds = null) {
-		parent::__construct($id, $table, $ds);
-		$this->virtualFields['isAnonymous'] = $this->alias . '.user_id IS NULL';
-	}
-
-/**
  * beforeSave method
  *
  * Set default values for project settings
@@ -157,6 +143,20 @@ class Project extends AppModel {
 		}
 
 		return ($this->field('public', array('id' => $id)) == Project::PROJ_PUBLIC);
+	}
+
+/**
+ * isAnonymous method
+ *
+ * Return true if project is not owned by a user.
+ *
+ * @param string $id
+ */
+	public function isAnonymous($id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		return !$this->User->exists($this->field('user_id', array('id' => $id)));
 	}
 
 /**
