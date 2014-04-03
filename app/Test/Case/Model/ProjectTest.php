@@ -40,6 +40,13 @@ class ProjectTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
+/**
+ * testCreateNewProject method
+ *
+ * New projects should be created.
+ *
+ * @covers ::save
+ */
 	public function testCreateNewProject() {
 		$this->Project->create();
 		$result = $this->Project->save(array('Project' => array('user_id' => '192.1.1.1')));
@@ -47,6 +54,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertArrayHasKey('Project', $result);
 	}
 
+/**
+ * testNewProjectSystemDefaults method
+ *
+ * New projects should use system defaults.
+ *
+ * @covers ::getDefaults
+ */
 	public function testNewProjectSystemDefaults() {
 		$this->Project->create();
 		$result = $this->Project->save(array('Project' => array('user_id' => '')));
@@ -59,6 +73,14 @@ class ProjectTest extends CakeTestCase {
 		$this->assertEqual($result['Project']['gcode_postscript'], Configure::read('LaserApp.default_gcode_postscript'));
 	}
 
+/**
+ * testNewProjectUserDefaults method
+ *
+ * New projects should use user defaults if they exist.
+ *
+ * @covers ::saveDefaults
+ * @covers ::getDefaults
+ */
 	public function testNewProjectUserDefaults() {
 		$defaults = array('Project' => array(
 			'max_feedrate' => 4000,
@@ -83,6 +105,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertEqual($result['Project']['gcode_postscript'], 'Bar');
 	}
 
+/**
+ * testIsOwner method
+ *
+ * Return true if a user is the owner of a project.
+ *
+ * @covers ::isOwner
+ */
 	public function testIsOwner() {
 		$this->Project->create();
 		$result = $this->Project->save(array('Project' => array('user_id' => '101')));
@@ -92,6 +121,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertFalse($this->Project->isOwner('102'));
 	}
 
+/**
+ * testIsOwnerOrPublic method
+ *
+ * Return true is a project is owned by a user or if the project is public.
+ *
+ * @covers ::isOwnerOrPublic
+ */
 	public function testIsOwnerOrPublic() {
 		$this->Project->create();
 		$this->Project->save(array('Project' => array('user_id' => '101')));
@@ -105,6 +141,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertTrue($this->Project->isOwnerOrPublic('102'));
 	}
 
+/**
+ * testResetUserDefaults method
+ *
+ * User defaults should be deleted, allowing system defaults to take effect.
+ *
+ * @covers ::resetUserDefaults
+ */
 	public function testResetUserDefaults() {
 		$defaults = array('Project' => array(
 			'max_feedrate' => 4000,
@@ -129,6 +172,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertEqual($result['Project']['gcode_postscript'], Configure::read('LaserApp.default_gcode_postscript'));
 	}
 
+/**
+ * testUpdateModified method
+ *
+ * Update modified should update the modified date.
+ *
+ * @covers ::updateModified
+ */
 	public function testUpdateModified() {
 		$this->Project->create();
 		$this->Project->save(array('Project' => array('user_id' => '', 'modified' => '1971-01-01 00:00:00')));
@@ -142,6 +192,13 @@ class ProjectTest extends CakeTestCase {
 		$this->assertGreaterThanOrEqual(0, $seconds);
 	}
 
+/**
+ * testCopyProject method
+ *
+ * Copy project to a new project.
+ *
+ * @covers ::copyProject
+ */
 	public function testCopyProject() {
 		$result = $this->Project->copyProject('Project Copy', '101');
 		$this->Project->contain(array(
