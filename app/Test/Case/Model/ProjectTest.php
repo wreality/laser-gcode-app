@@ -151,7 +151,6 @@ class ProjectTest extends CakeTestCase {
 	public function testIsPublic() {
 		$this->assertFalse($this->Project->isPublic('101'));
 		$this->assertTrue($this->Project->isPublic('101-Public'));
-
 	}
 
 /**

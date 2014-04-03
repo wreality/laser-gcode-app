@@ -45,7 +45,7 @@ class UserTest extends CakeTestCase {
  *
  * Test that password confirmations are correctly saved when creating or editing
  * a user.
- * 
+ *
  * @covers ::newUser
  */
 	public function testUserValidatePassword() {
@@ -86,7 +86,7 @@ class UserTest extends CakeTestCase {
  *
  * Test that new users are not allowed to be created with an existing email
  * address.
- * 
+ *
  * @covers ::newUser
  */
 	public function testNoDuplicateEmailOnCreate() {
@@ -122,7 +122,7 @@ class UserTest extends CakeTestCase {
  * testNoDuplicateUsernameOnCreate method
  *
  * Test that new users are not alloweed to be created with an existing username.
- * 
+ *
  * @covers ::newUser
  */
 	public function testNoDuplicateUsernameOnCreate() {
@@ -218,10 +218,10 @@ class UserTest extends CakeTestCase {
 	}
 
 /**
- * testFindByValidateKey method 
- * 
+ * testFindByValidateKey method
+ *
  * Returns validation key prefixed by key type.
- * 
+ *
  * @covers ::findByValidationKey
  */
 	public function testFindByValidateKey() {
@@ -243,9 +243,9 @@ class UserTest extends CakeTestCase {
  * testSecretKeyRequired method
  *
  * Secret key must be provided and be correct if feature is enabled.
- * 
+ *
  * @covers ::newUser
- */	
+ */
 	public function testSecretKeyRequired() {
 		$data = array('User' => array(
 			'username' => 'testsecret',
@@ -275,7 +275,7 @@ class UserTest extends CakeTestCase {
  *
  * Require current password add validation rule requiring current password on
  * save.
- * 
+ *
  * @covers ::requireCurrentPassword
  */
 	public function testRequireCurrentPassword() {
@@ -303,7 +303,7 @@ class UserTest extends CakeTestCase {
  * testSendValidationEmailNoResque method
  *
  * Send validation email when resque is not configured.
- * 
+ *
  * @covers ::enqueueEmail
  * @covers ::emailValidation
  */
@@ -320,7 +320,7 @@ class UserTest extends CakeTestCase {
  * testSendResetPasswordEmailNoResque method
  *
  * Send password reset email when resque is not configured.
- * 
+ *
  * @covers ::enqueueEmail
  * @covers ::emailResetPassword
  */
@@ -377,7 +377,7 @@ class UserTest extends CakeTestCase {
  * getUserMockForEmail method
  *
  * Return a mock user object prepared to mock email functions.
- * 
+ *
  * @param string $template
  * @param string $emailAddress
  * @return Ambigous <Model, PHPUnit_Framework_MockObject_MockObject, object, mixed>
