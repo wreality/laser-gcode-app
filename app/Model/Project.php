@@ -63,22 +63,6 @@ class Project extends AppModel {
 	);
 
 /**
- * beforeSave method
- *
- * Set default values for project settings
- *
- * (non-PHPdoc)
- * @see Model::beforeSave()
- */
-	public function beforeSave($options = array()) {
-		if (empty($this->id) && empty($this->data[$this->alias]['id'])) {
-			$defaults = $this->getDefaults($this->data[$this->alias]['user_id']);
-			$this->data[$this->alias] = array_merge($defaults, $this->data[$this->alias]);
-		}
-		return true;
-	}
-
-/**
  * validateMaterialThickness method
  *
  * Custom validation method to check if material_thickness supplied is sane
@@ -275,6 +259,7 @@ class Project extends AppModel {
 			'clear_after' => false,
 			'gcode_preamble' => Configure::read('LaserApp.default_gcode_preamble'),
 			'gcode_postscript' => Configure::read('LaserApp.default_gcode_postscript'),
+			'public' => Project::PROJ_PRIVATE,
 		);
 		if (!empty($userId)) {
 			$fields = array_keys($systemDefaults);
@@ -353,5 +338,29 @@ class Project extends AppModel {
 		foreach ($project['Operation'] as $operation) {
 			$this->Operation->updateOverview($operation['id']);
 		}
+	}
+
+/**
+ * newProject method
+ *
+ * Create a new proejct.
+ *
+ * @param string $userId
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
+	public function newProject($userId = null) {
+		$this->create();
+
+		$data['Project'] = $this->getDefaults($userId);
+		$data['Project']['user_id'] = $userId;
+		return $this->save($data);
+	}
+
+	public function claimProject($userId, $id = null) {
+		if (empty($id)) {
+			$id = $this->id;
+		}
+
+		return $this->save(array('Project' => array('id' => $id, 'user_id' => $userId)));
 	}
 }

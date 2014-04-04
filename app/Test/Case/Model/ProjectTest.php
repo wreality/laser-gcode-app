@@ -50,7 +50,7 @@ class ProjectTest extends CakeTestCase {
  */
 	public function testCreateNewProject() {
 		$this->Project->create();
-		$result = $this->Project->save(array('Project' => array('user_id' => '192.1.1.1')));
+		$result = $this->Project->newProject('192.1.1.1');
 
 		$this->assertArrayHasKey('Project', $result);
 	}
@@ -64,7 +64,7 @@ class ProjectTest extends CakeTestCase {
  */
 	public function testNewProjectSystemDefaults() {
 		$this->Project->create();
-		$result = $this->Project->save(array('Project' => array('user_id' => '')));
+		$result = $this->Project->newProject(false);
 
 		$this->assertEqual($result['Project']['max_feedrate'], Configure::read('LaserApp.default_max_cut_feedrate'));
 		$this->assertEqual($result['Project']['traversal_rate'], Configure::read('LaserApp.default_traversal_feedrate'));
@@ -95,8 +95,7 @@ class ProjectTest extends CakeTestCase {
 		$result = $this->Project->saveDefaults('101', $defaults);
 		$this->assertArrayHasKey('Project', $result);
 
-		$this->Project->create();
-		$result = $this->Project->save(array('Project' => array('user_id' => '101')));
+		$result = $this->Project->newProject('101');
 
 		$this->assertEqual($result['Project']['max_feedrate'], 4000);
 		$this->assertEqual($result['Project']['traversal_rate'], 299);
@@ -187,7 +186,7 @@ class ProjectTest extends CakeTestCase {
 		$this->assertArrayHasKey('Project', $result);
 		$this->Project->resetUserDefaults('101');
 		$this->Project->create();
-		$result = $this->Project->save(array('Project' => array('user_id' => '101')));
+		$result = $this->Project->newProject('101');
 
 		$this->assertEqual($result['Project']['max_feedrate'], Configure::read('LaserApp.default_max_cut_feedrate'));
 		$this->assertEqual($result['Project']['traversal_rate'], Configure::read('LaserApp.default_traversal_feedrate'));
@@ -237,5 +236,15 @@ class ProjectTest extends CakeTestCase {
 		$this->assertEquals('Project Copy', $result['Project']['project_name']);
 		$this->assertCount(1, $result['Operation']);
 		$this->assertCount(1, $result['Operation'][0]['Path']);
+	}
+
+	public function testClaimProject() {
+		$this->Project->claimProject('101', '999');
+
+		$this->assertTrue($this->Project->isOwner('101', '999'));
+		$this->assertFalse($this->Project->isAnonymous('999'));
+		$this->Project->claimProject('191.1.1.1', '999');
+
+		$this->assertTrue($this->Project->isAnonymous('999'));
 	}
 }

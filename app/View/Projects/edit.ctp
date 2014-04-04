@@ -99,7 +99,7 @@
 		<div class="panel-body">
 			<?php echo $this->Form->input('project_name', array('help_text' => __('GCode files will be prefixed with this name.')));?>
 			<?php //echo $this->Form->input('material_thickness', array('append' => 'mm', 'help_text' => __('Only applies if "Home Before" is yes.')))?>
-       		<?php if (!$project['Project']['isAnonymous']) {?>
+       		<?php if (!empty($project['User']['id'])) {?>
        			<?php echo $this->Form->input('public', array('options' => $public_options))?>
        		<?php } ?>
 			<?php echo $this->Form->submit(__('Save'))?>

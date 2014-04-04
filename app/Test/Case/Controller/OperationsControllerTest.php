@@ -58,7 +58,7 @@ class OperationsControllerTest extends ControllerTestCase {
 			->will($this->returnValue(true));
 
 		$this->testAction('/operations/delete/101');
-		$this->assertNoTEmpty($this->headers['Location']);
+		$this->assertNotEmpty($this->headers['Location']);
 	}
 
 /**

@@ -13,6 +13,7 @@ class AllTestsTest extends CakeTestSuite {
 		$suite->addTestFile(TESTS . 'Case/Model/ProjectTest.php');
 		$suite->addTestFile(TESTS . 'Case/Model/OperationTest.php');
 		$suite->addTestFile(TESTS . 'Case/Controller/OperationsControllerTest.php');
+		$suite->addTestFile(TESTS . 'Case/Controller/ProjectsControllerTest.php');
 		return $suite;
 	}
 }
