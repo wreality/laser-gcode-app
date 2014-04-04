@@ -76,6 +76,11 @@ class ProjectsControllerTest extends ControllerTestCase {
 		$this->assertTrue($Projects->Project->isOwner('101', $Projects->Project->id));
 	}
 
+/**
+ * testMakeClaim method
+ *
+ * @covers ::make_claim
+ */
 	public function testMakeClaim() {
 		$Projects = $this->generate('Projects', array(
 			'components' => array(
@@ -101,6 +106,11 @@ class ProjectsControllerTest extends ControllerTestCase {
 		$this->assertNotEmpty($this->headers['Location']);
 	}
 
+/**
+ * testMakeClaimAlreadyClaimed method
+ *
+ * @covers ::make_claim
+ */
 	public function testMakeClaimAlreadyClaimed() {
 		$Projects = $this->generate('Projects', array(
 			'components' => array(
