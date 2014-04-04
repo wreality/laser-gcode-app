@@ -1,4 +1,5 @@
 <?php
+App::uses('Project', 'Model');
 /**
  * ProjectFixture
  *
@@ -10,23 +11,56 @@ class ProjectFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $fields = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1)
-		),
-		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
-	);
+	public $import = 'Project';
 
-/**
- * Records
- *
- * @var array
- */
 	public $records = array(
 		array(
-			'id' => '525b30b1-21b4-4ed7-88ea-1c0c0e5d8fe8'
+			'id' => '101',
+			'project_name' => 'Test Project',
+			'max_feedrate' => '1000',
+			'traversal_rate' => '4000',
+			'home_before' => false,
+			'gcode_preamble' => '',
+			'gcode_postscript' => '',
+			'clear_after' => false,
+			'material_thickness' => '10',
+			'created' => '1971-01-01 00:00:00',
+			'modified' => '1971-01-01 00:00:00',
+			'operation_count' => '1',
+			'user_id' => '101',
+			'public' => Project::PROJ_PRIVATE,
 		),
+		array(
+			'id' => '101-Public',
+			'project_name' => 'Test Project',
+			'max_feedrate' => '1000',
+			'traversal_rate' => '4000',
+			'home_before' => false,
+			'gcode_preamble' => '',
+			'gcode_postscript' => '',
+			'clear_after' => false,
+			'material_thickness' => '10',
+			'created' => '1971-01-01 00:00:00',
+			'modified' => '1971-01-01 00:00:00',
+			'operation_count' => '1',
+			'user_id' => '101',
+			'public' => Project::PROJ_PUBLIC,
+		),
+		array(
+			'id' => '999',
+			'project_name' => 'Test Project',
+			'max_feedrate' => '1000',
+			'traversal_rate' => '4000',
+			'home_before' => false,
+			'gcode_preamble' => '',
+			'gcode_postscript' => '',
+			'clear_after' => false,
+			'material_thickness' => '10',
+			'created' => '1971-01-01 00:00:00',
+			'modified' => '1971-01-01 00:00:00',
+			'operation_count' => '1',
+			'user_id' => '192.168.1.1',
+			'public' => Project::PROJ_PRIVATE,
+		)
 	);
-
 }

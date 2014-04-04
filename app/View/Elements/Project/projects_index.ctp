@@ -9,7 +9,7 @@
 		
 			<div class="chip">
 				<div class="thumb">
-					<?php if ((!empty($project['Operation'])) && (file_exists(PDF_PATH.DS.$project['Operation'][0]['id'].'.png'))) {?>
+					<?php if ((!empty($project['Operation'])) && (file_exists(Configure::read('LaserApp.storage_path').DS.$project['Operation'][0]['id'].'.png'))) {?>
 						<?php echo $this->Html->image('/files/'.$project['Operation'][0]['id'].'.png')?>
 					<?php } else { ?>
 						<?php echo $this->Html->image('no-thumb.png')?>

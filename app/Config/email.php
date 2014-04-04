@@ -41,10 +41,9 @@
  *
  */
 class EmailConfig {
-	
+
 	public function __construct() {
 		$this->default = Configure::read('Email');
 		$this->default['viewRender'] = 'Emogrifier.Emogrifier';
-
 	}
 }

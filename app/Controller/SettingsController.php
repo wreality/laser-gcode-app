@@ -6,7 +6,7 @@ App::uses('AppController', 'Controller');
  * @property Setting $Setting
  */
 class SettingsController extends AppController {
-	
+
 /**
  * admin_index method
  *
@@ -27,7 +27,7 @@ class SettingsController extends AppController {
  * admin_view method
  *
  * @param string $id
- * @return void
+ * @throws NotFoundException
  */
 	public function admin_view($id = null) {
 		$this->Setting->id = $id;
@@ -58,26 +58,26 @@ class SettingsController extends AppController {
  * admin_edit method
  *
  * @param string $id
- * @return void
+ * @throws NotFoundException
  */
 	public function admin_edit($id = null) {
 		$this->Setting->id = $id;
-		
+
 		if (!$this->Setting->exists()) {
 			throw new NotFoundException(__('Invalid setting'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if (!empty($this->request->data['Setting']['enum_safe'])) {
-				$options_lines = explode(';', $this->request->data['Setting']['enum_safe']);
-				foreach($options_lines as $option_line) {
-					$temp = explode(',', $option_line);
+				$optionsLines = explode(';', $this->request->data['Setting']['enum_safe']);
+				foreach ($optionsLines as $optionLine) {
+					$temp = explode(',', $optionLine);
 					$options[$temp[0]] = $temp[1];
 				}
 				$this->request->data['Setting']['enum_data'] = serialize($options);
-					
+
 			}
 			if (!empty($this->request->data['Setting']['validate'])) {
-				
+
 				$this->Setting->validate = array(
 					'value' => array(
 						'rule' => $this->request->data['Setting']['validate'],
@@ -105,37 +105,37 @@ class SettingsController extends AppController {
 			}
 			if (!empty($this->request->data['Setting']['enum_data'])) {
 				$options = unserialize($this->request->data['Setting']['enum_data']);
-				foreach($options as $key => $option) {
-					$comma_sep[] = $key.','.$option;
+				foreach ($options as $key => $option) {
+					$commaSep[] = $key . ',' . $option;
 				}
-				$this->request->data['Setting']['enum_safe'] = implode(';', $comma_sep);
+				$this->request->data['Setting']['enum_safe'] = implode(';', $commaSep);
 			}
 		}
 	}
 
 /**
  * admin_update method
- * 
+ *
  * Update settings by extracting from model.
- */	
+ */
 	public function admin_update() {
 		$this->Setting->updateSettings();
 		$this->Session->setFlash(__('Settings updated'), 'bs_success');
 		$this->redirect(array('action' => 'index'));
 	}
-	
+
 /**
  * admin_import method
- * 
+ *
  * Import settings from currently configured values.
- * 
+ *
  * @throws MethodNotAllowedException
- */	
+ */
 	public function admin_import() {
 		if (!($this->request->is('post') || ($this->request->is('put')))) {
 			throw new MethodNotAllowedException('POST or PUT required for this method.');
 		}
-		
+
 		$key = $this->Setting->findByKey($this->request->data['Setting']['key']);
 		if (!$key) {
 			$this->Setting->create();
@@ -150,15 +150,16 @@ class SettingsController extends AppController {
 		} else {
 			$this->Session->setFlash(__('Key already exists.'), 'bs_default');
 			$this->redirect(array('action' => 'edit', $key['Setting']['key']));
-			
+
 		}
 	}
-	
+
 /**
  * admin_delete method
  *
  * @param string $id
- * @return void
+ * @throws MethodNotAllowedException
+ * @throws NotFoundException
  */
 	public function admin_delete($id = null) {
 		if (!$this->request->is('post')) {

@@ -10,14 +10,7 @@ class OperationFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $fields = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'project_id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => array('id', 'project_id'), 'unique' => 1)
-		),
-		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
-	);
+	public $import = 'Operation';
 
 /**
  * Records
@@ -26,8 +19,16 @@ class OperationFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array(
-			'id' => '525b30b1-ff20-4f8b-843d-1c0c0e5d8fe8',
-			'project_id' => '525b30b1-1a54-434d-aa14-1c0c0e5d8fe8'
+			'id' => '101',
+			'project_id' => '101',
+			'size_warning' => false,
+			'order' => 1,
+		),
+		array(
+			'id' => '101-Public',
+			'project_id' => '101-Public',
+			'size_warning' => false,
+			'order' => 1,
 		),
 	);
 

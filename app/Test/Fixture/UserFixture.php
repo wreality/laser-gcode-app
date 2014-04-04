@@ -10,29 +10,38 @@ class UserFixture extends CakeTestFixture {
  *
  * @var array
  */
-	public $fields = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 36, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'email' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 90, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'password' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'admin' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1)
-		),
-		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
-	);
+	public $import = 'User';
 
-/**
- * Records
- *
- * @var array
- */
 	public $records = array(
 		array(
-			'id' => '52c0f1e3-c8a8-4068-b68e-1a240e5d8fe8',
-			'email' => 'Lorem ipsum dolor sit amet',
-			'password' => 'Lorem ipsum dolor sit amet',
-			'admin' => 1
+			'id' => '101',
+			'username' => 'test1',
+			'email' => 'test@example.com',
+			'password' => '',
+			'admin' => '0',
+			'active' => '1',
+			'validate_key' => '',
+			'validate_data' => '',
+			'created' => '2014-01-01 00:00:00',
+			'modified' => '2014-01-01 00:00:00',
+			'last_login' => '0000-00-00 00:00:00',
+			'project_count' => '1',
+			'public_count' => '0',
+		),
+		array(
+			'id' => '102',
+			'username' => 'test2',
+			'email' => 'test2@example.com',
+			'password' => '',
+			'admin' => '0',
+			'active' => '1',
+			'validate_key' => '',
+			'validate_data' => '',
+			'created' => '2014-01-01 00:00:00',
+			'modified' => '2014-01-01 00:00:00',
+			'last_login' => '0000-00-00 00:00:00',
+			'project_count' => '0',
+			'public_count' => '0',
 		),
 	);
-
 }

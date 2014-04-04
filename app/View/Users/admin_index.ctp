@@ -31,7 +31,8 @@
 			<th>&nbsp;</th>
 			<th><?php echo $this->Paginator->sort('username')?>
 			<th><?php echo $this->Paginator->sort('email'); ?></th>
-			<th><?php echo $this->Paginator->sort('created', __('Member Since'))?>
+			<th><?php echo $this->Paginator->sort('project_count', __('Projects'))?>
+			<th><?php echo $this->Paginator->sort('public_count', __('Public Projects'))?>
 			<th><?php echo $this->Paginator->sort('last_login', __('Last Login'));?>
 			<th class="actions">&nbsp;</th>
 	</tr>
@@ -70,7 +71,8 @@
 				<?php echo h($user['User']['email']); ?>&nbsp;
 			<?php } ?>
 		</td>
-		<td><?php echo $this->Time->format('M jS, Y', $user['User']['created'])?></td>
+		<td><?php echo $user['User']['project_count']?></td>
+		<td><?php echo $user['User']['public_count']?></td>
 		<td><?php echo $this->Time->format('M-d-Y g:ia', $user['User']['last_login'])?></td>
 		<td class="actions">
 			<?php echo $this->Html->button(__('Edit'), array('action' => 'edit', $user['User']['id']), array('size' => 'btn-xs')); ?>

@@ -4,6 +4,7 @@ App::uses('ProjectsController', 'Controller');
 /**
  * ProjectsController Test Case
  *
+ * @coversDefaultClass ProjectController
  */
 class ProjectsControllerTest extends ControllerTestCase {
 
@@ -15,47 +16,122 @@ class ProjectsControllerTest extends ControllerTestCase {
 	public $fixtures = array(
 		'app.project',
 		'app.operation',
-		'app.path'
+		'app.path',
+		'app.setting',
+		'app.preset',
+		'app.user',
+		'app.session'
 	);
 
 /**
- * testIndex method
+ * testNewProjectAnonymous method
  *
- * @return void
+ * New projects created anonymously
+ *
+ * @covers ::add
  */
-	public function testIndex() {
+	public function testNewProjectAnonymous() {
+		$Projects = $this->generate('Projects', array(
+			'models' => array(
+			),
+			'components' => array(
+				'Auth' => array('user'),
+			)
+		));
+
+		$Projects->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue(false));
+
+		$this->testAction('/projects/add');
+		$this->assertNotEmpty($this->headers['Location']);
+		$this->assertRegExp('%/projects/edit/(.*)+$%', $this->headers['Location']);
+		$this->assertTrue($Projects->Project->isAnonymous($Projects->Project->id));
 	}
 
 /**
- * testView method
+ * testNewProjectUser method
  *
- * @return void
+ * New projects created with a user attached.
+ *
+ * @covers ::add
  */
-	public function testView() {
+	public function testNewProjectUser() {
+		$Projects = $this->generate('Projects', array(
+			'components' => array(
+				'Auth' => array('user')
+			)
+		));
+		$Projects->Auth
+			->staticExpects($this->once())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('101'));
+
+		$this->testAction('/projects/add');
+		$this->assertNotEmpty($this->headers['Location']);
+		$this->assertRegExp('%/projects/edit/(.*)+%', $this->headers['Location']);
+		$this->assertTrue($Projects->Project->isOwner('101', $Projects->Project->id));
 	}
 
 /**
- * testAdd method
+ * testMakeClaim method
  *
- * @return void
+ * @covers ::make_claim
  */
-	public function testAdd() {
+	public function testMakeClaim() {
+		$Projects = $this->generate('Projects', array(
+			'components' => array(
+				'Auth' => array('user', '_isAllowed'),
+				'Session' => array('setFlash'),
+			)
+		));
+
+		$Projects->Auth
+			->expects($this->once())
+			->method('_isAllowed')
+			->will($this->returnValue(true));
+		$Projects->Auth
+			->staticExpects($this->any())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('101'));
+		$Projects->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with($this->anything(), 'bs_success');
+		$this->testAction('/projects/make_claim/999');
+		$this->assertNotEmpty($this->headers['Location']);
 	}
 
 /**
- * testEdit method
+ * testMakeClaimAlreadyClaimed method
  *
- * @return void
+ * @covers ::make_claim
  */
-	public function testEdit() {
-	}
+	public function testMakeClaimAlreadyClaimed() {
+		$Projects = $this->generate('Projects', array(
+			'components' => array(
+				'Auth' => array('user', '_isAllowed'),
+				'Session' => array('setFlash'),
+			)
+		));
 
-/**
- * testDelete method
- *
- * @return void
- */
-	public function testDelete() {
+		$Projects->Auth
+			->expects($this->once())
+			->method('_isAllowed')
+			->will($this->returnValue(true));
+		$Projects->Auth
+			->staticExpects($this->any())
+			->method('user')
+			->with('id')
+			->will($this->returnValue('101'));
+		$Projects->Session
+			->expects($this->once())
+			->method('setFlash')
+			->with($this->anything(), 'bs_error');
+		$this->testAction('/projects/make_claim/101');
 	}
-
 }
