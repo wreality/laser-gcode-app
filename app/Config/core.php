@@ -67,7 +67,7 @@
 	define('PATH_MOVE_UP', -1);
 	define('PATH_MOVE_DOWN', 1);
 
-	Configure::write('App.version', '2.0-RC2+develop');
+	Configure::write('App.version', '2.0-RC3');
 	Configure::write('App.pstoedit_command', 'pstoedit -q -f "gcode: -speed {{SPEED}} -intensity {{POWER}} -noheader -nofooter" {{FILE}}');
 	Configure::write('App.max_email_retries', 5);
 	Configure::write('App.title', 'GCode Creator');
