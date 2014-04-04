@@ -356,6 +356,15 @@ class Project extends AppModel {
 		return $this->save($data);
 	}
 
+/**
+ * claimProject method
+ *
+ * Claim a project by a user.
+ *
+ * @param unknown $userId
+ * @param string $id
+ * @return Ambigous <mixed, boolean, multitype:>
+ */
 	public function claimProject($userId, $id = null) {
 		if (empty($id)) {
 			$id = $this->id;
