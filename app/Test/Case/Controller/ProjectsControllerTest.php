@@ -4,7 +4,7 @@ App::uses('ProjectsController', 'Controller');
 /**
  * ProjectsController Test Case
  *
- * @coversDefaultClass ProjectController
+ * @coversDefaultClass ProjectsController
  */
 class ProjectsControllerTest extends ControllerTestCase {
 
