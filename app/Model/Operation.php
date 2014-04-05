@@ -181,13 +181,14 @@ class Operation extends AppModel {
 		App::import('Model', 'GCode');
 
 		$GCode = new GCode();
+		$GCode->setTraversalRate($operation['Project']['traversal_rate']);
 		if ($operation['Operation']['order'] == 1) {
 			if (!empty($operation['Project']['gcode_preamble'])) {
 				$GCode->insertGCode(explode("\n", $operation['Project']['gcode_preamble']));
 			}
 		}
 
-		$GCode->startOpCode($operation['Project']['home_before']);
+		$GCode->startOpCode($operation['Project']['home_before'], $operation['Project']['traversal_rate']);
 
 		foreach ($operation['Path'] as $path) {
 			$speed = $operation['Project']['max_feedrate'] * ($path['speed'] / 100);
@@ -195,7 +196,7 @@ class Operation extends AppModel {
 			$GCode->insertComment('Start of path: ' . $path['file_name']);
 			$GCode->insertComment(sprintf('; Speed: %d, Power: %d', $speed, $power));
 			$GCode->newLine();
-			$GCode->pstoedit($speed, $power, $operation['Project']['traversal_rate'], Configure::read('LaserApp.storage_path') . DS . $path['file_hash'] . '.pdf');
+			$GCode->pstoedit($speed, $power, Configure::read('LaserApp.storage_path') . DS . $path['file_hash'] . '.pdf');
 			$GCode->laserOff();
 			$GCode->moveTo(0, 0, false, $operation['Project']['traversal_rate']);
 			$GCode->insertComment('End of path: ' . $path['file_name']);

@@ -6,6 +6,17 @@ class GCode extends AppModel {
 
 	protected $_gcode = array();
 
+	protected $_traversalRate = null;
+
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->_traversalRate = Configure::read('LaserApp.default_traversal_rate');
+	}
+
+	public function setTraversalRate($traversalRate) {
+		$this->_traversalRate = $traversalRate;
+	}
+
 	public function resetGCode() {
 		$this->_gcode = array();
 	}
@@ -97,7 +108,7 @@ class GCode extends AppModel {
 		if ($z) {
 			$gcode .= ' Z0 F150';
 		} else {
-			$gcode .= ' F6000';
+			$gcode = $gcode . ' F' . $this->_traversalRate;
 		}
 		$this->_gcode[] = $gcode;
 		return $gcode;
@@ -247,12 +258,12 @@ class GCode extends AppModel {
  * @throws InternalErrorException if pstoedit returns with an error.
  * @return multitype:
  */
-	public function pstoedit($speed, $power, $traversal, $filename) {
+	public function pstoedit($speed, $power, $filename) {
 			$gcode = array();
 			$command = Configure::read('LaserApp.pstoedit_command');
 			$command = str_replace('{{POWER}}', (int)($power), $command);
 			$command = str_replace('{{SPEED}}', (int)($speed), $command);
-			$command = str_replace('{{TRAVERSAL}}', (int)($traversal), $command);
+			$command = str_replace('{{TRAVERSAL}}', (int)($this->_traversalRate), $command);
 			$command = str_replace('{{FILE}}', $filename, $command);
 
 			exec($command, $gcode, $return);

@@ -147,6 +147,23 @@ class OperationTest extends CakeTestCase {
 		$this->Operation->deleteGCode('101');
 	}
 
+	public function testHomeOperationFeedrate() {
+		$this->Operation->Project->save(array('Project' => array('id' => '101', 'home_before' => true)));
+		try {
+			$result = $this->Operation->generateGCode('101');
+		} catch (InternalErrorException $e) {
+			$this->markTestSkipped();
+			return;
+		}
+
+		$this->assertTrue($result);
+		$GCode = $this->getGCode('101');
+		$this->assertTrue($this->findInArray($GCode, '/^G28/', $lineNumber));
+
+		$this->assertTrue(preg_match('/F(\d+)$/', $GCode[$lineNumber], $matches) == 1);
+		$this->assertEquals('4000', $matches[1]);
+	}
+
 	public function testCopyOperation() {
 		$result = $this->Operation->copyOperation('101');
 		$this->Operation->contain(array('Path'));
