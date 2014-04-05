@@ -2,7 +2,7 @@
 <?php echo $this->Form->create('Path', array('type' => 'file', 'novalidate' => true)); ?>
 	<fieldset>
 		<legend><?php echo __('Edit Path'); ?></legend>
-	
+
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('operation_id', array('type' => 'hidden'));
@@ -13,9 +13,9 @@
 			<?php echo $this->Form->input('speed', array('placeholder' => 'Speed', 'class' => 'col-lg-3', 'append' => '%','label' => array('class' => 'sr-only', 'text' => 'Enter Speed Percentage')));?>
 		</div>
 			<div class="clearfix">&nbsp;</div>
-	<?php 
-	
-		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Choose Path File')));
+	<?php
+
+		echo $this->Form->input('file', array('type' => 'file', 'accept' => 'application/pdf', 'label' => __('Choose Path File')));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

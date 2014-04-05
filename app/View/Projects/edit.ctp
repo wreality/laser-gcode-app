@@ -72,7 +72,7 @@
 						</table>
 					<?php } ?>
 					<?php echo $this->Form->create('Path', array('novalidate', 'class' => 'form-inline', 'type' => 'file', 'url' => array('controller' => 'paths', 'action' => 'add', $operation['id'])))?>
-					<?php echo $this->Form->input('Path.file', array('class' => 'col-lg-12', 'type' => 'file', 'label' => array('class' => 'sr-only', 'text' => 'Select File Path')))?>
+					<?php echo $this->Form->input('Path.file', array('class' => 'col-lg-12', 'type' => 'file', 'accept' => 'application/pdf', 'label' => array('class' => 'sr-only', 'text' => 'Select File Path')))?>
 					<?php echo $this->Form->input('preset_id', array('class' => 'preset-options', 'options' => $presets, 'empty' => '--Choose Preset --', 'label' => array('class' => 'sr-only', 'text' => 'Select Preset')));?>
 					<?php echo $this->Form->submit('Upload New Path', array('div' => array('class' => 'form-group')))?>
 					<div class="clearfix">&nbsp;</div>

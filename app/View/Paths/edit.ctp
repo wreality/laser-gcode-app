@@ -16,9 +16,9 @@
 			<?php echo $this->Form->input('speed', array('class' => 'col-lg-3', 'placeholder' => 'Speed',  'append' => '%','label' => array('class' => 'col-lg-2', 'text' => 'Speed')));?>
 		</div>
 			<div class="clearfix">&nbsp;</div>
-	<?php 
-	
-		echo $this->Form->input('file', array('type' => 'file', 'label' => __('Replace Path File'), 'required' => false));
+	<?php
+
+		echo $this->Form->input('file', array('type' => 'file', 'accept' => 'application/pdf', 'label' => __('Replace Path File'), 'required' => false));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
