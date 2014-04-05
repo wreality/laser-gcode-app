@@ -121,7 +121,7 @@ class Path extends AppModel {
 		App::import('Model', 'GCode');
 		$GCode = new GCode();
 
-		$gc = $GCode->pstoedit(100, 100, 6000, $this->data[$this->alias]['file']['tmp_name']);
+		$gc = $GCode->pstoedit(100, 100, $this->data[$this->alias]['file']['tmp_name']);
 		if (empty($gc)) {
 			return __('No GCode generated from upload.  Are there vectors in your PDF ?');
 		}
