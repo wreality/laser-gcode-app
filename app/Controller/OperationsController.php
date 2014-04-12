@@ -138,7 +138,7 @@ class OperationsController extends AppController {
 			return $this->response;
 		}
 
-		//$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
+		$this->response->file(Configure::read('LaserApp.storage_path') . DS . $id . '.gcode', array('download' => true, 'name' => $name));
 		return $this->response;
 	}
 
